@@ -1,12 +1,12 @@
 /** SWIPER PREV AND NEXT BUTTONS **/
-// var next_prev_buttons =
-//   '<div class="swiper-button-prev"></div><div class="swiper-button-next"></div>';
-// $('.swiper').each(function(index) {
-//   $(this).append(next_prev_buttons);
-// });
+var next_prev_buttons =
+  '<div class="swiper-button-prev"></div><div class="swiper-button-next"></div>';
+$('.swiper').each(function(index) {
+  $(this).append(next_prev_buttons);
+});
 
 var swiper = new Swiper('.swiper', {
-  loop: false,
+  loop: true,
   speed: 100,
   setWrapperSize: true,
   a11y: false,
