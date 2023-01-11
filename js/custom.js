@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 //////////////////////////////////////////////////////////////
 //* [GLOBAL VARIABLES] *//
 let currentMediumVideo = null;
@@ -103,18 +102,6 @@ swiper = new Swiper('#swiper', {
   slideToClickedSlide: true,
   centerInsufficientSlides: true,
   speed: 1000,
-=======
-/** SWIPER PREV AND NEXT BUTTONS **/
-var next_prev_buttons =
-  '<div class="swiper-button-prev"></div><div class="swiper-button-next"></div>';
-$('.swiper').each(function(index) {
-  $(this).append(next_prev_buttons);
-});
-
-var swiper = new Swiper('.swiper', {
-  loop: true,
-  speed: 100,
->>>>>>> e163e304fe808e8ca221c11ec6aacf23622a2e04
   setWrapperSize: true,
   a11y: false,
   // freeMode: true,
