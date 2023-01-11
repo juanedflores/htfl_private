@@ -3,7 +3,6 @@
 normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css 
 ========================================================================== */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-
 html {
     font-family: sans-serif;
     -ms-text-size-adjust: 100%;
@@ -2491,7 +2490,6 @@ a {
 }
 
 .swiper {
-    opacity: 1;
     position: static;
     left: 0%;
     top: 0%;
@@ -2528,32 +2526,32 @@ a {
     border: 1px solid transparent;
 }
 
-/* .swiper-slide { */
-/*     position: absolute; */
-/*     left: 0%; */
-/*     top: auto; */
-/*     right: 0%; */
-/*     bottom: 0%; */
-/*     z-index: 4; */
-/*     display: block; */
-/*     overflow: visible; */
-/*     min-height: auto; */
-/*     min-width: auto; */
-/*     -webkit-align-self: auto; */
-/*     -ms-flex-item-align: auto; */
-/*     -ms-grid-row-align: auto; */
-/*     align-self: auto; */
-/*     border: 2px solid transparent; */
-/*     border-radius: 6px; */
-/*     -webkit-transition: width 200ms ease; */
-/*     transition: width 200ms ease; */
-/*     background-clip: border-box; */
-/*     -webkit-text-fill-color: inherit; */
-/*     cursor: auto; */
-/*     mix-blend-mode: normal; */
-/*     -o-object-fit: fill; */
-/*     object-fit: fill; */
-/* } */
+.swiper-slide {
+    position: absolute;
+    left: 0%;
+    top: auto;
+    right: 0%;
+    bottom: 0%;
+    z-index: 4;
+    display: block;
+    overflow: visible;
+    min-height: auto;
+    min-width: auto;
+    -webkit-align-self: auto;
+    -ms-flex-item-align: auto;
+    -ms-grid-row-align: auto;
+    align-self: auto;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    -webkit-transition: width 200ms ease;
+    transition: width 200ms ease;
+    background-clip: border-box;
+    -webkit-text-fill-color: inherit;
+    cursor: auto;
+    mix-blend-mode: normal;
+    -o-object-fit: fill;
+    object-fit: fill;
+}
 
 .card__category {
     position: absolute;
@@ -3687,29 +3685,6 @@ a {
     padding-left: 0px;
 }
 
-.swiper-wrapper {
-    position: relative;
-    z-index: 500;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    overflow: visible;
-    margin-bottom: 10vh;
-    padding-right: 0px;
-    padding-left: 0px;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: end;
-    -webkit-align-items: flex-end;
-    -ms-flex-align: end;
-    align-items: flex-end;
-    border: 1px solid transparent;
-    /* transition: all 0.8s ease 0s; */
-}
-
 .swiper-wrapper-testing {
     position: relative;
     z-index: 500;
@@ -3731,21 +3706,21 @@ a {
     border: 2px solid transparent;
     border-radius: 6px;
     background-color: #242424;
-    /* -webkit-transition: -webkit-transform 200ms ease-in-out; */
-    /* transition: -webkit-transform 200ms ease-in-out; */
-    /* transition: transform 200ms ease-in-out; */
-    /* transition: transform 200ms ease-in-out, -webkit-transform 200ms ease-in-out; */
-    /* cursor: pointer; */
+    -webkit-transition: -webkit-transform 200ms ease-in-out;
+    transition: -webkit-transform 200ms ease-in-out;
+    transition: transform 200ms ease-in-out;
+    transition: transform 200ms ease-in-out, -webkit-transform 200ms ease-in-out;
+    cursor: pointer;
 }
 
-/* .swiper-slide-testing:hover { */
-/*     position: relative; */
-/*     z-index: 1000; */
-/*     border-width: 2px; */
-/*     -webkit-transform: translate(0px, -80px) scale(1.4); */
-/*     -ms-transform: translate(0px, -80px) scale(1.4); */
-/*     transform: translate(0px, -80px) scale(1.4); */
-/* } */
+.swiper-slide-testing:hover {
+    position: relative;
+    z-index: 1000;
+    border-width: 2px;
+    -webkit-transform: translate(0px, -80px) scale(1.4);
+    -ms-transform: translate(0px, -80px) scale(1.4);
+    transform: translate(0px, -80px) scale(1.4);
+}
 
 .card__img-container-testing {
     position: static;
@@ -4174,11 +4149,11 @@ a {
     margin-left: 0px;
     border: 2px solid transparent;
     border-radius: 6px;
-    /* -webkit-transition: -webkit-transform 200ms ease-in-out; */
-    /* transition: -webkit-transform 200ms ease-in-out; */
-    /* transition: transform 200ms ease-in-out; */
-    /* transition: transform 200ms ease-in-out, -webkit-transform 200ms ease-in-out; */
-    /* cursor: pointer; */
+    -webkit-transition: -webkit-transform 200ms ease-in-out;
+    transition: -webkit-transform 200ms ease-in-out;
+    transition: transform 200ms ease-in-out;
+    transition: transform 200ms ease-in-out, -webkit-transform 200ms ease-in-out;
+    cursor: pointer;
 }
 
 .swiper-slide-2:hover {
@@ -4208,17 +4183,17 @@ a {
 .card_video {
     position: relative;
     bottom: 0px;
-    /* z-index: 8; */
+    z-index: 8;
     max-height: none;
     max-width: none;
     margin: -2px -2px 0px;
     border: 1px solid transparent;
-    /* -webkit-transition: -webkit-transform 1025ms ease; */
-    /* transition: -webkit-transform 1025ms ease; */
-    /* transition: transform 1025ms ease; */
-    /* transition: transform 1025ms ease, -webkit-transform 125ms ease; */
-    /* -o-object-fit: fill; */
-    /* object-fit: fill; */
+    -webkit-transition: -webkit-transform 125ms ease;
+    transition: -webkit-transform 125ms ease;
+    transition: transform 125ms ease;
+    transition: transform 125ms ease, -webkit-transform 125ms ease;
+    -o-object-fit: fill;
+    object-fit: fill;
 }
 
 .card_description {
@@ -4261,7 +4236,7 @@ a {
     font-size: 16px;
     font-weight: 500;
     letter-spacing: 1px;
-    /* white-space: pre-wrap; */
+    white-space: pre-wrap;
 }
 
 .video-description {
@@ -4788,7 +4763,7 @@ a {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    padding-right: 30px;
+    padding-right: 10px;
     padding-left: 15px;
     -webkit-box-pack: end;
     -webkit-justify-content: flex-end;
@@ -5232,9 +5207,9 @@ a {
     }
 
     .swiper-slide:hover {
-        /* -webkit-transform: none; */
-        /* -ms-transform: none; */
-        /* transform: none; */
+        -webkit-transform: none;
+        -ms-transform: none;
+        transform: none;
     }
 
     .container-hero {
@@ -5310,9 +5285,8 @@ a {
     }
 
     .tab-content {
-        /* width: auto; */
-        /* max-width: 31%; */
-        max-width: 100%;
+        width: auto;
+        max-width: 31%;
         min-width: 95%;
         margin-top: 100px;
         margin-left: 20px;
@@ -5363,9 +5337,9 @@ a {
     }
 
     .swiper-slide-2:hover {
-        /* -webkit-transform: none; */
-        /* -ms-transform: none; */
-        /* transform: none; */
+        -webkit-transform: none;
+        -ms-transform: none;
+        transform: none;
     }
 
     .video-title {
