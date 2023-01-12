@@ -4,8 +4,9 @@ let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
 let hoverTimerArray = [];
 let swiper;
-let menuEnterTimer, menuLeaveTimer;
+let menuEnterTimer, menuLeaveTimer, resizeTimer;
 let backgroundClick;
+let resizing = false;
 let skipped = false;
 
 //////////////////////////////////////////////////////////////
@@ -25,6 +26,24 @@ function makeSmall(element, plyr) {
     description.fadeOut(300);
     // update global variables
     currentMediumVideoPlayer = null;
+  } 
+}
+
+function makeSmallLarge(element, plyr, element2, plyr2) {
+  if (element.hasClass("largeVideo")){
+    element.removeClass('largeVideo');
+    element.css({ 'min-width' : '10vw' });
+    // lower volume to 0
+    fadeAudio(plyr, 0);
+    // pause the video after ms it takes to return to small
+    setTimeout(function() {
+      plyr.pause();
+      makeMedium(element2, plyr2);
+    }, 1400);
+    // hide the description
+    let description = $(element[0].children[1]);
+    description.fadeOut(300);
+    // update global variables
     currentLargeVideoPlayer = null;
   } 
 }
@@ -41,7 +60,8 @@ function makeMedium(element, plyr) {
     fadeAudio(plyr, 0.6);
   } 
   // if video is not medium or large
-  if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo")){
+  if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
+    console.log("from small");
     element.addClass('mediumVideo');
     let description = $(element[0].children[1]);
     // fade in the description
@@ -54,8 +74,6 @@ function makeMedium(element, plyr) {
     element.css({ 'min-width' : '35vw' });
     // update global variable
     currentMediumVideoPlayer = plyr;
-    console.log("after make Medium:");
-    console.log(currentMediumVideoPlayer);
   }
 }
 
@@ -71,10 +89,8 @@ function makeLarge(element, plyr) {
     currentMediumVideoPlayer = null;
     currentLargeVideoPlayer = plyr;
     // move largeVideo to center and make it active
-    // console.log(swiper.clickedIndex);
     swiper.slideTo(swiper.clickedIndex);
     element.css({ 'min-width' : '70vw' });
-    console.log("making large")
   } 
 }
 
@@ -87,7 +103,6 @@ function fadeAudio (plyr, targetVolume) {
   }
   var fadeAudio = setInterval(function () {
     // Only fade if past the fade out point or not at zero already
-    console.log(plyr.volume);
     // When volume close to zero stop all the intervalling
     if (Math.abs(plyr.volume - targetVolume) >= 0.05) {
       if (fadeIn) { 
@@ -111,13 +126,29 @@ swiper = new Swiper('#swiper', {
   slidesPerGroup: 1,
   preventInteractionOnTransition: true,
   centeredSlides: true,
+  // centeredSlidesBounds: true,
   slideToClickedSlide: true,
   speed: 1000,
   setWrapperSize: true,
   a11y: false,
+  observeSlideChildren: true,
+  observer: true,
+  resizeObserver: true,
+  rewind: true,
+  watchSlidesProgress: true,
+  allowTouchMove: false,
+  on: {
+    resize: function () {
+      resizing = true;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resizing = false;
+      }, 200);
+    },
+  },
   freeMode: {
     enabled: true,
-    sticky: true,
+    // sticky: true,
   },
   navigation: {
     nextEl: '.swiper-button-next',
@@ -126,6 +157,7 @@ swiper = new Swiper('#swiper', {
   mousewheel: {
     invert: true,
   },
+  // mousewheel: false,
   spaceBetween: 8,
   breakpoints: {
     320: {
@@ -199,17 +231,22 @@ document.addEventListener('DOMContentLoaded', () => {
       player_swiper_slide.addEventListener('mouseenter', function() {
         let thisItem = $(this);
         // whenever any video slide is hovered hide the upper body except menu
-        $('.tab-content-container').fadeOut(500);
+        $('#tabContent').fadeOut(500);
         // update hoverTimer to prevent fast moving of mouse
+        // TODO
 
-        if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
-          // TODO hide any active video
+        if (menuLeaveTimer != null && currentMediumVideoPlayer != null && !resizing) {
           clearTimeout(menuLeaveTimer);
           prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+          // if any other medium or large player is active
           makeSmall(prevPlayer, currentMediumVideoPlayer);
+          // make the currently hovered video medium
           makeMedium(thisItem, player);
-        } else {
-          console.log("there was no leavetimer")
+        } 
+        else if (currentLargeVideoPlayer) {
+          console.log("return");
+        }
+        else {
           // add active class after a delay
           menuEnterTimer = setTimeout(function() {
             makeMedium(thisItem, player);
@@ -242,10 +279,19 @@ document.addEventListener('DOMContentLoaded', () => {
         let thisItem = $(this);
         if(thisItem.hasClass("mediumVideo")){
           makeLarge(thisItem, player);
-        } else if (thisItem.hasClass("largeVideo")){
-          console.log("making medium from large");
+        } 
+        else if (thisItem.hasClass("largeVideo")){
           makeMedium(thisItem, player);
         } 
+        else if (currentLargeVideoPlayer) {
+          if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
+            console.log("different")
+          } else {
+            console.log("same")
+          }
+          let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
+          makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
+        }
       });
 
       random_Time = Math.random() * 1000;
@@ -265,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', function() {
       if (!skipped) {
         skipped = true;
-        console.log("skipped Intro");
         document.getElementById('typedTitle').style.display = 'none';
         document.getElementById('typedTitleSkip').style.display = 'block';
         document.getElementById('typedWords').style.display = 'none';
@@ -273,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
         $('.continue-button').show();
         skipped = true;
       } else if (skipped) {
-        console.log("continuing..");
         $(".continue-button").click();
       }
     });
@@ -354,10 +398,8 @@ function afterIntro() {
   $('.section').hover(
     // if there is no current medium or large video, fade in body info
     function() {
-      console.log("hovering");
-      console.log(currentMediumVideoPlayer);
       if (currentLargeVideoPlayer == null && currentMediumVideoPlayer == null) {
-        $('.tab-content-container').fadeIn(500);
+        $('#tabContent').fadeIn(500);
       }
     }
   );
@@ -421,7 +463,6 @@ var count = 0;
 clickerDown.mousedown(function() {
   timeoutDown = setInterval(function() {
     document.getElementById('tabContent').scrollTop += 5;
-    console.log('down button clicked');
   }, 50);
 
   return false;
@@ -435,7 +476,6 @@ $(document).mouseup(function() {
 clickerUp.mousedown(function() {
   timeoutUp = setInterval(function() {
     document.getElementById('tabContent').scrollTop -= 5;
-    console.log('up button clicked');
   }, 50);
 
   return false;
