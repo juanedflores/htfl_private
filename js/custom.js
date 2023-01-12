@@ -23,7 +23,7 @@ function makeSmall(element, plyr) {
     }, 1400);
     // hide the description
     let description = $(element[0].children[1]);
-    description.fadeOut(300);
+    description.fadeOut(400);
     // update global variables
     currentMediumVideoPlayer = null;
   } 
@@ -129,13 +129,13 @@ swiper = new Swiper('#swiper', {
   // centeredSlidesBounds: true,
   slideToClickedSlide: true,
   speed: 1000,
-  setWrapperSize: true,
+  // setWrapperSize: true,
   a11y: false,
-  observeSlideChildren: true,
-  observer: true,
-  resizeObserver: true,
+  // observeSlideChildren: true,
+  // observer: true,
+  // resizeObserver: true,
   rewind: true,
-  watchSlidesProgress: true,
+  // watchSlidesProgress: true,
   allowTouchMove: false,
   on: {
     resize: function () {
@@ -143,11 +143,11 @@ swiper = new Swiper('#swiper', {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         resizing = false;
-      }, 200);
+      }, 500);
     },
   },
   freeMode: {
-    enabled: true,
+    enabled: false,
     // sticky: true,
   },
   navigation: {
@@ -235,10 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // update hoverTimer to prevent fast moving of mouse
         // TODO
 
+        // clearTimeout(resizeTimer);
         if (menuLeaveTimer != null && currentMediumVideoPlayer != null && !resizing) {
           clearTimeout(menuLeaveTimer);
           prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
-          // if any other medium or large player is active
+          // if any other medium is active
           makeSmall(prevPlayer, currentMediumVideoPlayer);
           // make the currently hovered video medium
           makeMedium(thisItem, player);
