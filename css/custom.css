@@ -11,6 +11,17 @@ body {
     line-height: 22px;
 }
 
+/* hide scroll bar */
+.tab-content {
+    /* overflow: hidden; */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+.tab-content::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
 .swiper-section {
     position: fixed;
     left: 0%;
@@ -130,6 +141,7 @@ body {
 
 .video-description {
     position: relative;
+    width: 60%;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -151,7 +163,7 @@ body {
     background-color: transparent;
     font-family: Akzidenz, sans-serif;
     color: #e0e0e0;
-    font-size: 12px;
+    font-size: 15px;
     line-height: 12px;
     font-weight: 300;
     letter-spacing: normal;
@@ -409,11 +421,19 @@ body {
     /* border: 1px solid red !important; */
 }
 
+.mediumVideo .video-description {
+    width: 20vw;
+}
+
 .largeVideo {
     /* transition: all 1s ease-in; */
     /* transition: all 1s linear; */
     z-index: 5;
     /* min-width: 70vw; */
+}
+
+.largeVideo .video-description {
+    width: 70vw;
 }
 
 .card_video {

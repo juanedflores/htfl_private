@@ -1,35 +1,16 @@
 //////////////////////////////////////////////////////////////
 //* [GLOBAL VARIABLES] *//
-let currentMediumVideo = null;
-let currentLargeVideo = null;
+let currentMediumVideoPlayer = null;
+let currentLargeVideoPlayer = null;
+let hoverTimer = null;
 let swiper;
 let menuEnterTimer, menuLeaveTimer;
 let backgroundClick;
+let skipped = false;
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
-function makeMedium(element, plyr) {
-  // if video is large and not medium
-  if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
-    element.removeClass('largeVideo');
-    element.addClass('mediumVideo');
-    currentLargeVideo = null;
-    currentMediumVideo = plyr;
-    element.css({ 'min-width' : '35vw' });
-    // fade out the audio
-    fadeAudio(plyr, 0.6);
-  } 
-  // if video is not medium or large
-  if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo")){
-    element.addClass('mediumVideo');
-    let description = $(element[0].children[1]);
-    description.delay(100).show(200);
-    element.css({ 'min-width' : '35vw' });
-    currentMediumVideo = plyr;
-  }
-}
-
-function removeMedium(element, plyr) {
+function makeSmall(element, plyr) {
   if (element.hasClass("mediumVideo")){
     element.removeClass('mediumVideo');
     element.css({ 'min-width' : '10vw' });
@@ -41,10 +22,34 @@ function removeMedium(element, plyr) {
     }, 1400);
     // hide the description
     let description = $(element[0].children[1]);
-    description.hide();
+    description.fadeOut(300);
     // update global variables
-    currentMediumVideo = null;
+    currentMediumVideoPlayer = null;
+    currentLargeVideoPlayer = null;
   } 
+}
+
+function makeMedium(element, plyr) {
+  // if video is large and not medium
+  if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
+    element.removeClass('largeVideo');
+    element.addClass('mediumVideo');
+    currentLargeVideoPlayer = null;
+    currentMediumVideoPlayer = plyr;
+    element.css({ 'min-width' : '35vw' });
+    // fade out the audio
+    fadeAudio(plyr, 0.6);
+  } 
+  // if video is not medium or large
+  if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo")){
+    element.addClass('mediumVideo');
+    let description = $(element[0].children[1]);
+    description.delay(200).fadeIn(600);
+    element.css({ 'min-width' : '35vw' });
+    currentMediumVideoPlayer = plyr;
+    console.log("after make Medium:");
+    console.log(currentMediumVideoPlayer);
+  }
 }
 
 function makeLarge(element, plyr) {
@@ -56,8 +61,8 @@ function makeLarge(element, plyr) {
     // fade in audio
     fadeAudio(plyr, 1);
 
-    currentMediumVideo = null;
-    currentLargeVideo = plyr;
+    currentMediumVideoPlayer = null;
+    currentLargeVideoPlayer = plyr;
     // move largeVideo to center and make it active
     // console.log(swiper.clickedIndex);
     swiper.slideTo(swiper.clickedIndex);
@@ -100,11 +105,9 @@ swiper = new Swiper('#swiper', {
   preventInteractionOnTransition: true,
   centeredSlides: true,
   slideToClickedSlide: true,
-  centerInsufficientSlides: true,
   speed: 1000,
   setWrapperSize: true,
   a11y: false,
-  // freeMode: true,
   freeMode: {
     enabled: true,
     sticky: true,
@@ -130,22 +133,6 @@ swiper = new Swiper('#swiper', {
   },
 });
 
-// mySwiper = new Swiper('#swiper', {
-//   loop: false,
-//   slidesPerView: 11,
-//   initialSlide: 5,
-//   spaceBetween: 10,
-//   navigation: {
-//     prevEl: ".swiper-plugin-navigation-prevEl",
-//     nextEl: ".swiper-plugin-navigation-nextEl",
-//   },
-//   freeMode: true,
-//   centeredSlides: true,
-//   plugins: [SwiperPluginNavigation],
-//   slideActiveClass: 'mediumVideo'
-// });
-
-
 // initialize GreenAudioPlayer
 GreenAudioPlayer.init({
   selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
@@ -162,29 +149,25 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.swiper-button-prev').hide();
   document.getElementById("swiper").style.pointerEvents = 'none'; // disable swiper
 
-
-
-  //////////////////////////////////////////////////////////////
   //* VIDEO PLAYERS *//
   // video player settings
-  const controls = [
+  const playerControls = [
     // 'play',     // Play/pause playback
     // 'progress', // The progress bar and scrubber for playback and buffering
     // 'disabled'
   ];
 
   const vimeoOptions = {
-    responsive: true,
-    autoplay: false,
+    // responsive: true,
+    // autoplay: false,
     background: true,
-    transparent: false,
-    centeredSlides: true,
-    portrait: false
+    // transparent: false,
+    // portrait: false
     // width: 640
   };
 
   // get all video players
-  const players = Plyr.setup('.js-player', { controls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
 
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
@@ -199,24 +182,24 @@ document.addEventListener('DOMContentLoaded', () => {
       let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
 
       //////////////////////////////////////////////////////////////
-      // start the volume at 0
+      // start the volume at 0.6
       player.volume = 0.6;
 
       //////////////////////////////////////////////////////////////
-      //* [MOUSE HOVER FOR SLIDER] *//
-      // add mouseEnter and mouseLeave events 
-      // delays in milliseconds
+      //* [MOUSE EVENTS FOR SLIDER] *//
+      // add mouse events 
       let showDelay = 1000, hideDelay = 1000;
       player_swiper_slide.addEventListener('mouseenter', function() {
+        // whenever any video slide is hovered hide the upper body except menu
+        $('.tab-content-container').fadeOut(500);
+
         // TODO: Not just enter, but make sure mouse has not moved for 1 sec
         let thisItem = $(this);
-        // clear the opposite timer
-        if (menuLeaveTimer != null && currentMediumVideo != null) {
+        if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
           // TODO hide any active video
-          console.log("there was a timer");
           clearTimeout(menuLeaveTimer);
-          prevPlayer = $(currentMediumVideo.elements.container.offsetParent.offsetParent);
-          removeMedium(prevPlayer, currentMediumVideo);
+          prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+          makeSmall(prevPlayer, currentMediumVideoPlayer);
           makeMedium(thisItem, player);
         } else {
           console.log("there was no leavetimer")
@@ -234,15 +217,15 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(menuEnterTimer);
         // remove active class after a delay
         menuLeaveTimer = setTimeout(function() {
-          removeMedium(thisItem, player);
+          makeSmall(thisItem, player);
         }, hideDelay);
 
         // TODO: add event listener for background click
-        if (currentLargeVideo != null && currentMediumVideo == null){
+        if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
           backgroundClick = document.addEventListener('click', function() {
-            let player_swiper_slide = currentLargeVideo.elements.container.offsetParent.offsetParent;
+            let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
             player_swiper_slide = $(player_swiper_slide);
-            makeMedium(player_swiper_slide, currentLargeVideo);
+            makeMedium(player_swiper_slide, currentLargeVideoPlayer);
           }, { once: true });
         }
 
@@ -262,43 +245,32 @@ document.addEventListener('DOMContentLoaded', () => {
       // show video players at a random time
       setTimeout(() => {
         player.elements.container.style.visibility = "visible";
-        //////////////////////////////////////////////////////////////
-
-        // add a listener to check if it changes. This is to check what class it currently has. 
-        // check whether it has mediumVideo, largeVideo, or neither
-        // var observer = new MutationObserver(function() {
-        //   console.log(player.config.title + " : " + player_swiper_slide.className);
-        //   if (player_swiper_slide.classList.contains("mediumVideo")) {
-        //     console.log("has medium!\\n")
-        //   }
-        //   });
-        // // observe the element to check if a class has been added or removed
-        // observer.observe(player_swiper_slide, { attributeFilter: ['class'] });
-        // console.log(player);
-
-        setTimeout(() => {
-          $('.loading-container').show();
-          typewriterTitle.start();
-
-          // skip animation after click
-          document.addEventListener('click', function() {
-            document.getElementById('typedTitle').style.display = 'none';
-            document.getElementById('typedTitleSkip').style.display = 'block';
-            document.getElementById('typedWords').style.display = 'none';
-            document.getElementById('typedWordsSkip').style.display = 'inline';
-            $('.continue-button').show();
-          });
-
-        }, 2000);
-        setTimeout(() => {
-          typewriter.start()
-        }, 3000);
       }, random_Time);
-
-      currentPlayer = player;
-
     });
   }
+
+  // after DOMContentent is loaded, add click listener
+  setTimeout(() => {
+    $('.loading-container').show();
+    // start typewriter animatino after the container is loaded
+    typewriterTitle.start();
+    // skip animation after click
+    document.addEventListener('click', function() {
+      if (!skipped) {
+        skipped = true;
+        console.log("skipped Intro");
+        document.getElementById('typedTitle').style.display = 'none';
+        document.getElementById('typedTitleSkip').style.display = 'block';
+        document.getElementById('typedWords').style.display = 'none';
+        document.getElementById('typedWordsSkip').style.display = 'inline';
+        $('.continue-button').show();
+        skipped = true;
+      } else if (skipped) {
+        console.log("continuing..");
+        $(".continue-button").click();
+      }
+    });
+  }, 2000);
 });
 
 //////////////////////////////////////////////////////////////
@@ -314,42 +286,55 @@ var typedTitle = document.getElementById('typedTitle');
 var typewriterTitle = new Typewriter(typedTitle, {
   loop: false,
   cursor: '',
-  delay: 5,
+  delay: 50,
 });
-
-typewriterTitle.typeString('Half Truths <b>and</b> Full Lies');
 
 // Type the project text after the title
 var typedWords = document.getElementById('typedWords');
 var typewriter = new Typewriter(typedWords, {
   loop: false,
   cursor: '',
-  delay: 20,
+  delay: 1,
 });
 
+// intro text body
 typedText = "In 1989, at age 15, Efrén Paredes, Jr. was convicted for a murder and armed robbery. The crime took place in St. Joseph, Michigan, at a local store where Efrén was working at the time. According to Efrén and his family, on the night of the crime, after completing his work at the store, he was brought home by the store’s manager. A short time later the store was robbed and the manager was murdered. The case against Efrén was based primarily on the statements of other youths who received reduced charges and sentences in exchange for their testimony. Efrén’s mother’s testimony, who claims that she had witnessed his return home before the murder was committed, was discarded. Efrén was sentenced to two life without parole sentences and one parolable life sentence."
-
 stringArray = stringSplitter(typedText);
-
 for (var i = 0; i < stringArray.length; i++) {
   typewriter.pasteString(stringArray[i] + " ");
 }
-
 typewriter
   .pauseFor(1000)
   .typeString(' <br><br> He is currently 49 years-old.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
+    skipped = true;
   });
+
+// start to write the intro text
+typewriterTitle.typeString('Half Truths <b>and</b> Full Lies').pauseFor(1000).callFunction(() => {
+  typewriter.start();
+});
+
 
 //////////////////////////////////////////////////////////////
 //* [END OF INTRO] *//
 // events that happen after the continue button is clicked
 $('.continue-button').on('click', function() {
-  $('.loading-container').fadeOut(500);
-  $('.continue-button').fadeOut(1000);
-  $('.tab-content-container').fadeIn(2000);
+  $('.continue-button').fadeOut(600);
+  setTimeout(function() {
+    $('#typedWords').fadeOut(800);
+    $('#typedWordsSkip').fadeOut(800);
+  }, 600);
+  setTimeout(function() {
+    $('#typedTitle').fadeOut(1000);
+    $('#typedTitleSkip').fadeOut(1000);
+  }, 1400);
+  setTimeout(function() {
+    $('.loading-container').hide();
+    $('.tab-content-container').fadeIn(3500);
+  }, 2600);
   afterIntro();
 });
 
@@ -360,11 +345,13 @@ function afterIntro() {
   document.getElementById("swiper").style.pointerEvents = 'auto';
   // when upper body is hovered
   $('.section').hover(
+    // if there is no current medium or large video, fade in body info
     function() {
-      $('.tab-content-container').fadeIn(500);
-    },
-    function() {
-      $('.tab-content-container').fadeOut(500);
+      console.log("hovering");
+      console.log(currentMediumVideoPlayer);
+      if (currentLargeVideoPlayer == null && currentMediumVideoPlayer == null) {
+        $('.tab-content-container').fadeIn(500);
+      }
     }
   );
   // show swiper buttons
