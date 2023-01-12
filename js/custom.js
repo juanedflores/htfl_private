@@ -2,7 +2,7 @@
 //* [GLOBAL VARIABLES] *//
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
-let hoverTimer = null;
+let hoverTimerArray = [];
 let swiper;
 let menuEnterTimer, menuLeaveTimer;
 let backgroundClick;
@@ -16,7 +16,7 @@ function makeSmall(element, plyr) {
     element.css({ 'min-width' : '10vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
-    // pause the video
+    // pause the video after ms it takes to return to small
     setTimeout(function() {
       plyr.pause();
     }, 1400);
@@ -44,8 +44,15 @@ function makeMedium(element, plyr) {
   if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo")){
     element.addClass('mediumVideo');
     let description = $(element[0].children[1]);
-    description.delay(200).fadeIn(600);
+    // fade in the description
+    setTimeout(function() {
+      if (plyr == currentMediumVideoPlayer) { 
+        description.fadeIn(600);
+      }
+    }, 400);
+    // set the size
     element.css({ 'min-width' : '35vw' });
+    // update global variable
     currentMediumVideoPlayer = plyr;
     console.log("after make Medium:");
     console.log(currentMediumVideoPlayer);
@@ -190,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // add mouse events 
       let showDelay = 1000, hideDelay = 1000;
       player_swiper_slide.addEventListener('mouseenter', function() {
+        let thisItem = $(this);
         // whenever any video slide is hovered hide the upper body except menu
         $('.tab-content-container').fadeOut(500);
+        // update hoverTimer to prevent fast moving of mouse
 
-        // TODO: Not just enter, but make sure mouse has not moved for 1 sec
-        let thisItem = $(this);
         if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
           // TODO hide any active video
           clearTimeout(menuLeaveTimer);
