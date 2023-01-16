@@ -4229,7 +4229,7 @@ a {
     height: 100%;
     max-height: none;
     max-width: none;
-    min-width: 100px;
+    /* min-width: 100px; */
     margin-bottom: -40px;
     padding: 0px 5px;
     clear: none;

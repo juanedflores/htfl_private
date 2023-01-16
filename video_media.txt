@@ -1,4 +1,4 @@
-Name,Order in Scrolly Reel,Subject Name,Subject Name for index page,Video Description,Video Duration,Video ID in Vimeo
+Name,Order in Scrolly Reel,Subject Name,Subject Name for index page,Video Description,Video Duration,Vimeo ID
 Burch 1,41,Andrew Burch,Andrew Burch 1,Efrén’s defense attorney during the initial trial,2:52,743637612
 Burch2,42,Andrew Burch,Andrew Burch 2,Efrén’s defense attorney during the initial trial,4:13,743637660
 Burch3,43,Andrew Burch,Andrew Burch 3,Efrén’s defense attorney during the initial trial,4:04,743637287

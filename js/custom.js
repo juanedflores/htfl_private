@@ -9,6 +9,9 @@ let updateInterval;
 let backgroundClick;
 let resizing = false;
 let skipped = false;
+let video_media_array;
+let currentStartIndex = 0;
+let currentEndIndex = 20;
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
@@ -134,27 +137,79 @@ function fadeAudio (plyr, targetVolume) {
   }, 100);
 }
 
+function makeSlide(i) {
+  let vimeoID = video_media_array[i]["Vimeo ID"];
+  let videoTitle = video_media_array[i]["Subject Name"];
+  let videoDuration = video_media_array[i]["Video Duration"];
+  let videoDescription = video_media_array[i]["Video Description"];
+  htmlstring = 
+    `
+    <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 10vw; margin-right: 8px">
+      <div class="card_video">
+        <div class="w-embed">
+          <div tabindex="0"
+            class="plyr plyr--full-ui plyr--video plyr--vimeo plyr--fullscreen-enabled plyr--paused plyr--stopped plyr--captions-enabled"
+            style="visibility: visible">
+            <div class="plyr__controls"></div>
+            <div class="plyr__video-wrapper plyr__video-embed" style="aspect-ratio: 16 / 9">
+              <div class="plyr__video-embed__container" style="transform: translateY(-38.2943%)">
+                <iframe
+                  src="https://player.vimeo.com/video/${vimeoID}?loop=false&amp;autoplay=false&amp;muted=false&amp;gesture=media&amp;playsinline=true&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=false&amp;customControls=true&amp;background=true"
+                  allowfullscreen=""
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
+                  title="Player for Stu" data-ready="true" tabindex="-1"></iframe>
+              </div>
+              <div class="plyr__poster"></div>
+            </div>
+            <div class="plyr__captions" dir="auto"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card_description" style="display: none">
+        <div class="video-top-div">
+          <div class="video-title">${videoTitle}</div>
+          <div class="video-duration" style="display: flex">${videoDuration}</div>
+          <div style="display: none" class="progress">
+            <svg viewBox="0 0 100 0.1" preserveAspectRatio="none" style="display: block; width: 100%">
+              <path d="M 0,0.05 L 100,0.05" stroke="#808080" stroke-width="0.1" fill-opacity="0"></path>
+              <path d="M 0,0.05 L 100,0.05" stroke="#FFFFFF" stroke-width="0.1" fill-opacity="0" style="
+                                stroke-dasharray: 100px, 100px;
+                                stroke-dashoffset: 100px;
+                            "></path>
+            </svg>
+          </div>
+        </div>
+        <div class="video-description">${videoDescription}</div>
+      </div>
+    </div>
+    `
+
+  return htmlstring;
+}
+
 //////////////////////////////////////////////////////////////
 //* [INITIALIZE LIBRARIES] *//
 // initialize Swiper
 swiper = new Swiper('#swiper', {
+  runCallbacksOnInit: false,
   loop: false,
-  initialSlide: 5,
-  slidesPerView: 'auto',
+  slidesPerView: 9,
+  initialSlide: 7,
   slidesPerGroup: 1,
   preventInteractionOnTransition: true,
+  speed: 1000,
+  slideToClickedSlide: true,
   centeredSlides: true,
   // centeredSlidesBounds: true,
-  slideToClickedSlide: true,
-  speed: 1000,
-  // setWrapperSize: true,
-  a11y: false,
+  // centerInsufficientSlides: true,
+  setWrapperSize: true,
   // observeSlideChildren: true,
   // observer: true,
   // resizeObserver: true,
-  rewind: true,
+  // rewind: true,
   watchSlidesProgress: true,
   allowTouchMove: false,
+  // normalizeSlideIndex: false,
   on: {
     resize: function () {
       resizing = true;
@@ -163,14 +218,42 @@ swiper = new Swiper('#swiper', {
         resizing = false;
       }, 500);
     },
-    navigationNext: function () {
+    slideNextTransitionEnd: function () {
       console.log("next");
-      console.log(swiper.slides.length);
+      currentEndIndex = currentEndIndex+1;
+      currentStartIndex = currentStartIndex-1;
+      if (currentStartIndex < 0) { 
+        currentStartIndex = video_media_array.length-1;
+      }
+      if (currentEndIndex > video_media_array.length) { 
+        currentEndIndex = 0;
+      }
 
+      slide = makeSlide(currentEndIndex);
+      swiper.appendSlide(slide);
+      swiper.removeSlide(0);
+      swiper.update()
     },
-    navigationPrev: function () {
+    slidePrevTransitionEnd: function () {
       console.log("prev");
-    }
+      currentEndIndex = currentEndIndex+1;
+      currentStartIndex = currentStartIndex-1;
+      console.log(currentStartIndex);
+      console.log(currentEndIndex);
+      if (currentStartIndex < 0) { 
+        console.log("lower than 0: ");
+        currentStartIndex = video_media_array.length-1;
+      }
+      if (currentEndIndex > video_media_array.length) { 
+        console.log("lower than 0: ");
+        currentEndIndex = 0;
+      }
+
+      slide = makeSlide(currentStartIndex);
+      swiper.prependSlide(slide);
+      swiper.removeSlide(swiper.slides.length-1);
+      swiper.update()
+    },
   },
   freeMode: {
     enabled: false,
@@ -183,19 +266,18 @@ swiper = new Swiper('#swiper', {
   mousewheel: {
     invert: true,
   },
-  // mousewheel: false,
   spaceBetween: 8,
-  breakpoints: {
-    320: {
-      slidesPerView: 4,
-    },
-    640: {
-      slidesPerView: 8,
-    },
-    1024: {
-      slidesPerView: 11,
-    },
-  },
+  // breakpoints: {
+  //   320: {
+  //     // slidesPerView: 4,
+  //   },
+  //   640: {
+  //     // slidesPerView: 8,
+  //   },
+  //   1024: {
+  //     // slidesPerView: 12,
+  //   },
+  // },
 });
 
 // initialize GreenAudioPlayer
@@ -204,40 +286,44 @@ GreenAudioPlayer.init({
   stopOthersOnPlay: true,
 });
 
-// read csv data
-fetch('video_media.txt')
-  .then(response => response.text())
-  .then(text => console.log(text))
-// outputs the content of the text file
+// load CSV data
+async function fetchCSV () {
+  const res = await fetch('video_media.txt');
+  video_media_array = await res.text();
+  video_media_array = $.csv.toObjects(video_media_array)
+  video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  // video_media_array = video_media_array.sort((a,b)=> (a.name > b.name ? 1 : -1))
+  // console.log(video_media_array);
 
-function processData(allText) {
-  var record_num = 7;  // or however many elements there are in each row
-  var allTextLines = allText.split(/\r\n|\n/);
-  var entries = allTextLines[0].split(',');
-  var lines = [];
-
-  var headings = entries.splice(0,record_num);
-  while (entries.length>0) {
-    var tarr = [];
-    for (var j=0; j<record_num; j++) {
-      tarr.push(headings[j]+":"+entries.shift());
-    }
-    lines.push(tarr);
+  // create video players
+  for (var i = currentStartIndex; i <= currentEndIndex; i++) { 
+    let vimeoID = video_media_array[i]["Vimeo ID"];
+    let videoTitle = video_media_array[i]["Subject Name"];
+    let videoDuration = video_media_array[i]["Video Duration"];
+    let videoDescription = video_media_array[i]["Video Description"];
+    htmlstring = 
+      `<div role='listitem' class='swiper-slide'>
+        <div class='card_video'>
+          <div class='w-embed'>
+            <div
+              class='js-player'
+              data-plyr-provider='vimeo'
+              data-plyr-embed-id='${vimeoID}'></div>
+          </div>
+        </div>
+        <div class='card_description'>
+          <div class='video-top-div'>
+            <div class='video-title'>${videoTitle}</div>
+            <div class='video-duration'>${videoDuration}</div>
+          </div>
+          <div class='video-description'>
+          ${videoDescription}
+          </div>
+        </div>
+      </div>`
+    // console.log(htmlstring);
+    $('.swiper-wrapper').append(htmlstring);
   }
-  // alert(lines);
-  console.log(lines);
-}
-
-
-//////////////////////////////////////////////////////////////
-//* [AFTER DOM CONTENT IS LOADED] *//
-document.addEventListener('DOMContentLoaded', () => {
-  $('.continue-button').hide();
-  $('.tab-content-container').hide();
-  $('.tab-menu').hide();
-  $('.swiper-button-next').hide();
-  $('.swiper-button-prev').hide();
-  document.getElementById("swiper").style.pointerEvents = 'none'; // disable swiper
 
   //* VIDEO PLAYERS *//
   // video player settings
@@ -396,6 +482,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }, random_Time);
     });
   }
+}
+
+
+//////////////////////////////////////////////////////////////
+//* [AFTER DOM CONTENT IS LOADED] *//
+document.addEventListener('DOMContentLoaded', () => {
+  $('.continue-button').hide();
+  $('.tab-content-container').hide();
+  $('.tab-menu').hide();
+  $('.swiper-button-next').hide();
+  $('.swiper-button-prev').hide();
+  document.getElementById("swiper").style.pointerEvents = 'none'; // disable swiper
+
+  // load videos
+  fetchCSV();
 
   // after DOMContentent is loaded, add click listener
   setTimeout(() => {
