@@ -18,6 +18,14 @@ body {
     supported by Chrome, Edge, Opera and Firefox */
 }
 
+table {
+    width: 100%;
+}
+
+th {
+    font-weight: normal;
+}
+
 /* hide scroll bar */
 .tab-content {
     /* overflow: hidden; */
@@ -217,7 +225,7 @@ body {
     /* display: inline-block; */
     /* left: auto; */
     /* top: 0%; */
-    /* right: 2%; /* added space on right side */ 
+    /* right: 2%; /* added space on right side */
     /* bottom: 0%; */
     /* width: 100%; */
     /* float: right; */

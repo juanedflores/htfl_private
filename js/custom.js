@@ -153,7 +153,7 @@ swiper = new Swiper('#swiper', {
   // observer: true,
   // resizeObserver: true,
   rewind: true,
-  // watchSlidesProgress: true,
+  watchSlidesProgress: true,
   allowTouchMove: false,
   on: {
     resize: function () {
@@ -163,6 +163,14 @@ swiper = new Swiper('#swiper', {
         resizing = false;
       }, 500);
     },
+    navigationNext: function () {
+      console.log("next");
+      console.log(swiper.slides.length);
+
+    },
+    navigationPrev: function () {
+      console.log("prev");
+    }
   },
   freeMode: {
     enabled: false,
@@ -195,6 +203,30 @@ GreenAudioPlayer.init({
   selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
   stopOthersOnPlay: true,
 });
+
+// read csv data
+fetch('video_media.txt')
+  .then(response => response.text())
+  .then(text => console.log(text))
+// outputs the content of the text file
+
+function processData(allText) {
+  var record_num = 7;  // or however many elements there are in each row
+  var allTextLines = allText.split(/\r\n|\n/);
+  var entries = allTextLines[0].split(',');
+  var lines = [];
+
+  var headings = entries.splice(0,record_num);
+  while (entries.length>0) {
+    var tarr = [];
+    for (var j=0; j<record_num; j++) {
+      tarr.push(headings[j]+":"+entries.shift());
+    }
+    lines.push(tarr);
+  }
+  // alert(lines);
+  console.log(lines);
+}
 
 
 //////////////////////////////////////////////////////////////
@@ -505,12 +537,12 @@ function afterIntro() {
 }
 $('.audio-container').hover(
   function() {
-    $(this).find('.holder').fadeIn(200);
-    $(this).find('.controls').fadeIn(200);
+    // $(this).find('.holder').fadeIn(200);
+    // $(this).find('.controls').fadeIn(200);
   },
   function() {
-    $(this).find('.controls').hide();
-    $(this).find('.holder').hide();
+    // $(this).find('.controls').hide();
+    // $(this).find('.holder').hide();
   }
 );
 
