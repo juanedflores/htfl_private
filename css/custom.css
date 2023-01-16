@@ -9,6 +9,13 @@ body {
     color: #fff;
     font-size: 16px;
     line-height: 22px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+    supported by Chrome, Edge, Opera and Firefox */
 }
 
 /* hide scroll bar */
@@ -116,19 +123,23 @@ body {
 }
 
 .video-title {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    margin-right: 30px;
+    order: 0;
+    /* display: -webkit-box; */
+    /* display: -webkit-flex; */
+    /* display: -ms-flexbox; */
+    /* display: flex; */
+    /**/
+    /* margin: auto; */
+    /* display: inline-block; */
+    margin-right: 10px;
     padding-right: 10px;
-    -webkit-box-pack: start;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
+    /* -webkit-box-pack: start; */
+    /* -webkit-justify-content: flex-start; */
+    /* -ms-flex-pack: start; */
+    /* justify-content: flex-start; */
+    /* -webkit-flex-wrap: wrap; */
+    /* -ms-flex-wrap: wrap; */
+    /* flex-wrap: wrap; */
     grid-column-gap: 5px;
     grid-row-gap: 5px;
     font-family: Akzidenz, sans-serif;
@@ -177,9 +188,9 @@ body {
     top: 0%;
     right: 2%; /* added space on right side */
     bottom: 0%;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
+    /* display: -webkit-box; */
+    /* display: -webkit-flex; */
+    /* display: -ms-flexbox; */
     display: flex;
     -webkit-box-pack: end;
     -webkit-justify-content: flex-end;
@@ -191,29 +202,77 @@ body {
     font-weight: 500;
 }
 
+.progress {
+    height: 2px;
+    order: 5;
+    flex: 5;
+    display: block;
+    /* height: auto; */
+    margin: auto;
+
+    align-items: center;
+    justify-content: center;
+    /**/
+    /* margin: auto; */
+    /* display: inline-block; */
+    /* left: auto; */
+    /* top: 0%; */
+    /* right: 2%; /* added space on right side */ 
+    /* bottom: 0%; */
+    /* width: 100%; */
+    /* float: right; */
+    /* display: -webkit-box; */
+    /* display: -webkit-flex; */
+    /* display: -ms-flexbox; */
+    /* display: flex; */
+    /* -webkit-box-pack: end; */
+    /* -webkit-justify-content: flex-end; */
+    /* -ms-flex-pack: end; */
+    /* justify-content: flex-end; */
+    /* font-family: Akzidenz, sans-serif; */
+    /* color: #e0e0e0; */
+    /* font-size: 14px; */
+    /* font-weight: 500; */
+}
+
+.progress > svg {
+    height: 100%;
+    display: block;
+}
+
+.progress * {
+    /* vertical-align: middle; */
+    /* justify-content: center; */
+    /* align-items: center; */
+}
+
 .video-top-div {
-    position: relative;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
+    width: 100%;
     display: flex;
+    /* display: -webkit-box; */
+    /* display: -webkit-flex; */
+    /* display: -ms-flexbox; */
+    /* display: flex; */
     overflow: hidden;
     padding-left: 5px;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-pack: justify;
-    -webkit-justify-content: space-between;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    -webkit-flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-align-content: space-between;
-    -ms-flex-line-pack: justify;
-    align-content: space-between;
+    padding-top: 5px;
+    /* -webkit-box-orient: vertical; */
+    /* -webkit-box-direction: normal; */
+    /* -webkit-flex-direction: column; */
+    /* -ms-flex-direction: column; */
+    /* -webkit-box-pack: justify; */
+    /* -webkit-justify-content: space-between; */
+    /* -ms-flex-pack: justify; */
+    /* -webkit-flex-wrap: wrap; */
+    /* -ms-flex-wrap: wrap; */
+    /* flex-wrap: wrap; */
+    /* -webkit-align-content: space-between; */
+    /* -ms-flex-line-pack: justify; */
+    flex-direction: row;
+    /* justify-content: space-between; */
+    /* align-content: space-between; */
+    /* justify-content: center; */
+    /* align-items: center; */
     grid-column-gap: 5px;
     grid-row-gap: 5px;
     font-family: Akzidenz, sans-serif;
@@ -235,6 +294,7 @@ body {
     /*     min-width: 100px; */
     /*     border-radius: 0 0 0 0; */
     /* webflow */
+    order: 1;
     position: relative;
     left: 0%;
     top: auto;

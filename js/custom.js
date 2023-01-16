@@ -5,6 +5,7 @@ let currentLargeVideoPlayer = null;
 let hoverTimerArray = [];
 let swiper;
 let menuEnterTimer, menuLeaveTimer, resizeTimer;
+let updateInterval;
 let backgroundClick;
 let resizing = false;
 let skipped = false;
@@ -20,6 +21,11 @@ function makeSmall(element, plyr) {
     // pause the video after ms it takes to return to small
     setTimeout(function() {
       plyr.pause();
+      clearInterval(updateInterval);
+      let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
+      progressbar.style.display = "none";
+      durationdiv.style.display = "flex";
     }, 1400);
     // hide the description
     let description = $(element[0].children[1]);
@@ -38,6 +44,7 @@ function makeSmallLarge(element, plyr, element2, plyr2) {
     // pause the video after ms it takes to return to small
     setTimeout(function() {
       plyr.pause();
+      clearInterval(updateInterval);
       makeMedium(element2, plyr2);
     }, 1400);
     // hide the description
@@ -91,6 +98,17 @@ function makeLarge(element, plyr) {
     // move largeVideo to center and make it active
     swiper.slideTo(swiper.clickedIndex);
     element.css({ 'min-width' : '70vw' });
+    // show progress bar
+    let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+    let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
+    progressbar.style.display = "block";
+    durationdiv.style.display = "none";
+
+    updateInterval = setInterval(function() {
+      currenttime = plyr.currentTime;
+      percentage = (currenttime / plyr.duration);
+      plyr.progressbar.set(percentage);
+    }, 500);
   } 
 }
 
@@ -178,6 +196,7 @@ GreenAudioPlayer.init({
   stopOthersOnPlay: true,
 });
 
+
 //////////////////////////////////////////////////////////////
 //* [AFTER DOM CONTENT IS LOADED] *//
 document.addEventListener('DOMContentLoaded', () => {
@@ -219,10 +238,36 @@ document.addEventListener('DOMContentLoaded', () => {
     players[i].on('ready', (event) => {
       let player = event.detail.plyr 
       let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
+      let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
+      let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+      console.log(player_videocard);
 
       //////////////////////////////////////////////////////////////
       // start the volume at 0.6
       player.volume = 0.6;
+
+      //////////////////////////////////////////////////////////////
+      // add the custom progress bar
+      progressbardiv = document.createElement('div');
+      progressbardiv.style.display = "none";
+      progressbardiv.setAttribute("class","progress");
+      player_videoTopDiv.onclick = function clickEvent(e) {
+        let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+        var parentwidth = progressbar.offsetWidth;
+        var rect = e.target.getBoundingClientRect();
+        var x = e.clientX - rect.right; //x position within the element.
+        player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
+      }
+      player_videoTopDiv.append(progressbardiv);
+
+      var progressbar = new ProgressBar.Line(progressbardiv, {
+        color: '#FFFFFF',
+        trailColor: '#808080',
+        strokeWidth: 0.1
+      });
+
+      progressbar.set(0.0);
+      player.progressbar = progressbar;
 
       //////////////////////////////////////////////////////////////
       //* [MOUSE EVENTS FOR SLIDER] *//
@@ -276,11 +321,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
       });
 
-      player_swiper_slide.addEventListener('click', function() {
-        let thisItem = $(this);
-        if(thisItem.hasClass("mediumVideo")){
+      player_videocard.addEventListener('click', function() {
+        let thisItem = $(player_swiper_slide);
+        // if the clicked video is currently small, make medium
+        if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
+          makeMedium(thisItem, player);
+        } 
+        // if the clicked video is currently medium, make large
+        else if(thisItem.hasClass("mediumVideo")) {
           makeLarge(thisItem, player);
         } 
+        // if the clicked video is currently large, make medium
         else if (thisItem.hasClass("largeVideo")){
           makeMedium(thisItem, player);
         } 
