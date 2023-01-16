@@ -58,6 +58,28 @@ function makeSmallLarge(element, plyr, element2, plyr2) {
   } 
 }
 
+function makeSmallLarge2(element, plyr) {
+  if (element.hasClass("largeVideo")){
+    element.removeClass('largeVideo');
+    element.css({ 'min-width' : '1vw' });
+    // lower volume to 0
+    fadeAudio(plyr, 0);
+    // pause the video after ms it takes to return to small
+    setTimeout(function() {
+      // plyr.pause();
+      clearInterval(updateInterval);
+      for (let i = 0; i < 5; i++) {
+        swiper.slideNext();
+      }
+    }, 1400);
+    // hide the description
+    let description = $(element[0].children[1]);
+    description.fadeOut(300);
+    // update global variables
+    currentLargeVideoPlayer = null;
+  } 
+}
+
 function makeMedium(element, plyr) {
   // if video is large and not medium
   if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
@@ -196,7 +218,7 @@ swiper = new Swiper('#swiper', {
   slidesPerView: 11,
   initialSlide: 7,
   slidesPerGroup: 1,
-  preventInteractionOnTransition: true,
+  // preventInteractionOnTransition: true,
   speed: 1000,
   slideToClickedSlide: true,
   centeredSlides: true,
@@ -288,7 +310,7 @@ GreenAudioPlayer.init({
 
 // load CSV data
 async function fetchCSV () {
-  const res = await fetch('video_media.txt');
+  const res = await fetch('video_media.csv');
   video_media_array = await res.text();
   video_media_array = $.csv.toObjects(video_media_array)
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
@@ -376,7 +398,7 @@ async function fetchCSV () {
         let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
         var parentwidth = progressbar.offsetWidth;
         if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
-          clearInterval(updateInterval);
+          // clearInterval(updateInterval);
           var rect = e.target.getBoundingClientRect();
           var x = e.clientX - rect.right; //x position within the element.
           player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
@@ -400,6 +422,17 @@ async function fetchCSV () {
 
       progressbar.set(0.0);
       player.progressbar = progressbar;
+
+      /// add end event listener
+      player.on('ended', function(data) {
+        // data is an object containing properties specific to that event
+        let thisItem = $(this);
+        let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
+        console.log(thisItem[0].offsetParent.offsetParent);
+        makeSmallLarge2(swiper_slide, thisItem);
+        progressbar.set(0.0);
+        player.currentTime = 0;
+      });
 
       //////////////////////////////////////////////////////////////
       //* [MOUSE EVENTS FOR SLIDER] *//
@@ -439,7 +472,7 @@ async function fetchCSV () {
         clearTimeout(menuEnterTimer);
         // remove active class after a delay
         menuLeaveTimer = setTimeout(function() {
-          makeSmall(thisItem, player);
+          makeSmallLarge(thisItem, player);
         }, hideDelay);
 
         // TODO: add event listener for background click
