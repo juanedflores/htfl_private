@@ -108,7 +108,7 @@ function makeLarge(element, plyr) {
       currenttime = plyr.currentTime;
       percentage = (currenttime / plyr.duration);
       plyr.progressbar.set(percentage);
-    }, 500);
+    }, 100);
   } 
 }
 
@@ -254,9 +254,20 @@ document.addEventListener('DOMContentLoaded', () => {
       player_videoTopDiv.onclick = function clickEvent(e) {
         let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
         var parentwidth = progressbar.offsetWidth;
-        var rect = e.target.getBoundingClientRect();
-        var x = e.clientX - rect.right; //x position within the element.
-        player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
+        if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
+          clearInterval(updateInterval);
+          var rect = e.target.getBoundingClientRect();
+          var x = e.clientX - rect.right; //x position within the element.
+          player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
+          player.progressbar.set((1-(Math.abs(x) / parentwidth)));
+          // updateInterval = setInterval(function() {
+          //   currenttime = player.currentTime;
+          //   percentage = (currenttime / player.duration);
+          //   player.progressbar.set(percentage);
+          // }, 100);
+        } else {
+          console.log("no match");
+        }
       }
       player_videoTopDiv.append(progressbardiv);
 
