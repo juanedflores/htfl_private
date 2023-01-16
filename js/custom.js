@@ -360,6 +360,9 @@ async function fetchCSV () {
       let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
       console.log(player_videocard);
 
+      // add a transition effect
+      player_swiper_slide.style.transition = "all 1400ms ease";
+
       //////////////////////////////////////////////////////////////
       // start the volume at 0.6
       player.volume = 0.6;
