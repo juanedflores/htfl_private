@@ -18,7 +18,7 @@ let currentEndIndex = 20;
 function makeSmall(element, plyr) {
   if (element.hasClass("mediumVideo")){
     element.removeClass('mediumVideo');
-    element.css({ 'min-width' : '10vw' });
+    element.css({ 'min-width' : '1vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
@@ -41,7 +41,7 @@ function makeSmall(element, plyr) {
 function makeSmallLarge(element, plyr, element2, plyr2) {
   if (element.hasClass("largeVideo")){
     element.removeClass('largeVideo');
-    element.css({ 'min-width' : '10vw' });
+    element.css({ 'min-width' : '1vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
@@ -144,7 +144,7 @@ function makeSlide(i) {
   let videoDescription = video_media_array[i]["Video Description"];
   htmlstring = 
     `
-    <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 10vw; margin-right: 8px">
+    <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 1vw; margin-right: 8px">
       <div class="card_video">
         <div class="w-embed">
           <div tabindex="0"
@@ -193,7 +193,7 @@ function makeSlide(i) {
 swiper = new Swiper('#swiper', {
   runCallbacksOnInit: false,
   loop: false,
-  slidesPerView: 9,
+  slidesPerView: 11,
   initialSlide: 7,
   slidesPerGroup: 1,
   preventInteractionOnTransition: true,

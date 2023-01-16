@@ -320,7 +320,7 @@ th {
     overflow: visible;
     /* min-height: auto; */
     /* min-width: auto; */
-    min-width: 10vw;
+    min-width: 1vw;
     -webkit-align-self: auto;
     -ms-flex-item-align: auto;
     -ms-grid-row-align: auto;
@@ -335,7 +335,7 @@ th {
     mix-blend-mode: normal;
     -o-object-fit: fill;
     object-fit: fill;
-    width: 10vw !important;
+    /* width: 10vw !important; */
 }
 
 .swiper-slide-active {
