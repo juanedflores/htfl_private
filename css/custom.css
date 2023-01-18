@@ -339,7 +339,7 @@ th {
 }
 
 .swiper-slide-active {
-    border: 1px solid red !important;
+    /* border: 1px solid red !important; */
 }
 
 /* .swiper-slide:hover { */

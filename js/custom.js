@@ -472,7 +472,7 @@ async function fetchCSV () {
         clearTimeout(menuEnterTimer);
         // remove active class after a delay
         menuLeaveTimer = setTimeout(function() {
-          makeSmallLarge(thisItem, player);
+          makeSmall(thisItem, player);
         }, hideDelay);
 
         // TODO: add event listener for background click
