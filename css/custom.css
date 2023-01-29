@@ -56,12 +56,14 @@ th {
     /* overflow: hidden; */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
-    background: #141414;
 }
 
 .tab-content::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
-    background: #141414;
+}
+
+#indexContent {
+    overflow: hidden;
 }
 
 .hero {
