@@ -63,7 +63,7 @@ th {
 }
 
 #indexContent {
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 .hero {
