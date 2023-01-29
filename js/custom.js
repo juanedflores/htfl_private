@@ -410,11 +410,6 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
-  $('#content_text').fadeOut(1000);
-  // $('#upButton').fadeOut(600);
-  // $('#downButton').fadeOut(600);
-
-  $('#content_text').promise().done(function(){
     // will be called when all the animations on the queue finish
 
   // $('.w--tab-active').fadeOut('slow', function() {
@@ -447,35 +442,37 @@ function makeMedium(element, plyr) {
       // update global variable
       currentMediumVideoPlayer = plyr;
     }
-  });
 }
 
 function makeLarge(element, plyr) {
-  if (element.hasClass("mediumVideo")){
-    element.removeClass('mediumVideo');
-    element.addClass('largeVideo');
-    // play video
-    plyr.play();
-    // fade in audio
-    fadeAudio(plyr, 1);
+  $('#content_text').fadeOut(1000);
+  $('#content_text').promise().done(function(){
+    if (element.hasClass("mediumVideo")){
+      element.removeClass('mediumVideo');
+      element.addClass('largeVideo');
+      // play video
+      plyr.play();
+      // fade in audio
+      fadeAudio(plyr, 1);
 
-    currentMediumVideoPlayer = null;
-    currentLargeVideoPlayer = plyr;
-    // move largeVideo to center and make it active
-    swiper.slideTo(swiper.clickedIndex);
-    element.css({ 'min-width' : '70vw' });
-    // show progress bar
-    let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-    let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
-    progressbar.style.display = "block";
-    durationdiv.style.display = "none";
+      currentMediumVideoPlayer = null;
+      currentLargeVideoPlayer = plyr;
+      // move largeVideo to center and make it active
+      swiper.slideTo(swiper.clickedIndex);
+      element.css({ 'min-width' : '70vw' });
+      // show progress bar
+      let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
+      progressbar.style.display = "block";
+      durationdiv.style.display = "none";
 
-    updateInterval = setInterval(function() {
-      currenttime = plyr.currentTime;
-      percentage = (currenttime / plyr.duration);
-      plyr.progressbar.set(percentage);
-    }, 100);
-  } 
+      updateInterval = setInterval(function() {
+        currenttime = plyr.currentTime;
+        percentage = (currenttime / plyr.duration);
+        plyr.progressbar.set(percentage);
+      }, 100);
+    } 
+  });
 }
 
 function fadeAudio (plyr, targetVolume) {
@@ -799,7 +796,8 @@ async function fetchCSV () {
           // will be called when all the animations on the queue finish
 
           // clearTimeout(resizeTimer);
-          if (menuLeaveTimer != null && currentMediumVideoPlayer != null && !resizing) {
+        if (!resizing) {
+          if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
             clearTimeout(menuLeaveTimer);
             prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
             // if any other medium is active
@@ -816,6 +814,7 @@ async function fetchCSV () {
               makeMedium(thisItem, player);
             }, showDelay);
           }
+        }
         // })
       });
 
@@ -1114,12 +1113,11 @@ menu_button = document.getElementsByClassName("lottieanimation");
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() { //asign a function
     let thisItem = $(this);
-    $('#content_text').fadeIn(1000);
-
-    console.log("clicked");
     menu_button[0].click();
+    console.log("clicked");
+
+    $('#content_text').fadeIn(1000);
     menuItem = thisItem[0].innerText;
-    console.log(menuItem);
     if (menuItem == "Index") {
       index();
     }
