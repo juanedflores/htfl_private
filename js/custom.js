@@ -13,7 +13,10 @@ let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
 let currentEndIndex = 24;
+let initialSlide = 7;
 let panes_visible = false;
+// debugging
+let debug_swiper = true;
 
 // menu items (Temporary Fix) TODO: create non webflow menu
 panes = document.getElementsByClassName("w-tab-pane");
@@ -343,14 +346,6 @@ function resources() {
 }
 
 function makeSmall(element, plyr) {
-  // setTimeout(function() {
-  //   // whenever any video slide is hovered hide the upper body except menu
-  //   $('.w--tab-active').fadeIn(600);
-  //   $('#upButton').fadeIn(600);
-  //   $('#downButton').fadeIn(600);
-  // }, 1400);
-
-
   if (element.hasClass("mediumVideo")){
     element.removeClass('mediumVideo');
     element.css({ 'min-width' : '1vw' });
@@ -374,13 +369,6 @@ function makeSmall(element, plyr) {
 }
 
 function makeSmallLarge(element, plyr, element2, plyr2) {
-  // setTimeout(function() {
-  //   // whenever any video slide is hovered hide the upper body except menu
-  //   $('.w--tab-active').fadeIn(600);
-  //   $('#upButton').fadeIn(600);
-  //   $('#downButton').fadeIn(600);
-  // }, 1400);
-
   if (element.hasClass("largeVideo")){
     element.removeClass('largeVideo');
     element.css({ 'min-width' : '1vw' });
@@ -570,7 +558,7 @@ swiper = new Swiper('#swiper', {
   runCallbacksOnInit: false,
   loop: false,
   slidesPerView: 11,
-  initialSlide: 7,
+  initialSlide: initialSlide,
   slidesPerGroup: 1,
   // preventInteractionOnTransition: true,
   speed: 1000,
@@ -718,6 +706,7 @@ async function fetchCSV () {
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
     players[i].elements.container.style.visibility = "hidden";
+
   }
 
   // make video player visible when fully loaded (random between 1 second)
@@ -728,6 +717,19 @@ async function fetchCSV () {
       let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
       let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
       let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+
+
+      // debug mode
+      if (debug_swiper) {
+        var styles = `
+        .swiper-slide-active {
+          background: red;
+        }
+        `
+        var styleSheet = document.createElement("style")
+        styleSheet.innerText = styles
+        document.head.appendChild(styleSheet)
+      }
 
       // add a transition effect
       player_swiper_slide.style.transition = "all 1400ms ease";
@@ -872,7 +874,6 @@ async function fetchCSV () {
 //* [AFTER DOM CONTENT IS LOADED] *//
 document.addEventListener('DOMContentLoaded', () => {
 
-
   // variables (TODO: Temporary fix)
   test = document.getElementsByClassName("menu-text");
   menu1_index = test[0];
@@ -891,6 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.continue-button').hide();
   $('.tab-content-container').hide();
   $('.tab-menu').hide();
+
   $('.swiper-button-next').hide();
   $('.swiper-button-prev').hide();
   document.getElementById("swiper").style.pointerEvents = 'none'; // disable swiper
@@ -918,6 +920,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }, 2000);
+
+  // if (debug_swiper) {
+    $(".swiper-slide-active").css("border", "1px solid red !important");
+  // }
 });
 
 //////////////////////////////////////////////////////////////
@@ -976,6 +982,7 @@ $('.continue-button').on('click', function() {
   setTimeout(function() {
     $('#typedWords').fadeOut(800);
     $('#typedWordsSkip').fadeOut(800);
+    $('.continue-button').css("display", "none");
   }, 600);
   setTimeout(function() {
     $('#typedTitle').fadeOut(1000);
@@ -983,14 +990,10 @@ $('.continue-button').on('click', function() {
   }, 1400);
   setTimeout(function() {
     $('.loading-container').hide();
-
-    // show menu contents (temporary fix)
-    // menu_text = document.getElementsByClassName("w-tab-pane");
-    // for (var k = 0; k < menu_text.length; k++) {
-    //   element = menu_text[k];
-    //   element.style.display = "block";
-    // }
+    // fade in the controls
     $('.tab-content-container').fadeIn(3500);
+    $('.swiper-button-prev').fadeIn(3500);
+    $('.swiper-button-next').fadeIn(3500);
   }, 2600);
   afterIntro();
 });
@@ -1010,8 +1013,8 @@ function afterIntro() {
     }
   );
   // show swiper buttons
-  $('.swiper-button-next').show();
-  $('.swiper-button-prev').show();
+  // $('.swiper-button-next').show();
+  // $('.swiper-button-prev').show();
 }
 
 //////////////////////////////////////////////////////////////
@@ -1173,3 +1176,4 @@ function reportWindowSize() {
 }
 
 window.onresize = reportWindowSize;
+
