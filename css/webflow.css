@@ -3108,7 +3108,7 @@ a {
 }
 
 .columns {
-    /* overflow: scroll; */
+    overflow: scroll;
 }
 
 .tabs-content-2 {
@@ -3450,7 +3450,7 @@ a {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    /* overflow: scroll; */
+    overflow: scroll;
     width: 48vw;
     max-height: 48vh;
     min-height: 38vh;
@@ -4819,7 +4819,7 @@ a {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    /* overflow: scroll; */
+    overflow: scroll;
     width: 90%;
     min-width: 90%;
     margin-left: 40px;
