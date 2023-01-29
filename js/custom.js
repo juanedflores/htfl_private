@@ -410,12 +410,11 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
-  $('.w--tab-active').fadeOut(1000);
-  $('#upButton').fadeOut(600);
-  $('#downButton').fadeOut(600);
-  panes_visible = false;
+  $('#content_text').fadeOut(1000);
+  // $('#upButton').fadeOut(600);
+  // $('#downButton').fadeOut(600);
 
-  $('.w--tab-active').promise().done(function(){
+  $('#content_text').promise().done(function(){
     // will be called when all the animations on the queue finish
 
   // $('.w--tab-active').fadeOut('slow', function() {
@@ -1115,6 +1114,8 @@ menu_button = document.getElementsByClassName("lottieanimation");
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() { //asign a function
     let thisItem = $(this);
+    $('#content_text').fadeIn(1000);
+
     console.log("clicked");
     menu_button[0].click();
     menuItem = thisItem[0].innerText;
