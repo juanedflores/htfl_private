@@ -10,14 +10,325 @@ let backgroundClick;
 let resizing = false;
 let skipped = false;
 let video_media_array;
+let audio_media_array;
 let currentStartIndex = 0;
 let currentEndIndex = 24;
+let panes_visible = false;
 
 // menu items (Temporary Fix) TODO: create non webflow menu
-// w-tabs-0-data-w-tab-1
+panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
+function index() {
+  console.log("index")
+  document.getElementById("content_text").innerHTML = indexContent;
+
+  function task(i) {
+    setTimeout(function() {
+      let name = video_media_array[i]["Subject Name"];
+      if (name != currName) {
+        cellcount = 0;
+        console.log("new name")
+        currRow = table.insertRow(rowcount);
+        currName = name;
+        console.log(name);
+        cell = currRow.insertCell(0);
+        // typewriter
+        typecell = new Typewriter(cell, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(name)
+          .start();
+
+        // cell.innerHTML = name;
+        rowcount = rowcount + 1;
+        cellcount = cellcount + 1;
+
+        // add the time
+        cell = currRow.insertCell(cellcount);
+        duration = video_media_array[i]["Video Duration"];
+        a = document.createElement('a');
+        a.setAttribute('href', "https://google.com");
+        // a.innerHTML = duration;
+
+        typecell = new Typewriter(a, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(duration)
+          .start();
+
+        cell.appendChild(a);
+        // cell.innerHTML = duration;
+        cellcount = cellcount + 1;
+      }
+      else {
+        console.log("same name");
+        cell = currRow.insertCell(cellcount);
+        duration = video_media_array[i]["Video Duration"];
+        a = document.createElement('a');
+        a.setAttribute('href', "https://google.com");
+        // a.innerHTML = duration;
+
+        typecell = new Typewriter(a, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(duration)
+          .start();
+
+        cell.appendChild(a);
+        cellcount = cellcount + 1;
+      }
+      console.log("rowcount: " + rowcount);
+      console.log("cellcount: " + cellcount);
+    }, 100 * i);
+  }
+
+  currName = "";
+  let currRow;
+  let rowcount = 0;
+  let cellcount = 0;
+  table = document.getElementById("indexTable");
+
+  for (var i = 0; i <= video_media_array.length - 1; i++) {
+    task(i);
+  }
+}
+
+function aboutTheCase() {
+  console.log("about the case")
+  document.getElementById("content_text").innerHTML = aboutCaseContent;
+
+  typedText = `
+    In 1989, at age 15, Efrén Paredes, Jr. was
+    convicted for a murder and armed robbery. The
+    crime took place in St. Joseph, Michigan, at a
+    local store where Efrén was working at the time.
+    According to Efrén and his family, on the night
+    of the crime, after completing his work at the
+    store, he was brought home by the store’s
+    manager. A short time later the store was robbed
+    and the manager was murdered. The case against
+    Efrén was based primarily on the statements of
+    other youths who received reduced charges and
+    sentences in exchange for their testimony.
+    Efrén’s mother’s testimony, who claims that she
+    had witnessed his return home before the murder
+    was committed, was discarded. Efrén was
+    sentenced to two life without parole sentences
+    and one parolable life sentence.
+    `
+
+  typeString = new Typewriter("#aboutCaseContent", {
+    loop: false,
+    cursor: '',
+    delay: 4,
+  });
+
+  stringArray = stringSplitter(typedText);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString
+    .typeString(' <br><br> He is currently 49 years-old.')
+    .start();
+}
+
+function aboutTheInstallation() {
+  console.log("about the installation")
+  document.getElementById("content_text").innerHTML = aboutInstallContent;
+
+  typedText = "A collaborative project between nonfiction filmmakers Tirtza Even and Meg McLagan and audio producer Elyse Blennerhassett."
+  typedText2 = "Half Truths and Full Lies depicts, through documentation and reenactment, the case of Efrén Paredes Jr., a Latinx man from Michigan, who was sentenced to life without parole in 1989 at age fifteen, for a murder he claims he did not commit."
+  typedText3 = "The multi-channel installation takes on a Rashomon-like quality, as divergent accounts of the crime accrue, forming multiple portraits of Efren. These accounts reflect perspectives of a range of individuals, from a police detective to key witnesses from the tight-knit small town community who singled Paredes out, as well as those whose lives — over the past 30 years — were most affected by the teen’s conviction: family members, teachers, and citizens who sat in judgment as jury members."
+  typedText4 = "Half Truths and Full Lies tells a story about a story; one constructed by a group of teens who appear to have conspired to set up their peer, and whose narrative played on stereotypical assumptions about racial minorities. This account became the only one the public, and the jury, got to hear, and the one upon which the local police and prosecutor relied."
+  typedText5 = "<a href='https://vimeo.com/294983167' target='_blank'>Full story.</a>"
+
+  typeString = new Typewriter("#aboutCaseInstallation", {
+    loop: false,
+    cursor: '',
+    delay: 4,
+  });
+
+  stringArray = stringSplitter(typedText);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+  stringArray = stringSplitter(typedText2);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+  stringArray = stringSplitter(typedText3);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+  stringArray = stringSplitter(typedText4);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+  typeString
+    .typeString(typedText5)
+    .start();
+}
+
+function audioFiles() {
+  console.log("audio files")
+  document.getElementById("content_text").innerHTML = audioContent;
+
+  function task(i) {
+    setTimeout(function() {
+      let name = audio_media_array[i]["Name"];
+      currRow = table.insertRow(i);
+      cell = currRow.insertCell(0);
+      cell.innerText = name;
+    }, 100 * i);
+  }
+
+  table = document.getElementById("indexTable");
+  for (var i = 0; i <= audio_media_array.length - 1; i++) {
+    task(i);
+  }
+}
+
+function resources() {
+  console.log("resources")
+  document.getElementById("content_text").innerHTML = resourcesContent;
+
+  typedString = `
+  <h2 class="heading-2">Resources</h2>
+  <div>
+      <div class="collection-list-wrapper-5 w-dyn-list">
+          <div role="list" class="w-dyn-items">
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">Supreme Court rulings related to juvenile justice</h4>
+                  <a href="https://supreme.justia.com/cases/federal/us/543/03-633/index.pdf"
+                      target="_blank" class="link resources-link">Roper v. Simmons (2005)</a><a
+                      id="link2"
+                      href="https://supreme.justia.com/cases/federal/us/560/08-7412/opinion.pdf"
+                      target="_blank" class="link resources-link">Graham v. Roper (2010)</a><a
+                      href="https://supreme.justia.com/cases/federal/us/567/10-9646/case.pdf"
+                      target="_blank" class="link resources-link">Miller v. Alabama (2012)</a><a
+                      href="https://supreme.justia.com/cases/federal/us/577/14-280/"
+                      target="_blank" class="link resources-link">Montgomery v. Louisiana (2016)</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">State of Michigan Life without parole sentencing rulings</h4>
+                  <a href="http://www.legislature.mi.gov/(S(31zcrydck2yfeo2zqrhydjox))/mileg.aspx?page=GetObject&amp;objectname=mcl-769-25"
+                      target="_blank" class="link resources-link">Michigan Legislature, Section
+                      769.25</a><a id="link2"
+                      href="http://www.legislature.mi.gov/(S(xguapetbtjv0ggjermuafgi5))/mileg.aspx?page=GetObject&amp;objectname=mcl-769-25a"
+                      target="_blank" class="link resources-link">Michigan Legislature, Section 769.25a</a><a
+                      href="https://www.michiganradio.org/criminal-justice-legal-system/2022-07-29/state-supreme-court-sets-new-rules-for-sentencing-youth-to-life"
+                      target="_blank" class="link resources-link">State Supreme Court sets new rules for sentencing youth to life</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">Efren Paredes trial documents</h4>
+                  <a href="#" class="link resources-link w-dyn-bind-empty"></a><a id="link2"
+                      href="#" class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630b9c16cd03307a949b7e0f_Preliminary%20Exam%20Transcript%20Vol.%201.pdf"
+                      target="_blank" class="link resources-link">Preliminary Exam Transcript Vol
+                      1</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba086b123fb2cd0c261a2_Preliminary%20Exam%20Transcript%20Vol.%202.pdf"
+                      target="_blank" class="link resources-link">Preliminary Exam Transcript Vol
+                      2</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba0f078b484a8be8613df_Trial%20Sentencing%20Transcript%20-%2008%2014%2089_small.pdf"
+                      target="_blank" class="link resources-link">Trial Transcript - 08 14
+                      1989</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">
+                      Alex Mui trial documents
+                  </h4>
+                  <a href="#" class="link resources-link w-dyn-bind-empty"></a><a id="link2"
+                      href="#" class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba7cd64f09a4331f4b5e7_alex%20mui%20presentencing_all.pdf"
+                      target="_blank" class="link resources-link">Presentencing hearing</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba58d98758853cb99f23e_alex%20mui%20guilty%20plea.pdf"
+                      target="_blank" class="link resources-link">Guilty plea</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">
+                      Eric Mui trial documents
+                  </h4>
+                  <a href="#" class="link resources-link w-dyn-bind-empty"></a><a id="link2"
+                      href="#" class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba8a9e146c8e466cc6c01_eric%20mui%20guilty%20plea_pg1-51.pdf"
+                      target="_blank" class="link resources-link">Eric Mui guilty plea</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630ba8c0b00126dcc3ddd012_Eric%20Mui%20motion%20to%20suppress.pdf"
+                      target="_blank" class="link resources-link">Motion to suppress</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630baa094fa8ae6f8d04b8f4_Eric%20Mui%20pre%20sentencing%20investigation%20report%20pg%201%20-%2043.pdf"
+                      target="_blank" class="link resources-link">Presentencing investigation
+                      report</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">Evidence</h4>
+                  <a href="#" class="link resources-link w-dyn-bind-empty"></a><a id="link2"
+                      href="#" class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630bab4e57c56a00cf24650b_MSP%20Crime%20Lab%20Reports%20-%20Part%201.pdf"
+                      target="_blank" class="link resources-link">Crime Lab report</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630bab93cd0330c8779c6d57_Fingerprint_documents_Val1-4.pdf"
+                      target="_blank" class="link resources-link">Fingerprints</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630bac0b7ed27f48a0f360c1_witness_statements_all.pdf"
+                      target="_blank" class="link resources-link">Witness statements</a>
+              </div>
+              <div role="listitem" class="collection-item-6 w-dyn-item">
+                  <h4 class="heading">
+                      Press coverage
+                  </h4>
+                  <a href="#" class="link resources-link w-dyn-bind-empty"></a><a id="link2"
+                      href="#" class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a href="#"
+                      class="link resources-link w-dyn-bind-empty"></a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630bac6ea377265d82889959_Newspaper%20Articles%20RE%20Efren%20Paredes%20Jr1.pdf"
+                      target="_blank" class="link resources-link">Newspaper Articles part 1</a><a
+                      href="https://uploads-ssl.webflow.com/62d643985f63b74fb0b79da0/630bac80c30273afcdaa63e2_Newspaper%20Articles%20RE%20Efren%20Paredes%20Jr2.pdf"
+                      target="_blank" class="link resources-link">Newspaper Articles part 2</a><a
+                      href="#" class="link resources-link w-dyn-bind-empty">
+              </div>
+          </div>
+      </div>
+  </div>
+  `
+
+  typeString = new Typewriter("#resourcesContent", {
+    loop: false,
+    cursor: '',
+    delay: 3,
+  });
+
+  typeString
+    .pasteString(typedString)
+    .start();
+}
+
 function makeSmall(element, plyr) {
   // setTimeout(function() {
   //   // whenever any video slide is hovered hide the upper body except menu
@@ -99,36 +410,45 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
-  $('.w--tab-active').fadeOut(600);
+  $('.w--tab-active').fadeOut(1000);
   $('#upButton').fadeOut(600);
   $('#downButton').fadeOut(600);
+  panes_visible = false;
 
-  // if video is large and not medium
-  if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
-    element.removeClass('largeVideo');
-    element.addClass('mediumVideo');
-    currentLargeVideoPlayer = null;
-    currentMediumVideoPlayer = plyr;
-    element.css({ 'min-width' : '35vw' });
-    // fade out the audio
-    fadeAudio(plyr, 0.6);
-  } 
-  // if video is not medium or large
-  if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
-    console.log("from small");
-    element.addClass('mediumVideo');
-    let description = $(element[0].children[1]);
-    // fade in the description
-    setTimeout(function() {
-      if (plyr == currentMediumVideoPlayer) { 
-        description.fadeIn(600);
-      }
-    }, 400);
-    // set the size
-    element.css({ 'min-width' : '35vw' });
-    // update global variable
-    currentMediumVideoPlayer = plyr;
-  }
+  $('.w--tab-active').promise().done(function(){
+    // will be called when all the animations on the queue finish
+
+  // $('.w--tab-active').fadeOut('slow', function() {
+    // will be called when the element finishes fading out
+    // if selector matches multiple elements it will be called once for each
+
+    // if video is large and not medium
+    if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
+      element.removeClass('largeVideo');
+      element.addClass('mediumVideo');
+      currentLargeVideoPlayer = null;
+      currentMediumVideoPlayer = plyr;
+      element.css({ 'min-width' : '35vw' });
+      // fade out the audio
+      fadeAudio(plyr, 0.6);
+    } 
+    // if video is not medium or large
+    if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
+      console.log("from small");
+      element.addClass('mediumVideo');
+      let description = $(element[0].children[1]);
+      // fade in the description
+      setTimeout(function() {
+        if (plyr == currentMediumVideoPlayer) { 
+          description.fadeIn(600);
+        }
+      }, 400);
+      // set the size
+      element.css({ 'min-width' : '35vw' });
+      // update global variable
+      currentMediumVideoPlayer = plyr;
+    }
+  });
 }
 
 function makeLarge(element, plyr) {
@@ -231,65 +551,8 @@ function makeSlide(i) {
   return htmlstring;
 }
 
-function fadeOut( elem, ms )
-{
-  if( ! elem )
-    return;
-
-  if( ms )
-  {
-    var opacity = 1;
-    var timer = setInterval( function() {
-      opacity -= 50 / ms;
-      if( opacity <= 0 )
-      {
-        clearInterval(timer);
-        opacity = 0;
-        elem.style.display = "none";
-        elem.style.visibility = "hidden";
-      }
-      elem.style.opacity = opacity;
-      elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-    }, 50 );
-  }
-  else
-  {
-    elem.style.opacity = 0;
-    elem.style.filter = "alpha(opacity=0)";
-    elem.style.display = "none";
-    elem.style.visibility = "hidden";
-  }
-}
-
-function fadeIn( elem, ms )
-{
-  if( ! elem )
-    return;
-
-  elem.style.opacity = 0;
-  elem.style.filter = "alpha(opacity=0)";
-  elem.style.display = "inline-block";
-  elem.style.visibility = "visible";
-
-  if( ms )
-  {
-    var opacity = 0;
-    var timer = setInterval( function() {
-      opacity += 50 / ms;
-      if( opacity >= 1 )
-      {
-        clearInterval(timer);
-        opacity = 1;
-      }
-      elem.style.opacity = opacity;
-      elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
-    }, 50 );
-  }
-  else
-  {
-    elem.style.opacity = 1;
-    elem.style.filter = "alpha(opacity=1)";
-  }
+function getCurrentActivePane() {
+  return $('.w--tab-active');
 }
 
 //////////////////////////////////////////////////////////////
@@ -389,12 +652,18 @@ GreenAudioPlayer.init({
 
 // load CSV data
 async function fetchCSV () {
+  // video
   const res = await fetch('video_media.csv');
   video_media_array = await res.text();
   video_media_array = $.csv.toObjects(video_media_array)
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
-  // video_media_array = video_media_array.sort((a,b)=> (a.name > b.name ? 1 : -1))
-  // console.log(video_media_array);
+  // audio
+  const resaudio = await fetch('audio_media.csv');
+  audio_media_array = await resaudio.text();
+  audio_media_array = $.csv.toObjects(audio_media_array)
+  // audio_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  console.log("audios");
+  console.log(audio_media_array.length);
 
   // create video players
   for (var i = currentStartIndex; i <= currentEndIndex; i++) { 
@@ -605,15 +874,15 @@ async function fetchCSV () {
       }, random_Time);
     });
   }
+
 }
 
 
 //////////////////////////////////////////////////////////////
 //* [AFTER DOM CONTENT IS LOADED] *//
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
+
+
   // variables (TODO: Temporary fix)
   test = document.getElementsByClassName("menu-text");
   menu1_index = test[0];
@@ -625,8 +894,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log(currently_active_menu);
 
+  // for (var i = 0; i < panes.length; i++) {
+  //   elemnt = $(panes[i]);
+  //   elemnt.hide();
+  // }
+
   // hide menu text
   $('.w--tab-active').hide();
+  // $('.w--tab-active').fadeOut(1000);
   $('#upButton').hide();
   $('#downButton').hide();
 
@@ -711,6 +986,9 @@ typewriterTitle.typeString('Half Truths <b>and</b> Full Lies').pauseFor(1000).ca
 //* [END OF INTRO] *//
 // events that happen after the continue button is clicked
 $('.continue-button').on('click', function() {
+  menu_button[0].click();
+  menu_button[0].click();
+
   $('.continue-button').fadeOut(600);
   setTimeout(function() {
     $('#typedWords').fadeOut(800);
@@ -836,16 +1114,66 @@ menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() { //asign a function
+    let thisItem = $(this);
     console.log("clicked");
     menu_button[0].click();
+    menuItem = thisItem[0].innerText;
+    console.log(menuItem);
+    if (menuItem == "Index") {
+      index();
+    }
+    if (menuItem == "About the case") {
+      aboutTheCase();
+    }
+    if (menuItem == "About the installation") {
+      aboutTheInstallation();
+    }
+    if (menuItem == "Audio files") {
+      audioFiles();
+    }
+    if (menuItem == "Resources") {
+      resources();
+    }
+    // pane = getCurrentActivePane();
+    // pane.fadeIn(1000);
   }
 }
 
-menu_button.onclick = function() { //asign a function
-  console.log("clicky!");
-}
+indexContent = `
+  <div id="indexContent" class="indexcontent">
+      <table id="indexTable" style="width: 100%;">
+        <tr style="visibility: hidden">
+          <th>Rally in support of Juvenile Lifers</th>
+          <th>0:00</th>
+          <th>0:00</th>
+          <th>0:00</th>
+          <th>0:00</th>
+        </tr>
+      </table>
+  </div>
+`;
 
-console.log(menu_button[0]);
-// start off closed
-menu_button[0].click();
-menu_button[0].click();
+aboutCaseContent = `
+  <div id="aboutCaseContent" class="text-block-12">
+  </div>
+`
+
+aboutInstallContent = 
+`
+  <div id="aboutCaseInstallation" class="text-block-13">
+  </div>
+`;
+
+audioContent = 
+`
+  <div id="audioContent" class="indexcontent">
+      <table id="indexTable" style="width: 100%;">
+      </table>
+  </div>
+`
+
+resourcesContent =
+`
+  <div id="resourcesContent">
+  </div>
+`

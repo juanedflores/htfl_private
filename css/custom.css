@@ -36,6 +36,21 @@ th {
     font-weight: normal;
 }
 
+#resourcesContent {
+    /* opacity: 1; */
+    /* display: block !important; */
+    /* transition: opacity 500ms ease-in-out 0s; */
+}
+
+.tab-pane-resources-2 {
+    /* opacity: 1; */
+    /* transition: opacity 500ms ease-in-out 0s; */
+}
+
+.w--tab-active {
+    display: none;
+}
+
 /* hide scroll bar */
 .tab-content {
     /* overflow: hidden; */
