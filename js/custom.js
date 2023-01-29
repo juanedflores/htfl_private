@@ -17,6 +17,7 @@ let initialSlide = 7;
 let panes_visible = false;
 // debugging
 let debug_swiper = true;
+let indexCells = [];
 
 // menu items (Temporary Fix) TODO: create non webflow menu
 panes = document.getElementsByClassName("w-tab-pane");
@@ -35,6 +36,7 @@ function index() {
         currRow = table.insertRow(rowcount);
         currName = name;
         cell = currRow.insertCell(0);
+        // cell.style.fontWeight = "bold";
         // typewriter
         typecell = new Typewriter(cell, {
           loop: false,
@@ -54,6 +56,7 @@ function index() {
         cell = currRow.insertCell(cellcount);
         duration = video_media_array[i]["Video Duration"];
         a = document.createElement('a');
+        indexCells.push(a);
         a.setAttribute('href', "https://google.com");
         // a.innerHTML = duration;
 
@@ -75,6 +78,7 @@ function index() {
         cell = currRow.insertCell(cellcount);
         duration = video_media_array[i]["Video Duration"];
         a = document.createElement('a');
+        indexCells.push(a);
         a.setAttribute('href', "https://google.com");
         // a.innerHTML = duration;
 
@@ -90,6 +94,35 @@ function index() {
 
         cell.appendChild(a);
         cellcount = cellcount + 1;
+      }
+      // debugging slider TODO
+      // all loaded slides will be in blue
+      // all slides in viewport will be in red
+      if (debug_swiper) {
+        if (i == video_media_array.length - 1) {
+          for (var j = currentStartIndex; j < currentEndIndex; j++) {
+            indexCells[j].style.color = "blue";
+          }
+
+          video_media_array.forEach(function(item, index) {
+            if (item.player) {
+              console.log(item.player);
+              let player_swiper_slide = item.player.elements.wrapper.offsetParent.offsetParent.offsetParent;
+              if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
+                console.log("VISIBLE");
+                console.log(player_swiper_slide);
+                console.log("index: " + (index));
+                indexCells[index].style.color = "green";
+                if (index == initialSlide) {
+                  indexCells[index].style.color = "red";
+                }
+              } else {
+                console.log("NOT VISIBLE");
+                console.log(player_swiper_slide);
+              }
+            }
+          })
+        }
       }
     }, 100 * i);
   }
@@ -560,7 +593,7 @@ swiper = new Swiper('#swiper', {
   slidesPerView: 11,
   initialSlide: initialSlide,
   slidesPerGroup: 1,
-  // preventInteractionOnTransition: true,
+  preventInteractionOnTransition: true,
   speed: 1000,
   slideToClickedSlide: true,
   centeredSlides: true,
@@ -585,33 +618,82 @@ swiper = new Swiper('#swiper', {
     slideNextTransitionEnd: function () {
       console.log("next");
       currentEndIndex = currentEndIndex+1;
-      currentStartIndex = currentStartIndex-1;
-      if (currentStartIndex < 0) { 
-        currentStartIndex = video_media_array.length-1;
+      currentStartIndex = currentStartIndex+1;
+      if (debug_swiper) {
+        console.log("currentStartIndex: " + currentStartIndex);
+        console.log("currentEndIndex: " + currentEndIndex);
+      }
+      if (currentStartIndex > video_media_array.length) { 
+        currentStartIndex = 0;
+        if (debug_swiper) {
+          console.log("currentStartIndex WRAPPED!: " + currentStartIndex);
+        }
       }
       if (currentEndIndex > video_media_array.length) { 
         currentEndIndex = 0;
+        if (debug_swiper) {
+          console.log("currentEndIndex WRAPPED!: " + currentEndIndex);
+        }
       }
 
+      // add slide to the right
       slide = makeSlide(currentEndIndex);
       swiper.appendSlide(slide);
+      // remove slide to the left
       swiper.removeSlide(0);
+      // update the swiper
       swiper.update()
+
+      // debugging slider TODO
+      // all loaded slides will be in blue
+      // all slides in viewport will be in red
+
+      // if (debug_swiper) {
+      //   for (var k = 0; k <= video_media_array.length - 1; k++) {
+      //     if (k == video_media_array.length - 1) {
+      //       for (var j = currentStartIndex; j < currentEndIndex; j++) {
+      //         indexCells[j].style.color = "blue";
+      //       }
+      //
+      //       video_media_array.forEach(function(item, index) {
+      //         if (item.player) {
+      //           console.log(item.player);
+      //           let player_swiper_slide = item.player.elements.wrapper.offsetParent.offsetParent.offsetParent;
+      //           if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
+      //             console.log("VISIBLE");
+      //             console.log(player_swiper_slide);
+      //             console.log("index: " + (index));
+      //             indexCells[index].style.color = "green";
+      //             if (index == initialSlide) {
+      //               indexCells[index].style.color = "red";
+      //             }
+      //           } else {
+      //             console.log("NOT VISIBLE");
+      //             console.log(player_swiper_slide);
+      //           }
+      //         }
+      //       })
+      //     }
+      //   }
+      // }
     },
     slidePrevTransitionEnd: function () {
       console.log("prev");
-      currentEndIndex = currentEndIndex+1;
+      currentEndIndex = currentEndIndex-1;
       currentStartIndex = currentStartIndex-1;
       if (currentStartIndex < 0) { 
         currentStartIndex = video_media_array.length-1;
       }
-      if (currentEndIndex > video_media_array.length) { 
-        currentEndIndex = 0;
+      if (currentEndIndex > 0) { 
+        currentEndIndex = video_media_array.length-1;
       }
 
       slide = makeSlide(currentStartIndex);
+      // add a slide to the beginning
       swiper.prependSlide(slide);
+      // delete the slide on the end
       swiper.removeSlide(swiper.slides.length-1);
+      // update swiper
       swiper.update()
     },
   },
@@ -707,6 +789,10 @@ async function fetchCSV () {
   for (var i = 0; i < players.length; i++) {
     players[i].elements.container.style.visibility = "hidden";
 
+    // add player to video_media_array
+    if (i < currentEndIndex+1) {
+      video_media_array[i].player = players[i];
+    }
   }
 
   // make video player visible when fully loaded (random between 1 second)
