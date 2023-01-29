@@ -62,6 +62,14 @@ th {
     display: none; /* Safari and Chrome */
 }
 
+.hero {
+    margin-top: 6vh !important;
+}
+
+.title-and-text {
+    margin-top: 6vh !important;
+}
+
 .swiper-section {
     /*     position: fixed; */
     /*     left: 0%; */

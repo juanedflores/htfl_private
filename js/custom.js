@@ -29,10 +29,8 @@ function index() {
       let name = video_media_array[i]["Subject Name"];
       if (name != currName) {
         cellcount = 0;
-        console.log("new name")
         currRow = table.insertRow(rowcount);
         currName = name;
-        console.log(name);
         cell = currRow.insertCell(0);
         // typewriter
         typecell = new Typewriter(cell, {
@@ -71,7 +69,6 @@ function index() {
         cellcount = cellcount + 1;
       }
       else {
-        console.log("same name");
         cell = currRow.insertCell(cellcount);
         duration = video_media_array[i]["Video Duration"];
         a = document.createElement('a');
@@ -91,8 +88,6 @@ function index() {
         cell.appendChild(a);
         cellcount = cellcount + 1;
       }
-      console.log("rowcount: " + rowcount);
-      console.log("cellcount: " + cellcount);
     }, 100 * i);
   }
 
@@ -195,19 +190,37 @@ function audioFiles() {
   console.log("audio files")
   document.getElementById("content_text").innerHTML = audioContent;
 
+
   function task(i) {
     setTimeout(function() {
       let name = audio_media_array[i]["Name"];
+      let slug = audio_media_array[i]["Slug"];
+      let audioID = audio_media_array[i]["Google Drive File ID"];
+      console.log(audioID)
       currRow = table.insertRow(i);
       cell = currRow.insertCell(0);
+      cell.style.padding = "10px";
       cell.innerText = name;
+
+      audioPlayerString = `<div id="${slug}" class="audio-player"><audio id="audioPlayer" class="audioAudio"><source src="https://docs.google.com/uc?export=download&id=${audioID}" type="audio/mpeg" /></audio></div>`
+
+      cell = currRow.insertCell(1);
+      cell.innerHTML = audioPlayerString;
+      new GreenAudioPlayer('#' + slug);
     }, 100 * i);
   }
 
-  table = document.getElementById("indexTable");
+  table = document.getElementById("audioTable");
   for (var i = 0; i <= audio_media_array.length - 1; i++) {
     task(i);
   }
+
+  // initialize GreenAudioPlayer
+  // GreenAudioPlayer.init({
+  //   selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
+  //   stopOthersOnPlay: true,
+  //   showTooltips: true,
+  // });
 }
 
 function resources() {
@@ -428,7 +441,6 @@ function makeMedium(element, plyr) {
     } 
     // if video is not medium or large
     if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
-      console.log("from small");
       element.addClass('mediumVideo');
       let description = $(element[0].children[1]);
       // fade in the description
@@ -640,11 +652,6 @@ swiper = new Swiper('#swiper', {
   // },
 });
 
-// initialize GreenAudioPlayer
-GreenAudioPlayer.init({
-  selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
-  stopOthersOnPlay: true,
-});
 
 // load CSV data
 async function fetchCSV () {
@@ -658,8 +665,6 @@ async function fetchCSV () {
   audio_media_array = await resaudio.text();
   audio_media_array = $.csv.toObjects(audio_media_array)
   // audio_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
-  console.log("audios");
-  console.log(audio_media_array.length);
 
   // create video players
   for (var i = currentStartIndex; i <= currentEndIndex; i++) { 
@@ -687,7 +692,6 @@ async function fetchCSV () {
           </div>
         </div>
       </div>`
-    // console.log(htmlstring);
     $('.swiper-wrapper').append(htmlstring);
   }
 
@@ -771,7 +775,6 @@ async function fetchCSV () {
         // data is an object containing properties specific to that event
         let thisItem = $(this);
         let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
-        console.log(thisItem[0].offsetParent.offsetParent);
         makeSmallLarge2(swiper_slide, thisItem);
         progressbar.set(0.0);
         player.currentTime = 0;
@@ -783,19 +786,8 @@ async function fetchCSV () {
       let showDelay = 1000, hideDelay = 1000;
       player_swiper_slide.addEventListener('mouseenter', function() {
         let thisItem = $(this);
-        // whenever any video slide is hovered hide the upper body except menu
 
-        // active_tab = document.getElementsByClassName('w--tab-active')[0];
-        // upbutton = document.getElementById('upButton');
-        // downbutton = document.getElementById('downButton');
-        // console.log(active_tab);
-        // fadeOut( active_tab, 1000 );
-        // fadeOut( upbutton, 1000 );
-        // fadeOut( downbutton, 1000 );
-        // $('.w--tab-active').promise().done(function(){
-          // will be called when all the animations on the queue finish
-
-          // clearTimeout(resizeTimer);
+        // clearTimeout(resizeTimer);
         if (!resizing) {
           if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
             clearTimeout(menuLeaveTimer);
@@ -889,13 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
   menu4_audio = test[3];
   menu5_resources = test[4];
   currently_active_menu = menu5_resources;
-
-  console.log(currently_active_menu);
-
-  // for (var i = 0; i < panes.length; i++) {
-  //   elemnt = $(panes[i]);
-  //   elemnt.hide();
-  // }
 
   // hide menu text
   $('.w--tab-active').hide();
@@ -1114,7 +1099,6 @@ for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() { //asign a function
     let thisItem = $(this);
     menu_button[0].click();
-    console.log("clicked");
 
     $('#content_text').fadeIn(1000);
     menuItem = thisItem[0].innerText;
@@ -1166,7 +1150,7 @@ aboutInstallContent =
 audioContent = 
 `
   <div id="audioContent" class="indexcontent">
-      <table id="indexTable" style="width: 100%;">
+      <table id="audioTable" style="width: 100%;">
       </table>
   </div>
 `
