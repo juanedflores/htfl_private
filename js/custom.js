@@ -16,14 +16,172 @@ let currentEndIndex = 24;
 let initialSlide = 7;
 let panes_visible = false;
 // debugging
-let debug_swiper = true;
+let debug_swiper = false;
 let indexCells = [];
+// video player settings
+const playerControls = [
+  // 'play',     // Play/pause playback
+  // 'progress', // The progress bar and scrubber for playback and buffering
+  // 'disabled'
+];
+const vimeoOptions = {
+  // responsive: true,
+  // autoplay: false,
+  background: true,
+  // transparent: false,
+  // portrait: false
+  // width: 640
+};
+
 
 // menu items (Temporary Fix) TODO: create non webflow menu
 panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
+function playerOnReady(player) {
+  player.on('ready', (event) => {
+    let player = event.detail.plyr 
+    let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
+    let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
+    let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+
+    // add a transition effect
+    player_swiper_slide.style.transition = "all 1400ms ease";
+
+    //////////////////////////////////////////////////////////////
+    // start the volume at 0.6
+    player.volume = 0.6;
+
+    //////////////////////////////////////////////////////////////
+    // add the custom progress bar
+    progressbardiv = document.createElement('div');
+    progressbardiv.style.display = "none";
+    progressbardiv.setAttribute("class","progress");
+    player_videoTopDiv.onclick = function clickEvent(e) {
+      let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      var parentwidth = progressbar.offsetWidth;
+      if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
+        // clearInterval(updateInterval);
+        var rect = e.target.getBoundingClientRect();
+        var x = e.clientX - rect.right; //x position within the element.
+        player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
+        player.progressbar.set((1-(Math.abs(x) / parentwidth)));
+        // updateInterval = setInterval(function() {
+        //   currenttime = player.currentTime;
+        //   percentage = (currenttime / player.duration);
+        //   player.progressbar.set(percentage);
+        // }, 100);
+      } else {
+        console.log("no match");
+      }
+    }
+    player_videoTopDiv.append(progressbardiv);
+
+    var progressbar = new ProgressBar.Line(progressbardiv, {
+      color: '#FFFFFF',
+      trailColor: '#808080',
+      strokeWidth: 0.1
+    });
+
+    progressbar.set(0.0);
+    player.progressbar = progressbar;
+
+    /// add end event listener
+    player.on('ended', function(data) {
+      // data is an object containing properties specific to that event
+      let thisItem = $(this);
+      let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
+      makeSmallLarge2(swiper_slide, thisItem);
+      progressbar.set(0.0);
+      player.currentTime = 0;
+    });
+
+    //////////////////////////////////////////////////////////////
+    //* [MOUSE EVENTS FOR SLIDER] *//
+    // add mouse events 
+    let showDelay = 1000, hideDelay = 1000;
+    player_swiper_slide.addEventListener('mouseenter', function() {
+      let thisItem = $(this);
+
+      // clearTimeout(resizeTimer);
+      if (!resizing) {
+        if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
+          clearTimeout(menuLeaveTimer);
+          prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+          // if any other medium is active
+          makeSmall(prevPlayer, currentMediumVideoPlayer);
+          // make the currently hovered video medium
+          makeMedium(thisItem, player);
+        } 
+        else if (currentLargeVideoPlayer) {
+          console.log("return");
+        }
+        else {
+          // add active class after a delay
+          menuEnterTimer = setTimeout(function() {
+            makeMedium(thisItem, player);
+          }, showDelay);
+        }
+      }
+      // })
+    });
+
+    // triggered when user's mouse leaves the menu item
+    player_swiper_slide.addEventListener('mouseleave', function() {
+      let thisItem = $(this);
+
+      // clear the opposite timer
+      clearTimeout(menuEnterTimer);
+      // remove active class after a delay
+      menuLeaveTimer = setTimeout(function() {
+        makeSmall(thisItem, player);
+      }, hideDelay);
+
+      // TODO: add event listener for background click
+      if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
+        backgroundClick = document.addEventListener('click', function() {
+          let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
+          player_swiper_slide = $(player_swiper_slide);
+          makeMedium(player_swiper_slide, currentLargeVideoPlayer);
+        }, { once: true });
+      }
+
+    });
+
+    player_videocard.addEventListener('click', function() {
+      let thisItem = $(player_swiper_slide);
+      // if the clicked video is currently small, make medium
+      if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
+        makeMedium(thisItem, player);
+      } 
+      // if the clicked video is currently medium, make large
+      else if(thisItem.hasClass("mediumVideo")) {
+        makeLarge(thisItem, player);
+      } 
+      // if the clicked video is currently large, make medium
+      else if (thisItem.hasClass("largeVideo")){
+        makeMedium(thisItem, player);
+      } 
+      else if (currentLargeVideoPlayer) {
+        if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
+          console.log("different")
+        } else {
+          console.log("same")
+        }
+        let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
+        makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
+      }
+    });
+
+    // random_Time = Math.random() * 1000;
+    // // show video players at a random time
+    // setTimeout(() => {
+    //   player.elements.container.style.visibility = "visible";
+    // }, random_Time);
+  });
+}
+
 function index() {
   console.log("index")
   document.getElementById("content_text").innerHTML = indexContent;
@@ -535,47 +693,69 @@ function makeSlide(i) {
   let videoTitle = video_media_array[i]["Subject Name"];
   let videoDuration = video_media_array[i]["Video Duration"];
   let videoDescription = video_media_array[i]["Video Description"];
+  // htmlstring = 
+  //   `
+  //   <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 1vw; margin-right: 8px">
+  //     <div class="card_video">
+  //       <div class="w-embed">
+  //         <div tabindex="0"
+  //           class="plyr plyr--full-ui plyr--video plyr--vimeo plyr--fullscreen-enabled plyr--paused plyr--stopped plyr--captions-enabled"
+  //           style="visibility: visible">
+  //           <div class="plyr__controls"></div>
+  //           <div class="plyr__video-wrapper plyr__video-embed" style="aspect-ratio: 16 / 9">
+  //             <div class="plyr__video-embed__container" style="transform: translateY(-38.2943%)">
+  //               <iframe
+  //                 src="https://player.vimeo.com/video/${vimeoID}?loop=false&amp;autoplay=false&amp;muted=false&amp;gesture=media&amp;playsinline=true&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=false&amp;customControls=true&amp;background=true"
+  //                 allowfullscreen=""
+  //                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
+  //                 title="Player for Stu" data-ready="true" tabindex="-1"></iframe>
+  //             </div>
+  //             <div class="plyr__poster"></div>
+  //           </div>
+  //           <div class="plyr__captions" dir="auto"></div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <div class="card_description" style="display: none">
+  //       <div class="video-top-div">
+  //         <div class="video-title">${videoTitle}</div>
+  //         <div class="video-duration" style="display: flex">${videoDuration}</div>
+  //         <div style="display: none" class="progress">
+  //           <svg viewBox="0 0 100 0.1" preserveAspectRatio="none" style="display: block; width: 100%">
+  //             <path d="M 0,0.05 L 100,0.05" stroke="#808080" stroke-width="0.1" fill-opacity="0"></path>
+  //             <path d="M 0,0.05 L 100,0.05" stroke="#FFFFFF" stroke-width="0.1" fill-opacity="0" style="
+  //                               stroke-dasharray: 100px, 100px;
+  //                               stroke-dashoffset: 100px;
+  //                           "></path>
+  //           </svg>
+  //         </div>
+  //       </div>
+  //       <div class="video-description">${videoDescription}</div>
+  //     </div>
+  //   </div>
+  //   `
+
   htmlstring = 
-    `
-    <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 1vw; margin-right: 8px">
-      <div class="card_video">
-        <div class="w-embed">
-          <div tabindex="0"
-            class="plyr plyr--full-ui plyr--video plyr--vimeo plyr--fullscreen-enabled plyr--paused plyr--stopped plyr--captions-enabled"
-            style="visibility: visible">
-            <div class="plyr__controls"></div>
-            <div class="plyr__video-wrapper plyr__video-embed" style="aspect-ratio: 16 / 9">
-              <div class="plyr__video-embed__container" style="transform: translateY(-38.2943%)">
-                <iframe
-                  src="https://player.vimeo.com/video/${vimeoID}?loop=false&amp;autoplay=false&amp;muted=false&amp;gesture=media&amp;playsinline=true&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=false&amp;customControls=true&amp;background=true"
-                  allowfullscreen=""
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
-                  title="Player for Stu" data-ready="true" tabindex="-1"></iframe>
-              </div>
-              <div class="plyr__poster"></div>
-            </div>
-            <div class="plyr__captions" dir="auto"></div>
+      `<div role='listitem' class='swiper-slide'>
+        <div class='card_video'>
+          <div class='w-embed'>
+            <div
+              class='js-player'
+              data-plyr-provider='vimeo'
+              data-plyr-embed-id='${vimeoID}'></div>
           </div>
         </div>
-      </div>
-      <div class="card_description" style="display: none">
-        <div class="video-top-div">
-          <div class="video-title">${videoTitle}</div>
-          <div class="video-duration" style="display: flex">${videoDuration}</div>
-          <div style="display: none" class="progress">
-            <svg viewBox="0 0 100 0.1" preserveAspectRatio="none" style="display: block; width: 100%">
-              <path d="M 0,0.05 L 100,0.05" stroke="#808080" stroke-width="0.1" fill-opacity="0"></path>
-              <path d="M 0,0.05 L 100,0.05" stroke="#FFFFFF" stroke-width="0.1" fill-opacity="0" style="
-                                stroke-dasharray: 100px, 100px;
-                                stroke-dashoffset: 100px;
-                            "></path>
-            </svg>
+        <div class='card_description'>
+          <div class='video-top-div'>
+            <div class='video-title'>${videoTitle}</div>
+            <div class='video-duration'>${videoDuration}</div>
+          </div>
+          <div class='video-description'>
+          ${videoDescription}
           </div>
         </div>
-        <div class="video-description">${videoDescription}</div>
-      </div>
-    </div>
-    `
+      </div>`
+
 
   return htmlstring;
 }
@@ -623,13 +803,13 @@ swiper = new Swiper('#swiper', {
         console.log("currentStartIndex: " + currentStartIndex);
         console.log("currentEndIndex: " + currentEndIndex);
       }
-      if (currentStartIndex > video_media_array.length) { 
+      if (currentStartIndex > video_media_array.length-1) { 
         currentStartIndex = 0;
         if (debug_swiper) {
           console.log("currentStartIndex WRAPPED!: " + currentStartIndex);
         }
       }
-      if (currentEndIndex > video_media_array.length) { 
+      if (currentEndIndex > video_media_array.length-1) { 
         currentEndIndex = 0;
         if (debug_swiper) {
           console.log("currentEndIndex WRAPPED!: " + currentEndIndex);
@@ -637,8 +817,13 @@ swiper = new Swiper('#swiper', {
       }
 
       // add slide to the right
+      console.log("CURRENTEND: " + currentEndIndex);
       slide = makeSlide(currentEndIndex);
       swiper.appendSlide(slide);
+      swiper_obj = swiper.slides[swiper.slides.length-1];
+      player_js = swiper_obj.children[0].childNodes[1].children[0];
+      player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+      playerOnReady(player);
       // remove slide to the left
       swiper.removeSlide(0);
       // update the swiper
@@ -691,6 +876,10 @@ swiper = new Swiper('#swiper', {
       slide = makeSlide(currentStartIndex);
       // add a slide to the beginning
       swiper.prependSlide(slide);
+      swiper_obj = swiper.slides[0];
+      player_js = swiper_obj.children[0].childNodes[1].children[0];
+      player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+      playerOnReady(player);
       // delete the slide on the end
       swiper.removeSlide(swiper.slides.length-1);
       // update swiper
@@ -765,22 +954,6 @@ async function fetchCSV () {
     $('.swiper-wrapper').append(htmlstring);
   }
 
-  //* VIDEO PLAYERS *//
-  // video player settings
-  const playerControls = [
-    // 'play',     // Play/pause playback
-    // 'progress', // The progress bar and scrubber for playback and buffering
-    // 'disabled'
-  ];
-
-  const vimeoOptions = {
-    // responsive: true,
-    // autoplay: false,
-    background: true,
-    // transparent: false,
-    // portrait: false
-    // width: 640
-  };
 
   // get all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
