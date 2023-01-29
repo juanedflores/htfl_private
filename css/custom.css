@@ -20,6 +20,12 @@ body {
 
 .swiper-wrapper {
     opacity: 1 !important;
+    /* z-index: 2 !important; */
+    /* position: absolute; */
+}
+
+.swiper--poster {
+    z-index: 2;
 }
 
 table {
@@ -41,40 +47,40 @@ th {
     display: none; /* Safari and Chrome */
 }
 
-/* .swiper-section { */
-/*     position: fixed; */
-/*     left: 0%; */
-/*     top: auto; */
-/*     right: 0%; */
-/*     bottom: 5%; */
-/*     display: block; */
-/*     height: auto; */
-/*     margin-top: 40px; */
-/*     -webkit-box-align: end; */
-/*     -webkit-align-items: flex-end; */
-/*     -ms-flex-align: end; */
-/*     align-items: flex-end; */
-/* } */
+.swiper-section {
+    /*     position: fixed; */
+    /*     left: 0%; */
+    /*     top: auto; */
+    /*     right: 0%; */
+    /*     bottom: 5%; */
+    /*     display: block; */
+    /*     height: auto; */
+    /*     margin-top: 40px; */
+    /*     -webkit-box-align: end; */
+    /*     -webkit-align-items: flex-end; */
+    /*     -ms-flex-align: end; */
+    /*     align-items: flex-end; */
+    /* } */
 
-/* .swiper { */
-/*     width: 100%; */
-/*     height: 100%; */
-/*     /* bottom: 50%; */
-/*     /* overflow: visible; */
-*/
-/*     position: static; */
-/*     left: 0%; */
-/*     top: 0%; */
-/*     right: 0%; */
-/*     bottom: 0%; */
-/*     overflow: visible; */
-/*     min-height: auto; */
-/*     min-width: 50px; */
-/*     margin-right: 0px; */
-/*     margin-bottom: 0px; */
-/*     margin-left: 0px; */
-/*     padding: 0px; */
-/* } */
+    /* .swiper { */
+    /*     width: 100%; */
+    /*     height: 100%; */
+    /*     /* bottom: 50%; */
+    /*     /* overflow: visible; */
+    /*     position: static; */
+    /*     left: 0%; */
+    /*     top: 0%; */
+    /*     right: 0%; */
+    /*     bottom: 0%; */
+    /*     overflow: visible; */
+    /*     min-height: auto; */
+    /*     min-width: 50px; */
+    /*     margin-right: 0px; */
+    /*     margin-bottom: 0px; */
+    /*     margin-left: 0px; */
+    /*     padding: 0px; */
+    z-index: 2;
+}
 
 /* .swiper-wrapper { */
 /*     opacity: 1 !important; */
@@ -86,7 +92,8 @@ th {
 /*     display: -ms-flexbox; */
 /*     display: flex; */
 /*     overflow: visible; */
-/*     /* margin-bottom: 10vh; */ */
+/*     /* margin-bottom: 10vh; */
+*/
 /*     padding-right: 0px; */
 /*     padding-left: 0px; */
 /*     padding-bottom: 10vh; */

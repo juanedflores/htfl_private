@@ -11,11 +11,22 @@ let resizing = false;
 let skipped = false;
 let video_media_array;
 let currentStartIndex = 0;
-let currentEndIndex = 20;
+let currentEndIndex = 24;
+
+// menu items (Temporary Fix) TODO: create non webflow menu
+// w-tabs-0-data-w-tab-1
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
 function makeSmall(element, plyr) {
+  // setTimeout(function() {
+  //   // whenever any video slide is hovered hide the upper body except menu
+  //   $('.w--tab-active').fadeIn(600);
+  //   $('#upButton').fadeIn(600);
+  //   $('#downButton').fadeIn(600);
+  // }, 1400);
+
+
   if (element.hasClass("mediumVideo")){
     element.removeClass('mediumVideo');
     element.css({ 'min-width' : '1vw' });
@@ -39,6 +50,13 @@ function makeSmall(element, plyr) {
 }
 
 function makeSmallLarge(element, plyr, element2, plyr2) {
+  // setTimeout(function() {
+  //   // whenever any video slide is hovered hide the upper body except menu
+  //   $('.w--tab-active').fadeIn(600);
+  //   $('#upButton').fadeIn(600);
+  //   $('#downButton').fadeIn(600);
+  // }, 1400);
+
   if (element.hasClass("largeVideo")){
     element.removeClass('largeVideo');
     element.css({ 'min-width' : '1vw' });
@@ -81,6 +99,10 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
+  $('.w--tab-active').fadeOut(600);
+  $('#upButton').fadeOut(600);
+  $('#downButton').fadeOut(600);
+
   // if video is large and not medium
   if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
     element.removeClass('largeVideo');
@@ -209,6 +231,67 @@ function makeSlide(i) {
   return htmlstring;
 }
 
+function fadeOut( elem, ms )
+{
+  if( ! elem )
+    return;
+
+  if( ms )
+  {
+    var opacity = 1;
+    var timer = setInterval( function() {
+      opacity -= 50 / ms;
+      if( opacity <= 0 )
+      {
+        clearInterval(timer);
+        opacity = 0;
+        elem.style.display = "none";
+        elem.style.visibility = "hidden";
+      }
+      elem.style.opacity = opacity;
+      elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+    }, 50 );
+  }
+  else
+  {
+    elem.style.opacity = 0;
+    elem.style.filter = "alpha(opacity=0)";
+    elem.style.display = "none";
+    elem.style.visibility = "hidden";
+  }
+}
+
+function fadeIn( elem, ms )
+{
+  if( ! elem )
+    return;
+
+  elem.style.opacity = 0;
+  elem.style.filter = "alpha(opacity=0)";
+  elem.style.display = "inline-block";
+  elem.style.visibility = "visible";
+
+  if( ms )
+  {
+    var opacity = 0;
+    var timer = setInterval( function() {
+      opacity += 50 / ms;
+      if( opacity >= 1 )
+      {
+        clearInterval(timer);
+        opacity = 1;
+      }
+      elem.style.opacity = opacity;
+      elem.style.filter = "alpha(opacity=" + opacity * 100 + ")";
+    }, 50 );
+  }
+  else
+  {
+    elem.style.opacity = 1;
+    elem.style.filter = "alpha(opacity=1)";
+  }
+}
+
 //////////////////////////////////////////////////////////////
 //* [INITIALIZE LIBRARIES] *//
 // initialize Swiper
@@ -260,14 +343,10 @@ swiper = new Swiper('#swiper', {
       console.log("prev");
       currentEndIndex = currentEndIndex+1;
       currentStartIndex = currentStartIndex-1;
-      console.log(currentStartIndex);
-      console.log(currentEndIndex);
       if (currentStartIndex < 0) { 
-        console.log("lower than 0: ");
         currentStartIndex = video_media_array.length-1;
       }
       if (currentEndIndex > video_media_array.length) { 
-        console.log("lower than 0: ");
         currentEndIndex = 0;
       }
 
@@ -380,7 +459,6 @@ async function fetchCSV () {
       let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
       let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
       let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
-      console.log(player_videocard);
 
       // add a transition effect
       player_swiper_slide.style.transition = "all 1400ms ease";
@@ -441,33 +519,42 @@ async function fetchCSV () {
       player_swiper_slide.addEventListener('mouseenter', function() {
         let thisItem = $(this);
         // whenever any video slide is hovered hide the upper body except menu
-        $('#tabContent').fadeOut(500);
-        // update hoverTimer to prevent fast moving of mouse
-        // TODO
 
-        // clearTimeout(resizeTimer);
-        if (menuLeaveTimer != null && currentMediumVideoPlayer != null && !resizing) {
-          clearTimeout(menuLeaveTimer);
-          prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
-          // if any other medium is active
-          makeSmall(prevPlayer, currentMediumVideoPlayer);
-          // make the currently hovered video medium
-          makeMedium(thisItem, player);
-        } 
-        else if (currentLargeVideoPlayer) {
-          console.log("return");
-        }
-        else {
-          // add active class after a delay
-          menuEnterTimer = setTimeout(function() {
+        // active_tab = document.getElementsByClassName('w--tab-active')[0];
+        // upbutton = document.getElementById('upButton');
+        // downbutton = document.getElementById('downButton');
+        // console.log(active_tab);
+        // fadeOut( active_tab, 1000 );
+        // fadeOut( upbutton, 1000 );
+        // fadeOut( downbutton, 1000 );
+        // $('.w--tab-active').promise().done(function(){
+          // will be called when all the animations on the queue finish
+
+          // clearTimeout(resizeTimer);
+          if (menuLeaveTimer != null && currentMediumVideoPlayer != null && !resizing) {
+            clearTimeout(menuLeaveTimer);
+            prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+            // if any other medium is active
+            makeSmall(prevPlayer, currentMediumVideoPlayer);
+            // make the currently hovered video medium
             makeMedium(thisItem, player);
-          }, showDelay);
-        }
+          } 
+          else if (currentLargeVideoPlayer) {
+            console.log("return");
+          }
+          else {
+            // add active class after a delay
+            menuEnterTimer = setTimeout(function() {
+              makeMedium(thisItem, player);
+            }, showDelay);
+          }
+        // })
       });
 
       // triggered when user's mouse leaves the menu item
       player_swiper_slide.addEventListener('mouseleave', function() {
         let thisItem = $(this);
+
         // clear the opposite timer
         clearTimeout(menuEnterTimer);
         // remove active class after a delay
@@ -523,7 +610,26 @@ async function fetchCSV () {
 
 //////////////////////////////////////////////////////////////
 //* [AFTER DOM CONTENT IS LOADED] *//
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
+  // variables (TODO: Temporary fix)
+  test = document.getElementsByClassName("menu-text");
+  menu1_index = test[0];
+  menu2_aboutcase = test[1];
+  menu3_aboutinstall = test[2];
+  menu4_audio = test[3];
+  menu5_resources = test[4];
+  currently_active_menu = menu5_resources;
+
+  console.log(currently_active_menu);
+
+  // hide menu text
+  $('.w--tab-active').hide();
+  $('#upButton').hide();
+  $('#downButton').hide();
+
   $('.continue-button').hide();
   $('.tab-content-container').hide();
   $('.tab-menu').hide();
@@ -616,6 +722,13 @@ $('.continue-button').on('click', function() {
   }, 1400);
   setTimeout(function() {
     $('.loading-container').hide();
+
+    // show menu contents (temporary fix)
+    // menu_text = document.getElementsByClassName("w-tab-pane");
+    // for (var k = 0; k < menu_text.length; k++) {
+    //   element = menu_text[k];
+    //   element.style.display = "block";
+    // }
     $('.tab-content-container').fadeIn(3500);
   }, 2600);
   afterIntro();
@@ -717,3 +830,22 @@ $(document).mouseup(function() {
   clearInterval(timeoutUp);
   return false;
 });
+
+// temporary fix for button bug
+menu_text = document.getElementsByClassName("menu-text");
+menu_button = document.getElementsByClassName("lottieanimation");
+for (var i = 0; i < menu_text.length; i++) {
+  menu_text[i].onclick = function() { //asign a function
+    console.log("clicked");
+    menu_button[0].click();
+  }
+}
+
+menu_button.onclick = function() { //asign a function
+  console.log("clicky!");
+}
+
+console.log(menu_button[0]);
+// start off closed
+menu_button[0].click();
+menu_button[0].click();
