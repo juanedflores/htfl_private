@@ -1160,3 +1160,16 @@ resourcesContent =
   <div id="resourcesContent">
   </div>
 `
+
+// temporary fix for button on resize bug
+function resizedw(){
+  document.body.click();
+}
+
+let winresizeTimer;
+function reportWindowSize() {
+  clearTimeout(winresizeTimer);
+  winresizeTimer = setTimeout(resizedw, 100);
+}
+
+window.onresize = reportWindowSize;
