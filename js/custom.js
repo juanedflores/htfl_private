@@ -13,10 +13,10 @@ let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
 let currentEndIndex = 24;
-let initialSlide = 7;
+let initialSlide = 12;
 let panes_visible = false;
 // debugging
-let debug_swiper = false;
+let debug_swiper = true;
 let indexCells = [];
 // video player settings
 const playerControls = [
@@ -39,6 +39,104 @@ panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
+async function prev2() {
+  console.log("shifting prev");
+  currentEndIndex = currentEndIndex-1;
+  currentStartIndex = currentStartIndex-1;
+  if (currentStartIndex < 0) { 
+    currentStartIndex = video_media_array.length-1;
+  }
+  if (currentEndIndex > 0) { 
+    currentEndIndex = video_media_array.length-1;
+  }
+
+  slide = makeSlide(currentStartIndex);
+  // add a slide to the beginning
+  swiper.prependSlide(slide);
+  swiper_obj = swiper.slides[0];
+  player_js = swiper_obj.children[0].childNodes[1].children[0];
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  playerOnReady(player);
+  // delete the slide on the end
+  swiper.removeSlide(swiper.slides.length-1);
+  // update swiper
+  await swiper.update();
+
+  // check how many slides are to the left of active slide
+  active_index = swiper.activeIndex;
+  slides_to_left = active_index-1;
+  slides_to_right = swiper.slides.length - active_index;
+  console.log("total loaded slides: " + swiper.slides.length);
+  console.log("index of active slide: " + active_index);
+  console.log("slides to the left: " + slides_to_left);
+  console.log("slides to the right: " + slides_to_right);
+}
+
+function next() {
+  currentEndIndex = currentEndIndex+1;
+  currentStartIndex = currentStartIndex+1;
+  if (currentStartIndex > video_media_array.length-1) { 
+    currentStartIndex = 0;
+  }
+  if (currentEndIndex > video_media_array.length-1) { 
+    currentEndIndex = 0;
+  }
+
+  // add slide to the right
+  slide = makeSlide(currentEndIndex);
+  swiper.appendSlide(slide);
+  swiper_obj = swiper.slides[swiper.slides.length-1];
+  player_js = swiper_obj.children[0].childNodes[1].children[0];
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  playerOnReady(player);
+  // remove slide to the left
+  swiper.removeSlide(0);
+  // update the swiper
+  swiper.update()
+
+  // check how many slides are to the left of active slide
+  active_index = swiper.activeIndex;
+  slides_to_left = active_index-1;
+  slides_to_right = swiper.slides.length - active_index;
+  console.log("total loaded slides: " + swiper.slides.length);
+  console.log("index of active slide: " + active_index);
+  console.log("slides to the left: " + slides_to_left);
+  console.log("slides to the right: " + slides_to_right);
+}
+
+function prev() {
+  console.log("shifting prev");
+  currentEndIndex = currentEndIndex-1;
+  currentStartIndex = currentStartIndex-1;
+  if (currentStartIndex < 0) { 
+    currentStartIndex = video_media_array.length-1;
+  }
+  if (currentEndIndex > 0) { 
+    currentEndIndex = video_media_array.length-1;
+  }
+
+  slide = makeSlide(currentStartIndex);
+  // add a slide to the beginning
+  swiper.prependSlide(slide);
+  swiper_obj = swiper.slides[0];
+  player_js = swiper_obj.children[0].childNodes[1].children[0];
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  playerOnReady(player);
+  // delete the slide on the end
+  swiper.removeSlide(swiper.slides.length-1);
+  // update swiper
+  swiper.update()
+
+  // check how many slides are to the left of active slide
+  active_index = swiper.activeIndex;
+  slides_to_left = active_index-1;
+  slides_to_right = swiper.slides.length - active_index;
+  console.log("total loaded slides: " + swiper.slides.length);
+  console.log("index of active slide: " + active_index);
+  console.log("slides to the left: " + slides_to_left);
+  console.log("slides to the right: " + slides_to_right);
+}
+
 function playerOnReady(player) {
   player.on('ready', (event) => {
     let player = event.detail.plyr 
@@ -602,13 +700,9 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
-    // will be called when all the animations on the queue finish
-
-  // $('.w--tab-active').fadeOut('slow', function() {
-    // will be called when the element finishes fading out
-    // if selector matches multiple elements it will be called once for each
-
     // if video is large and not medium
+  console.log("resizing: " + resizing);
+  if (!resizing) {
     if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
       element.removeClass('largeVideo');
       element.addClass('mediumVideo');
@@ -633,6 +727,7 @@ function makeMedium(element, plyr) {
       // update global variable
       currentMediumVideoPlayer = plyr;
     }
+  }
 }
 
 function makeLarge(element, plyr) {
@@ -775,7 +870,8 @@ swiper = new Swiper('#swiper', {
   slidesPerGroup: 1,
   preventInteractionOnTransition: true,
   speed: 1000,
-  slideToClickedSlide: true,
+  // slideToClickedSlide: true,
+  slideToClickedSlide: false,
   centeredSlides: true,
   // centeredSlidesBounds: true,
   // centerInsufficientSlides: true,
@@ -796,38 +892,27 @@ swiper = new Swiper('#swiper', {
       }, 500);
     },
     slideNextTransitionEnd: function () {
-      console.log("next");
-      currentEndIndex = currentEndIndex+1;
-      currentStartIndex = currentStartIndex+1;
-      if (debug_swiper) {
-        console.log("currentStartIndex: " + currentStartIndex);
-        console.log("currentEndIndex: " + currentEndIndex);
-      }
-      if (currentStartIndex > video_media_array.length-1) { 
-        currentStartIndex = 0;
-        if (debug_swiper) {
-          console.log("currentStartIndex WRAPPED!: " + currentStartIndex);
-        }
-      }
-      if (currentEndIndex > video_media_array.length-1) { 
-        currentEndIndex = 0;
-        if (debug_swiper) {
-          console.log("currentEndIndex WRAPPED!: " + currentEndIndex);
-        }
-      }
-
-      // add slide to the right
-      console.log("CURRENTEND: " + currentEndIndex);
-      slide = makeSlide(currentEndIndex);
-      swiper.appendSlide(slide);
-      swiper_obj = swiper.slides[swiper.slides.length-1];
-      player_js = swiper_obj.children[0].childNodes[1].children[0];
-      player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
-      playerOnReady(player);
-      // remove slide to the left
-      swiper.removeSlide(0);
-      // update the swiper
-      swiper.update()
+      next();
+      // currentEndIndex = currentEndIndex+1;
+      // currentStartIndex = currentStartIndex+1;
+      // if (currentStartIndex > video_media_array.length-1) { 
+      //   currentStartIndex = 0;
+      // }
+      // if (currentEndIndex > video_media_array.length-1) { 
+      //   currentEndIndex = 0;
+      // }
+      //
+      // // add slide to the right
+      // slide = makeSlide(currentEndIndex);
+      // swiper.appendSlide(slide);
+      // swiper_obj = swiper.slides[swiper.slides.length-1];
+      // player_js = swiper_obj.children[0].childNodes[1].children[0];
+      // player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+      // playerOnReady(player);
+      // // remove slide to the left
+      // swiper.removeSlide(0);
+      // // update the swiper
+      // swiper.update()
 
       // debugging slider TODO
       // all loaded slides will be in blue
@@ -863,27 +948,7 @@ swiper = new Swiper('#swiper', {
       // }
     },
     slidePrevTransitionEnd: function () {
-      console.log("prev");
-      currentEndIndex = currentEndIndex-1;
-      currentStartIndex = currentStartIndex-1;
-      if (currentStartIndex < 0) { 
-        currentStartIndex = video_media_array.length-1;
-      }
-      if (currentEndIndex > 0) { 
-        currentEndIndex = video_media_array.length-1;
-      }
-
-      slide = makeSlide(currentStartIndex);
-      // add a slide to the beginning
-      swiper.prependSlide(slide);
-      swiper_obj = swiper.slides[0];
-      player_js = swiper_obj.children[0].childNodes[1].children[0];
-      player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
-      playerOnReady(player);
-      // delete the slide on the end
-      swiper.removeSlide(swiper.slides.length-1);
-      // update swiper
-      swiper.update()
+      prev2();
     },
   },
   freeMode: {
@@ -1095,6 +1160,38 @@ async function fetchCSV () {
 
       player_videocard.addEventListener('click', function() {
         let thisItem = $(player_swiper_slide);
+        console.log(thisItem);
+
+        // index of clicked slide before updating
+        clicked_index = 0;
+        for (var i = 0; i < swiper.slides.length; i++) {
+          if (swiper.slides[i] == thisItem[0]) {
+            clicked_index = i;
+          }
+        }
+
+        swiper.update();
+        console.log("clickedIndex: " + clicked_index);
+        if (clicked_index < initialSlide) {
+          diff = initialSlide - clicked_index;
+          console.log("diff prev: " + diff);
+          for (var i = 0; i < diff-1; i++) {
+            prev();
+          }
+          swiper.slideTo(initialSlide-1);
+        }
+        else if (clicked_index > initialSlide) {
+          diff = clicked_index - initialSlide;
+          console.log("diff next: " + diff);
+          for (var i = 0; i < diff-1; i++) {
+            next();
+          }
+          swiper.slideTo(initialSlide+1);
+        } else {
+          // swiper.slideTo(clicked_index+(diff-1));
+        }
+
+
         // if the clicked video is currently small, make medium
         if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
           makeMedium(thisItem, player);
