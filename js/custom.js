@@ -12,8 +12,8 @@ let skipped = false;
 let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
-let currentEndIndex = 24;
-let initialSlide = 12;
+let currentEndIndex = 12;
+let initialSlide = 6;
 let panes_visible = false;
 // debugging
 let debug_swiper = true;
@@ -64,8 +64,8 @@ async function prev2() {
 
   // check how many slides are to the left of active slide
   active_index = swiper.activeIndex;
-  slides_to_left = active_index-1;
-  slides_to_right = swiper.slides.length - active_index;
+  slides_to_left = active_index;
+  slides_to_right = swiper.slides.length - (active_index+1);
   console.log("total loaded slides: " + swiper.slides.length);
   console.log("index of active slide: " + active_index);
   console.log("slides to the left: " + slides_to_left);
@@ -96,8 +96,8 @@ function next() {
 
   // check how many slides are to the left of active slide
   active_index = swiper.activeIndex;
-  slides_to_left = active_index-1;
-  slides_to_right = swiper.slides.length - active_index;
+  slides_to_left = active_index;
+  slides_to_right = swiper.slides.length - (active_index+1);
   console.log("total loaded slides: " + swiper.slides.length);
   console.log("index of active slide: " + active_index);
   console.log("slides to the left: " + slides_to_left);
@@ -356,7 +356,7 @@ function index() {
       // all slides in viewport will be in red
       if (debug_swiper) {
         if (i == video_media_array.length - 1) {
-          for (var j = currentStartIndex; j < currentEndIndex; j++) {
+          for (var j = currentStartIndex; j <= currentEndIndex; j++) {
             indexCells[j].style.color = "blue";
           }
 
