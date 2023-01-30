@@ -40,17 +40,24 @@ panes = document.getElementsByClassName("w-tab-pane");
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
 function moveToSlide(index) {
+
+  let slidediv;
+  if (currentMediumVideoPlayer) {
+    console.log("There is a player that is medium");
+    console.log(currentMediumVideoPlayer);
+    slidediv = $(currentMediumVideoPlayer[0].elements.wrapper.parentNode.parentNode.parentNode.parentNode);
+    console.log("SLIDE: ");
+    console.log(slidediv);
+    console.log("making small..");
+    makeSmall(slidediv, currentMediumVideoPlayer[0]);
+  }
+
   active_index = swiper.activeIndex + currentStartIndex;
-
-  console.log("INDEX TO MOVE TO: " + index);
-  console.log("ACTIVE INDEX BEFORE: " + active_index);
-
   let diff = 0
   // greater; move to right (next)
   if (index > active_index) {
     diff = index - active_index;
     for (var i = 0; i < diff-1; i++) {
-      console.log("i: " + (i+1));
       next();
     }
     swiper.slideTo(initialSlide+1);
@@ -59,14 +66,29 @@ function moveToSlide(index) {
   else if (index < active_index) {
     diff = active_index - index;
     for (var i = 0; i < diff-1; i++) {
-      console.log("i: " + (i+1));
       prev();
     }
     swiper.slideTo(initialSlide-1);
   }
-  console.log("AWAY BY: " + diff);
 
-  // update the indices of each cell function
+
+  let player;
+  let slide;
+  video_media_array.forEach(function(item, index) {
+    if (item.player) {
+      let curr_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+      if (curr_slide.classList.contains("swiper-slide-active")) {
+        // console.log("found active");
+        slide = $(curr_slide);
+        player = $(item.player);
+        // console.log(slide);
+        // console.log(player);
+      }
+    }
+  })
+
+
+  makeMedium(slide, player);
 }
 
 function next() {
@@ -98,7 +120,7 @@ function next() {
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
 
-  if (debug_swiper && indexCells.length > 0) {
+  if (indexCells.length > 0) {
     for (var i = 0; i < indexCells.length; i++) {
       indexCells[i].style.color = "white";
     }
@@ -122,15 +144,21 @@ function next() {
           // console.log(video_media_array[index]);
           // console.log(player_swiper_slide);
           // console.log("index: " + (index));
-          indexCells[index].style.color = "green";
+          if (debug_swiper) {
+            indexCells[index].style.color = "green";
+          }
           if (player_swiper_slide.classList.contains("swiper-slide-active")) {
             // console.log("ACTIVE");
-            indexCells[index].style.color = "red";
+            if (debug_swiper) {
+              indexCells[index].style.color = "red";
+            }
           }
         } else {
           // console.log("NOT VISIBLE");
           // console.log("INDEX: " + index);
-          indexCells[index].style.color = "blue";
+          if (debug_swiper) {
+            indexCells[index].style.color = "blue";
+          }
           // console.log(item.player);
           // console.log(video_media_array[index]);
           // console.log(player_swiper_slide);
@@ -146,9 +174,7 @@ function next() {
   // console.log("index of active slide: " + active_index);
   // console.log("slides to the left: " + slides_to_left);
   // console.log("slides to the right: " + slides_to_right);
-
-  active_index = swiper.activeIndex + currentStartIndex;
-  console.log("ACTIVE INDEX AFTER: " + active_index);
+  // active_index = swiper.activeIndex + currentStartIndex;
 }
 
 function prev() {
@@ -179,7 +205,7 @@ function prev() {
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
 
-  if (debug_swiper && indexCells.length > 0) {
+  if (indexCells.length > 0) {
     for (var i = 0; i < indexCells.length; i++) {
       indexCells[i].style.color = "white";
     }
@@ -207,13 +233,20 @@ function prev() {
           // console.log(video_media_array[index]);
           // console.log(player_swiper_slide);
           // console.log("index: " + (index));
-          indexCells[index].style.color = "green";
+
+          if (debug_swiper) {
+            indexCells[index].style.color = "green";
+          }
           if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-            indexCells[index].style.color = "red";
+            if (debug_swiper) {
+              indexCells[index].style.color = "red";
+            }
             // console.log("ACTIVE");
           }
         } else {
-          indexCells[index].style.color = "blue";
+          if (debug_swiper) {
+            indexCells[index].style.color = "blue";
+          }
           // console.log("NOT VISIBLE");
           // console.log("INDEX: " + index);
           // console.log(item.player);
@@ -223,23 +256,30 @@ function prev() {
       }
     })
 
-    console.log("total slides: " + video_media_array.length);
-    console.log("currentStartIndex: " + currentStartIndex);
-    console.log("currentEndIndex: " + currentEndIndex);
-    console.log("total loaded slides: " + swiper.slides.length);
-    console.log("index of active slide: " + active_index);
-    console.log("slides to the left: " + slides_to_left);
-    console.log("slides to the right: " + slides_to_right);
+    // console.log("total slides: " + video_media_array.length);
+    // console.log("currentStartIndex: " + currentStartIndex);
+    // console.log("currentEndIndex: " + currentEndIndex);
+    // console.log("total loaded slides: " + swiper.slides.length);
+    // console.log("index of active slide: " + active_index);
+    // console.log("slides to the left: " + slides_to_left);
+    // console.log("slides to the right: " + slides_to_right);
   }
 }
 
 function playerOnReady(player) {
   player.on('ready', (event) => {
     let player = event.detail.plyr 
-    let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
-    console.log(player.elements);
-    let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
-    let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+    // let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
+    let player_swiper_slide = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+    // let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
+    let player_videocard = player.elements.wrapper.parentNode.parentNode.parentNode;
+    // console.log("Player: ");
+    // console.log(player_videocard);
+    // let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+    // let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+    let player_videoTopDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+    // console.log("TopDIv: ");
+    // console.log(player_videoTopDiv);
 
     // add a transition effect
     player_swiper_slide.style.transition = "all 1400ms ease";
@@ -254,7 +294,12 @@ function playerOnReady(player) {
     progressbardiv.style.display = "none";
     progressbardiv.setAttribute("class","progress");
     player_videoTopDiv.onclick = function clickEvent(e) {
-      let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      // let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      let progressbar = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.childNodes[5]
+      // console.log("progressbar new: ");
+      // console.log(player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.childNodes[5]);
+      // console.log("progressbar_original: ");
+      // console.log(progressbar);
       var parentwidth = progressbar.offsetWidth;
       if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
         // clearInterval(updateInterval);
@@ -268,7 +313,7 @@ function playerOnReady(player) {
         //   player.progressbar.set(percentage);
         // }, 100);
       } else {
-        console.log("no match");
+        // console.log("no match");
       }
     }
     player_videoTopDiv.append(progressbardiv);
@@ -303,14 +348,18 @@ function playerOnReady(player) {
       if (!resizing) {
         if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
           clearTimeout(menuLeaveTimer);
-          prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+          // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+          // console.log("MEDPLAYER: ");
+          console.log(currentMediumVideoPlayer[0]);
+          prevPlayer = $(currentMediumVideoPlayer[0].elements.wrapper.parentNode.parentNode);
+          // console.log(prevPlayer)
           // if any other medium is active
           makeSmall(prevPlayer, currentMediumVideoPlayer);
           // make the currently hovered video medium
           makeMedium(thisItem, player);
         } 
         else if (currentLargeVideoPlayer) {
-          console.log("return");
+          // console.log("return");
         }
         else {
           // add active class after a delay
@@ -345,35 +394,31 @@ function playerOnReady(player) {
     });
 
     player_videocard.addEventListener('click', function() {
-      let thisItem = $(player_swiper_slide);
-      // if the clicked video is currently small, make medium
-      if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
-        makeMedium(thisItem, player);
-      } 
-      // if the clicked video is currently medium, make large
-      else if(thisItem.hasClass("mediumVideo")) {
-        makeLarge(thisItem, player);
-      } 
-      // if the clicked video is currently large, make medium
-      else if (thisItem.hasClass("largeVideo")){
-        makeMedium(thisItem, player);
-      } 
-      else if (currentLargeVideoPlayer) {
-        if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-          console.log("different")
-        } else {
-          console.log("same")
+      if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
+        let thisItem = $(player_swiper_slide);
+        // if the clicked video is currently small, make medium
+        if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
+          makeMedium(thisItem, player);
+        } 
+        // if the clicked video is currently medium, make large
+        else if(thisItem.hasClass("mediumVideo")) {
+          makeLarge(thisItem, player);
+        } 
+        // if the clicked video is currently large, make medium
+        else if (thisItem.hasClass("largeVideo")){
+          makeMedium(thisItem, player);
+        } 
+        else if (currentLargeVideoPlayer) {
+          if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
+            // console.log("different")
+          } else {
+            // console.log("same")
+          }
+          let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
+          makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
         }
-        let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
-        makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
       }
     });
-
-    // random_Time = Math.random() * 1000;
-    // // show video players at a random time
-    // setTimeout(() => {
-    //   player.elements.container.style.visibility = "visible";
-    // }, random_Time);
   });
 }
 
@@ -381,9 +426,16 @@ function index() {
   console.log("index")
   document.getElementById("content_text").innerHTML = indexContent;
   indexCells = [];
+  currName = "";
+  let currRow;
+  let rowcount = 0;
+  let cellcount = 0;
+  table = document.getElementById("indexTable");
 
   function task(i) {
     setTimeout(function() {
+      // console.log("rowcount: " + rowcount)
+      // console.log("cellcount: " + cellcount)
       let name = video_media_array[i]["Subject Name"];
       if (name != currName) {
         cellcount = 0;
@@ -454,33 +506,39 @@ function index() {
       // all loaded slides will be in blue
       // all slides in viewport will be in red
       if (i == video_media_array.length - 1) {
-        if (debug_swiper && indexCells.length > 0) {
+        if (indexCells.length > 0) {
           for (var j = 0; j < indexCells.length; j++) {
             indexCells[j].style.color = "white";
           }
 
           video_media_array.forEach(function(item, index) {
             if (item.player) {
-              console.log(item.player)
+              // console.log(item.player)
               let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-                console.log("VISIBLE");
-                console.log(item.player);
-                console.log(video_media_array[index]);
-                console.log(player_swiper_slide);
-                console.log("index: " + (index));
-                indexCells[index].style.color = "green";
+                // console.log("VISIBLE");
+                // console.log(item.player);
+                // console.log(video_media_array[index]);
+                // console.log(player_swiper_slide);
+                // console.log("index: " + (index));
+                if (debug_swiper) {
+                  indexCells[index].style.color = "green";
+                }
                 if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-                  console.log("ACTIVE");
-                  indexCells[index].style.color = "red";
+                  // console.log("ACTIVE");
+                  if (debug_swiper) {
+                    indexCells[index].style.color = "red";
+                  }
                 }
               } else {
-                console.log("NOT VISIBLE");
-                console.log("INDEX: " + index);
-                indexCells[index].style.color = "blue";
-                console.log(item.player);
-                console.log(video_media_array[index]);
-                console.log(player_swiper_slide);
+                // console.log("NOT VISIBLE");
+                // console.log("INDEX: " + index);
+                if (debug_swiper) {
+                  indexCells[index].style.color = "blue";
+                }
+                // console.log(item.player);
+                // console.log(video_media_array[index]);
+                // console.log(player_swiper_slide);
               }
             }
           })
@@ -489,19 +547,13 @@ function index() {
     }, 100 * i);
   }
 
-  currName = "";
-  let currRow;
-  let rowcount = 0;
-  let cellcount = 0;
-  table = document.getElementById("indexTable");
-
   for (var i = 0; i <= video_media_array.length - 1; i++) {
     task(i);
   }
 }
 
 function loadindex() {
-  console.log("loading index")
+  // console.log("loading index")
   document.getElementById("content_text").innerHTML = indexContent;
   indexCells = [];
   currName = "";
@@ -582,7 +634,7 @@ function loadindex() {
       // all loaded slides will be in blue
       // all slides in viewport will be in red
       if (i == video_media_array.length - 1) {
-        if (debug_swiper && indexCells.length > 0) {
+        if (indexCells.length > 0) {
           for (var j = 0; j < indexCells.length; j++) {
             indexCells[j].style.color = "white";
           }
@@ -591,12 +643,18 @@ function loadindex() {
             if (item.player) {
               let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-                indexCells[index].style.color = "green";
+                if (debug_swiper) {
+                  indexCells[index].style.color = "green";
+                }
                 if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-                  indexCells[index].style.color = "red";
+                  if (debug_swiper) {
+                    indexCells[index].style.color = "red";
+                  }
                 }
               } else {
-                indexCells[index].style.color = "blue";
+                if (debug_swiper) {
+                  indexCells[index].style.color = "blue";
+                }
               }
             }
           })
@@ -706,7 +764,7 @@ function audioFiles() {
       let name = audio_media_array[i]["Name"];
       let slug = audio_media_array[i]["Slug"];
       let audioID = audio_media_array[i]["Google Drive File ID"];
-      console.log(audioID)
+      // console.log(audioID)
       currRow = table.insertRow(i);
       cell = currRow.insertCell(0);
       cell.style.padding = "10px";
@@ -862,8 +920,15 @@ function makeSmall(element, plyr) {
     setTimeout(function() {
       plyr.pause();
       clearInterval(updateInterval);
-      let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-      let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
+      // let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      // let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
+      // if (progressbar == null) {
+        // console.log("NULL")
+      progressbar = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[2];
+      durationdiv = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
+        // console.log(plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1]);
+      // }
+      console.log(plyr.elements.wrapper);
       progressbar.style.display = "none";
       durationdiv.style.display = "flex";
     }, 1400);
@@ -918,8 +983,10 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
+  // console.log(element);
+  // console.log(plyr);
     // if video is large and not medium
-  console.log("resizing: " + resizing);
+  // console.log("resizing: " + resizing);
   if (!resizing) {
     if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
       element.removeClass('largeVideo');
@@ -966,6 +1033,8 @@ function makeLarge(element, plyr) {
       element.css({ 'min-width' : '70vw' });
       // show progress bar
       let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+      // console.log("make large prog:");
+      // console.log(progressbar);
       let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
       progressbar.style.display = "block";
       durationdiv.style.display = "none";
@@ -1006,48 +1075,6 @@ function makeSlide(i) {
   let videoTitle = video_media_array[i]["Subject Name"];
   let videoDuration = video_media_array[i]["Video Duration"];
   let videoDescription = video_media_array[i]["Video Description"];
-  // htmlstring = 
-  //   `
-  //   <div role="listitem" class="swiper-slide" style="width: 97px; min-width: 1vw; margin-right: 8px">
-  //     <div class="card_video">
-  //       <div class="w-embed">
-  //         <div tabindex="0"
-  //           class="plyr plyr--full-ui plyr--video plyr--vimeo plyr--fullscreen-enabled plyr--paused plyr--stopped plyr--captions-enabled"
-  //           style="visibility: visible">
-  //           <div class="plyr__controls"></div>
-  //           <div class="plyr__video-wrapper plyr__video-embed" style="aspect-ratio: 16 / 9">
-  //             <div class="plyr__video-embed__container" style="transform: translateY(-38.2943%)">
-  //               <iframe
-  //                 src="https://player.vimeo.com/video/${vimeoID}?loop=false&amp;autoplay=false&amp;muted=false&amp;gesture=media&amp;playsinline=true&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=false&amp;customControls=true&amp;background=true"
-  //                 allowfullscreen=""
-  //                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope"
-  //                 title="Player for Stu" data-ready="true" tabindex="-1"></iframe>
-  //             </div>
-  //             <div class="plyr__poster"></div>
-  //           </div>
-  //           <div class="plyr__captions" dir="auto"></div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <div class="card_description" style="display: none">
-  //       <div class="video-top-div">
-  //         <div class="video-title">${videoTitle}</div>
-  //         <div class="video-duration" style="display: flex">${videoDuration}</div>
-  //         <div style="display: none" class="progress">
-  //           <svg viewBox="0 0 100 0.1" preserveAspectRatio="none" style="display: block; width: 100%">
-  //             <path d="M 0,0.05 L 100,0.05" stroke="#808080" stroke-width="0.1" fill-opacity="0"></path>
-  //             <path d="M 0,0.05 L 100,0.05" stroke="#FFFFFF" stroke-width="0.1" fill-opacity="0" style="
-  //                               stroke-dasharray: 100px, 100px;
-  //                               stroke-dashoffset: 100px;
-  //                           "></path>
-  //           </svg>
-  //         </div>
-  //       </div>
-  //       <div class="video-description">${videoDescription}</div>
-  //     </div>
-  //   </div>
-  //   `
-
   htmlstring = 
       `<div role='listitem' class='swiper-slide'>
         <div class='card_video'>
@@ -1111,59 +1138,6 @@ swiper = new Swiper('#swiper', {
     },
     slideNextTransitionEnd: function () {
       next();
-      // currentEndIndex = currentEndIndex+1;
-      // currentStartIndex = currentStartIndex+1;
-      // if (currentStartIndex > video_media_array.length-1) { 
-      //   currentStartIndex = 0;
-      // }
-      // if (currentEndIndex > video_media_array.length-1) { 
-      //   currentEndIndex = 0;
-      // }
-      //
-      // // add slide to the right
-      // slide = makeSlide(currentEndIndex);
-      // swiper.appendSlide(slide);
-      // swiper_obj = swiper.slides[swiper.slides.length-1];
-      // player_js = swiper_obj.children[0].childNodes[1].children[0];
-      // player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
-      // playerOnReady(player);
-      // // remove slide to the left
-      // swiper.removeSlide(0);
-      // // update the swiper
-      // swiper.update()
-
-      // debugging slider TODO
-      // all loaded slides will be in blue
-      // all slides in viewport will be in red
-
-      // if (debug_swiper) {
-      //   for (var k = 0; k <= video_media_array.length - 1; k++) {
-      //     if (k == video_media_array.length - 1) {
-      //       for (var j = currentStartIndex; j < currentEndIndex; j++) {
-      //         indexCells[j].style.color = "blue";
-      //       }
-      //
-      //       video_media_array.forEach(function(item, index) {
-      //         if (item.player) {
-      //           console.log(item.player);
-      //           let player_swiper_slide = item.player.elements.wrapper.offsetParent.offsetParent.offsetParent;
-      //           if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-      //             console.log("VISIBLE");
-      //             console.log(player_swiper_slide);
-      //             console.log("index: " + (index));
-      //             indexCells[index].style.color = "green";
-      //             if (index == initialSlide) {
-      //               indexCells[index].style.color = "red";
-      //             }
-      //           } else {
-      //             console.log("NOT VISIBLE");
-      //             console.log(player_swiper_slide);
-      //           }
-      //         }
-      //       })
-      //     }
-      //   }
-      // }
     },
     slidePrevTransitionEnd: function () {
       prev();
@@ -1300,7 +1274,7 @@ async function fetchCSV () {
           //   player.progressbar.set(percentage);
           // }, 100);
         } else {
-          console.log("no match");
+          // console.log("no match");
         }
       }
       player_videoTopDiv.append(progressbardiv);
@@ -1335,14 +1309,18 @@ async function fetchCSV () {
         if (!resizing) {
           if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
             clearTimeout(menuLeaveTimer);
-            prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+            // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+            // console.log("medium player: ");
+            // console.log(currentMediumVideoPlayer[0]);
+            prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
+            console.log(prevPlayer)
             // if any other medium is active
             makeSmall(prevPlayer, currentMediumVideoPlayer);
             // make the currently hovered video medium
             makeMedium(thisItem, player);
           } 
           else if (currentLargeVideoPlayer) {
-            console.log("return");
+            // console.log("return");
           }
           else {
             // add active class after a delay
@@ -1378,7 +1356,7 @@ async function fetchCSV () {
 
       player_videocard.addEventListener('click', function() {
         let thisItem = $(player_swiper_slide);
-        console.log(thisItem);
+        // console.log(thisItem);
 
         // index of clicked slide before updating
         clicked_index = 0;
@@ -1389,10 +1367,10 @@ async function fetchCSV () {
         }
 
         swiper.update();
-        console.log("clickedIndex: " + clicked_index);
+        // console.log("clickedIndex: " + clicked_index);
         if (clicked_index < initialSlide) {
           diff = initialSlide - clicked_index;
-          console.log("diff prev: " + diff);
+          // console.log("diff prev: " + diff);
           for (var i = 0; i < diff-1; i++) {
             prev();
           }
@@ -1400,7 +1378,7 @@ async function fetchCSV () {
         }
         else if (clicked_index > initialSlide) {
           diff = clicked_index - initialSlide;
-          console.log("diff next: " + diff);
+          // console.log("diff next: " + diff);
           for (var i = 0; i < diff-1; i++) {
             next();
           }
@@ -1424,9 +1402,9 @@ async function fetchCSV () {
         } 
         else if (currentLargeVideoPlayer) {
           if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-            console.log("different")
+            // console.log("different")
           } else {
-            console.log("same")
+            // console.log("same")
           }
           let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
           makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
