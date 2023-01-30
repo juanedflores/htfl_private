@@ -39,40 +39,8 @@ panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
-async function prev2() {
-  console.log("shifting prev");
-  currentEndIndex = currentEndIndex-1;
-  currentStartIndex = currentStartIndex-1;
-  if (currentStartIndex < 0) { 
-    currentStartIndex = video_media_array.length-1;
-  }
-  if (currentEndIndex > 0) { 
-    currentEndIndex = video_media_array.length-1;
-  }
-
-  slide = makeSlide(currentStartIndex);
-  // add a slide to the beginning
-  swiper.prependSlide(slide);
-  swiper_obj = swiper.slides[0];
-  player_js = swiper_obj.children[0].childNodes[1].children[0];
-  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
-  playerOnReady(player);
-  // delete the slide on the end
-  swiper.removeSlide(swiper.slides.length-1);
-  // update swiper
-  await swiper.update();
-
-  // check how many slides are to the left of active slide
-  active_index = swiper.activeIndex;
-  slides_to_left = active_index;
-  slides_to_right = swiper.slides.length - (active_index+1);
-  console.log("total loaded slides: " + swiper.slides.length);
-  console.log("index of active slide: " + active_index);
-  console.log("slides to the left: " + slides_to_left);
-  console.log("slides to the right: " + slides_to_right);
-}
-
 function next() {
+  console.log("shifting next");
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
   if (currentStartIndex > video_media_array.length-1) { 
@@ -102,6 +70,9 @@ function next() {
   console.log("index of active slide: " + active_index);
   console.log("slides to the left: " + slides_to_left);
   console.log("slides to the right: " + slides_to_right);
+  console.log("total slides: " + video_media_array.length);
+  console.log("currentStartIndex: " + currentStartIndex);
+  console.log("currentEndIndex: " + currentEndIndex);
 }
 
 function prev() {
@@ -111,7 +82,7 @@ function prev() {
   if (currentStartIndex < 0) { 
     currentStartIndex = video_media_array.length-1;
   }
-  if (currentEndIndex > 0) { 
+  if (currentEndIndex < 0) { 
     currentEndIndex = video_media_array.length-1;
   }
 
@@ -129,12 +100,26 @@ function prev() {
 
   // check how many slides are to the left of active slide
   active_index = swiper.activeIndex;
-  slides_to_left = active_index-1;
-  slides_to_right = swiper.slides.length - active_index;
+  slides_to_left = active_index;
+  slides_to_right = swiper.slides.length - (active_index+1);
   console.log("total loaded slides: " + swiper.slides.length);
   console.log("index of active slide: " + active_index);
   console.log("slides to the left: " + slides_to_left);
   console.log("slides to the right: " + slides_to_right);
+  console.log("total slides: " + video_media_array.length);
+  console.log("currentStartIndex: " + currentStartIndex);
+  console.log("currentEndIndex: " + currentEndIndex);
+
+  // // update the players array
+  // console.log(video_media_array);
+  // for (var i = 0; i < video_media_array.length; i++) {
+  //   if (video_media_array[i].player) {
+  //     console.log("player exists");
+  //     console.log(video_media_array[i].player);
+  //   }
+  //   // video_media_array[i].player = players[i];
+  // }
+
 }
 
 function playerOnReady(player) {
@@ -283,6 +268,7 @@ function playerOnReady(player) {
 function index() {
   console.log("index")
   document.getElementById("content_text").innerHTML = indexContent;
+  indexCells = [];
 
   function task(i) {
     setTimeout(function() {
@@ -356,6 +342,7 @@ function index() {
       // all slides in viewport will be in red
       if (debug_swiper) {
         if (i == video_media_array.length - 1) {
+          console.log("it does");
           for (var j = currentStartIndex; j <= currentEndIndex; j++) {
             indexCells[j].style.color = "blue";
           }
@@ -948,7 +935,7 @@ swiper = new Swiper('#swiper', {
       // }
     },
     slidePrevTransitionEnd: function () {
-      prev2();
+      prev();
     },
   },
   freeMode: {
