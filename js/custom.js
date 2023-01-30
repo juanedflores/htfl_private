@@ -40,21 +40,38 @@ panes = document.getElementsByClassName("w-tab-pane");
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
 function moveToSlide(index) {
-  console.log("IND: " + index);
-  console.log("INIT SLIDE: " + initialSlide);
-  if (index > initialSlide) {
-    console.log("greater..");
-  }
-  else if (index < initialSlide) {
-    console.log("lesser..");
-  }
+  active_index = swiper.activeIndex + currentStartIndex;
 
-  diff = index - swiper.activeIndex;
-  swiper.slideTo(index);
+  console.log("INDEX TO MOVE TO: " + index);
+  console.log("ACTIVE INDEX BEFORE: " + active_index);
+
+  let diff = 0
+  // greater; move to right (next)
+  if (index > active_index) {
+    diff = index - active_index;
+    for (var i = 0; i < diff-1; i++) {
+      console.log("i: " + (i+1));
+      next();
+    }
+    swiper.slideTo(initialSlide+1);
+  }
+  // lesser; move to the left (prev)
+  else if (index < active_index) {
+    diff = active_index - index;
+    for (var i = 0; i < diff-1; i++) {
+      console.log("i: " + (i+1));
+      prev();
+    }
+    swiper.slideTo(initialSlide-1);
+  }
+  console.log("AWAY BY: " + diff);
+
+  // update the indices of each cell function
 }
 
 function next() {
   console.log("shifting next");
+  // update beginning and ending indices
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
   if (currentStartIndex > video_media_array.length-1) { 
@@ -93,43 +110,45 @@ function next() {
     } else {
       video_media_array[currentStartIndex-1].player = null;
     }
-    console.log(video_media_array[currentEndIndex]);
+    // console.log(video_media_array[currentEndIndex]);
 
     video_media_array.forEach(function(item, index) {
       if (item.player) {
-        console.log(item.player)
+        // console.log(item.player)
         let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
         if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-          console.log("VISIBLE");
-          console.log(item.player);
-          console.log(video_media_array[index]);
-          console.log(player_swiper_slide);
-          console.log("index: " + (index));
+          // console.log("VISIBLE");
+          // console.log(item.player);
+          // console.log(video_media_array[index]);
+          // console.log(player_swiper_slide);
+          // console.log("index: " + (index));
           indexCells[index].style.color = "green";
           if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-            console.log("ACTIVE");
+            // console.log("ACTIVE");
             indexCells[index].style.color = "red";
           }
         } else {
-          console.log("NOT VISIBLE");
-          console.log("INDEX: " + index);
+          // console.log("NOT VISIBLE");
+          // console.log("INDEX: " + index);
           indexCells[index].style.color = "blue";
-          console.log(item.player);
-          console.log(video_media_array[index]);
-          console.log(player_swiper_slide);
+          // console.log(item.player);
+          // console.log(video_media_array[index]);
+          // console.log(player_swiper_slide);
         }
       }
     })
   }
 
+  // console.log("total slides: " + video_media_array.length);
+  // console.log("currentStartIndex: " + currentStartIndex);
+  // console.log("currentEndIndex: " + currentEndIndex);
+  // console.log("total loaded slides: " + swiper.slides.length);
+  // console.log("index of active slide: " + active_index);
+  // console.log("slides to the left: " + slides_to_left);
+  // console.log("slides to the right: " + slides_to_right);
 
-  console.log("total loaded slides: " + swiper.slides.length);
-  console.log("index of active slide: " + active_index);
-  console.log("slides to the left: " + slides_to_left);
-  console.log("slides to the right: " + slides_to_right);
-  console.log("total slides: " + video_media_array.length);
-  console.log("currentStartIndex: " + currentStartIndex);
-  console.log("currentEndIndex: " + currentEndIndex);
+  active_index = swiper.activeIndex + currentStartIndex;
+  console.log("ACTIVE INDEX AFTER: " + active_index);
 }
 
 function prev() {
@@ -172,9 +191,7 @@ function prev() {
       video_media_array[currentStartIndex].player = player;
     }
     // remove
-    console.log("PLEASE: " + (currentEndIndex+1));
     if ((currentEndIndex) == video_media_array.length-1) {
-      console.log("HHAHAHA");
       video_media_array[0].player = null;
     } else {
       video_media_array[currentEndIndex+1].player = null;
@@ -182,38 +199,37 @@ function prev() {
 
     video_media_array.forEach(function(item, index) {
       if (item.player) {
-        console.log(item.player)
+        // console.log(item.player)
         let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
         if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-          console.log("VISIBLE");
-          console.log(item.player);
-          console.log(video_media_array[index]);
-          console.log(player_swiper_slide);
-          console.log("index: " + (index));
+          // console.log("VISIBLE");
+          // console.log(item.player);
+          // console.log(video_media_array[index]);
+          // console.log(player_swiper_slide);
+          // console.log("index: " + (index));
           indexCells[index].style.color = "green";
           if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-            console.log("ACTIVE");
             indexCells[index].style.color = "red";
+            // console.log("ACTIVE");
           }
         } else {
-          console.log("NOT VISIBLE");
-          console.log("INDEX: " + index);
           indexCells[index].style.color = "blue";
-          console.log(item.player);
-          console.log(video_media_array[index]);
-          console.log(player_swiper_slide);
+          // console.log("NOT VISIBLE");
+          // console.log("INDEX: " + index);
+          // console.log(item.player);
+          // console.log(video_media_array[index]);
+          // console.log(player_swiper_slide);
         }
       }
     })
 
-
+    console.log("total slides: " + video_media_array.length);
+    console.log("currentStartIndex: " + currentStartIndex);
+    console.log("currentEndIndex: " + currentEndIndex);
     console.log("total loaded slides: " + swiper.slides.length);
     console.log("index of active slide: " + active_index);
     console.log("slides to the left: " + slides_to_left);
     console.log("slides to the right: " + slides_to_right);
-    console.log("total slides: " + video_media_array.length);
-    console.log("currentStartIndex: " + currentStartIndex);
-    console.log("currentEndIndex: " + currentEndIndex);
   }
 }
 
@@ -221,6 +237,7 @@ function playerOnReady(player) {
   player.on('ready', (event) => {
     let player = event.detail.plyr 
     let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
+    console.log(player.elements);
     let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
     let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
 
@@ -481,6 +498,118 @@ function index() {
   for (var i = 0; i <= video_media_array.length - 1; i++) {
     task(i);
   }
+}
+
+function loadindex() {
+  console.log("loading index")
+  document.getElementById("content_text").innerHTML = indexContent;
+  indexCells = [];
+  currName = "";
+  currRow = null;
+  rowcount = 0;
+  cellcount = 0;
+  table = document.getElementById("indexTable");
+
+  function task(i) {
+    setTimeout(function() {
+      let name = video_media_array[i]["Subject Name"];
+      if (name != currName) {
+        cellcount = 0;
+        currRow = table.insertRow(rowcount);
+        currName = name;
+        cell = currRow.insertCell(0);
+        // typewriter
+        typecell = new Typewriter(cell, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(name)
+          .start();
+
+        // cell.innerHTML = name;
+        rowcount = rowcount + 1;
+        cellcount = cellcount + 1;
+
+        // add the time
+        cell = currRow.insertCell(cellcount);
+        duration = video_media_array[i]["Video Duration"];
+        a = document.createElement('a');
+        indexCells.push(a);
+        cellIndex = indexCells.length-1;
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
+        // a.innerHTML = duration;
+
+        typecell = new Typewriter(a, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(duration)
+          .start();
+
+        cell.appendChild(a);
+        // cell.innerHTML = duration;
+        cellcount = cellcount + 1;
+      }
+      else {
+        cell = currRow.insertCell(cellcount);
+        duration = video_media_array[i]["Video Duration"];
+        a = document.createElement('a');
+        indexCells.push(a);
+        cellIndex = indexCells.length-1;
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
+        // a.innerHTML = duration;
+
+        typecell = new Typewriter(a, {
+          loop: false,
+          cursor: '',
+          delay: 50,
+        });
+
+        typecell
+          .typeString(duration)
+          .start();
+
+        cell.appendChild(a);
+        cellcount = cellcount + 1;
+      }
+      // debugging slider TODO
+      // all loaded slides will be in blue
+      // all slides in viewport will be in red
+      if (i == video_media_array.length - 1) {
+        if (debug_swiper && indexCells.length > 0) {
+          for (var j = 0; j < indexCells.length; j++) {
+            indexCells[j].style.color = "white";
+          }
+
+          video_media_array.forEach(function(item, index) {
+            if (item.player) {
+              let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+              if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
+                indexCells[index].style.color = "green";
+                if (player_swiper_slide.classList.contains("swiper-slide-active")) {
+                  indexCells[index].style.color = "red";
+                }
+              } else {
+                indexCells[index].style.color = "blue";
+              }
+            }
+          })
+        }
+      }
+    }, 100 * i);
+  }
+
+  for (var i = 0; i <= video_media_array.length - 1; i++) {
+    task(i);
+  }
+
+  $('#content_text').hide();
 }
 
 function aboutTheCase() {
@@ -1312,6 +1441,7 @@ async function fetchCSV () {
     });
   }
 
+  loadindex();
 }
 
 
@@ -1344,6 +1474,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // load videos
   fetchCSV();
+  // load indexCells
 
   // after DOMContentent is loaded, add click listener
   setTimeout(() => {
@@ -1449,17 +1580,19 @@ function afterIntro() {
   // activate video slider (make it interactible with mouse)
   document.getElementById("swiper").style.pointerEvents = 'auto';
   // when upper body is hovered
-  $('.section').hover(
-    // if there is no current medium or large video, fade in body info
-    function() {
-      if (currentLargeVideoPlayer == null && currentMediumVideoPlayer == null) {
-        $('#tabContent').fadeIn(500);
-      }
-    }
-  );
+  // $('.section').hover(
+  //   // if there is no current medium or large video, fade in body info
+  //   function() {
+  //     if (currentLargeVideoPlayer == null && currentMediumVideoPlayer == null) {
+  //       $('#tabContent').fadeIn(500);
+  //     }
+  //   }
+  // );
   // show swiper buttons
   // $('.swiper-button-next').show();
   // $('.swiper-button-prev').show();
+
+  // load cellArray
 }
 
 //////////////////////////////////////////////////////////////
@@ -1621,4 +1754,5 @@ function reportWindowSize() {
 }
 
 window.onresize = reportWindowSize;
+
 
