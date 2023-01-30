@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////
-//* [GLOBAL VARIABLES] *//
+// GLOBAL_VARIABLES:
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
 let video_media_array;
@@ -12,10 +12,10 @@ let menuEnterTimer, menuLeaveTimer, resizeTimer;
 let updateInterval;
 let backgroundClick;
 let resizing = false;
-let skipped = false;
 // debugging
 let debug_swiper = false;
 let indexCells = [];
+let menu_item_content_visible = false;
 
 // video player settings
 const playerControls = [
@@ -29,7 +29,7 @@ const vimeoOptions = {
 };
 
 //////////////////////////////////////////////////////////////
-//* [HELPER FUNCTIONS] *//
+// HELPER_FUNCTIONS:
 function moveToSlide(index) {
   let slidediv;
   if (currentMediumVideoPlayer) {
@@ -86,6 +86,7 @@ function next() {
   // update beginning and ending indices
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
+  // handle wrap around
   if (currentStartIndex > video_media_array.length-1) { 
     currentStartIndex = 0;
   }
@@ -415,7 +416,23 @@ function playerOnReady(player) {
 
 function index() {
   console.log("index")
+  // html content string
+  indexContent = 
+  `
+    <div id="indexContent" class="indexcontent">
+        <table id="indexTable" style="width: 100%;">
+          <tr style="visibility: hidden">
+            <th>Rally in support of Juvenile Lifers</th>
+            <th>0:00</th>
+            <th>0:00</th>
+            <th>0:00</th>
+            <th>0:00</th>
+          </tr>
+        </table>
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = indexContent;
+
   indexCells = [];
   currName = "";
   let currRow;
@@ -545,6 +562,21 @@ function index() {
 
 function loadindex() {
   // console.log("loading index")
+  // html content string
+  indexContent = 
+    `
+    <div id="indexContent" class="indexcontent">
+        <table id="indexTable" style="width: 100%;">
+          <tr style="visibility: hidden">
+            <th>Rally in support of Juvenile Lifers</th>
+            <th>0:00</th>
+            <th>0:00</th>
+            <th>0:00</th>
+            <th>0:00</th>
+          </tr>
+        </table>
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = indexContent;
   indexCells = [];
   currName = "";
@@ -658,11 +690,16 @@ function loadindex() {
     task(i);
   }
 
-  $('#content_text').hide();
+  // $('#content_text').hide();
 }
 
 function aboutTheCase() {
   console.log("about the case")
+  // html content string
+  aboutCaseContent = `
+    <div id="aboutCaseContent" class="text-block-12">
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = aboutCaseContent;
 
   typedText = `
@@ -702,6 +739,13 @@ function aboutTheCase() {
 
 function aboutTheInstallation() {
   console.log("about the installation")
+
+  // html content string
+  aboutInstallContent = 
+  `
+    <div id="aboutCaseInstallation" class="text-block-13">
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = aboutInstallContent;
 
   typedText = "A collaborative project between nonfiction filmmakers Tirtza Even and Meg McLagan and audio producer Elyse Blennerhassett."
@@ -747,6 +791,15 @@ function aboutTheInstallation() {
 
 function audioFiles() {
   console.log("audio files")
+
+  // html content string
+  audioContent = 
+  `
+    <div id="audioContent" class="indexcontent">
+        <table id="audioTable" style="width: 100%;">
+        </table>
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = audioContent;
 
 
@@ -784,6 +837,13 @@ function audioFiles() {
 
 function resources() {
   console.log("resources")
+
+  // html content string
+  resourcesContent =
+  `
+    <div id="resourcesContent">
+    </div>
+  `;
   document.getElementById("content_text").innerHTML = resourcesContent;
 
   typedString = `
@@ -974,40 +1034,48 @@ function makeSmallLarge2(element, plyr) {
 }
 
 function makeMedium(element, plyr) {
-  // console.log(element);
-  // console.log(plyr);
-    // if video is large and not medium
-  // console.log("resizing: " + resizing);
-  if (!resizing) {
-    if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
-      element.removeClass('largeVideo');
-      element.addClass('mediumVideo');
-      currentLargeVideoPlayer = null;
-      currentMediumVideoPlayer = plyr;
-      element.css({ 'min-width' : '35vw' });
-      // fade out the audio
-      fadeAudio(plyr, 0.6);
-    } 
-    // if video is not medium or large
-    if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
-      element.addClass('mediumVideo');
-      let description = $(element[0].children[1]);
-      // fade in the description
-      setTimeout(function() {
-        if (plyr == currentMediumVideoPlayer) { 
-          description.fadeIn(600);
-        }
-      }, 400);
-      // set the size
-      element.css({ 'min-width' : '35vw' });
-      // update global variable
-      currentMediumVideoPlayer = plyr;
+  function med() {
+    if (!resizing) {
+      if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
+        element.removeClass('largeVideo');
+        element.addClass('mediumVideo');
+        currentLargeVideoPlayer = null;
+        currentMediumVideoPlayer = plyr;
+        element.css({ 'min-width' : '35vw' });
+        // fade out the audio
+        fadeAudio(plyr, 0.6);
+      } 
+      // if video is not medium or large
+      if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
+        element.addClass('mediumVideo');
+        let description = $(element[0].children[1]);
+        // fade in the description
+        setTimeout(function() {
+          if (plyr == currentMediumVideoPlayer) { 
+            description.fadeIn(600);
+          }
+        }, 400);
+        // set the size
+        element.css({ 'min-width' : '35vw' });
+        // update global variable
+        currentMediumVideoPlayer = plyr;
+      }
     }
+  }
+  // fade out menu item content to 30%;
+  if (menu_item_content_visible) {
+    $('#content_text').fadeTo(1000, 0.3);
+    $('#content_text').promise().done(function(){
+      med();
+    });
+  } else {
+    med();
   }
 }
 
 function makeLarge(element, plyr) {
-  $('#content_text').fadeOut(1000);
+  // fade out menu item content completely
+  $('#content_text').fadeTo(1000, 0.0);
   $('#content_text').promise().done(function(){
     if (element.hasClass("mediumVideo")){
       element.removeClass('mediumVideo');
@@ -1095,72 +1163,6 @@ function getCurrentActivePane() {
   return $('.w--tab-active');
 }
 
-//////////////////////////////////////////////////////////////
-//* [INITIALIZE LIBRARIES] *//
-// initialize Swiper
-let swiper = new Swiper('#swiper', {
-  runCallbacksOnInit: false,
-  loop: false,
-  slidesPerView: 11,
-  initialSlide: initialSlide,
-  slidesPerGroup: 1,
-  preventInteractionOnTransition: true,
-  speed: 1000,
-  // slideToClickedSlide: true,
-  slideToClickedSlide: false,
-  centeredSlides: true,
-  // centeredSlidesBounds: true,
-  // centerInsufficientSlides: true,
-  setWrapperSize: true,
-  // observeSlideChildren: true,
-  // observer: true,
-  // resizeObserver: true,
-  // rewind: true,
-  watchSlidesProgress: true,
-  allowTouchMove: false,
-  // normalizeSlideIndex: false,
-  on: {
-    resize: function () {
-      resizing = true;
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        resizing = false;
-      }, 500);
-    },
-    slideNextTransitionEnd: function () {
-      next();
-    },
-    slidePrevTransitionEnd: function () {
-      prev();
-    },
-  },
-  freeMode: {
-    enabled: false,
-    // sticky: true,
-  },
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
-  mousewheel: {
-    invert: true,
-  },
-  spaceBetween: 8,
-  // breakpoints: {
-  //   320: {
-  //     // slidesPerView: 4,
-  //   },
-  //   640: {
-  //     // slidesPerView: 8,
-  //   },
-  //   1024: {
-  //     // slidesPerView: 12,
-  //   },
-  // },
-});
-
-
-// load CSV data
 async function fetchCSV () {
   // video
   const res = await fetch('video_media.csv');
@@ -1414,67 +1416,89 @@ async function fetchCSV () {
   loadindex();
 }
 
-
 //////////////////////////////////////////////////////////////
-//* [AFTER DOM CONTENT IS LOADED] *//
-document.addEventListener('DOMContentLoaded', () => {
-
-  // variables (TODO: Temporary fix)
-  test = document.getElementsByClassName("menu-text");
-  menu1_index = test[0];
-  menu2_aboutcase = test[1];
-  menu3_aboutinstall = test[2];
-  menu4_audio = test[3];
-  menu5_resources = test[4];
-  currently_active_menu = menu5_resources;
-
-  // hide menu text
-  $('.w--tab-active').hide();
-  // $('.w--tab-active').fadeOut(1000);
-  $('#upButton').hide();
-  $('#downButton').hide();
-
-  $('.continue-button').hide();
-  $('.tab-content-container').hide();
-  $('.tab-menu').hide();
-
-  $('.swiper-button-next').hide();
-  $('.swiper-button-prev').hide();
-  document.getElementById("swiper").style.pointerEvents = 'none'; // disable swiper
-
-  // load videos
-  fetchCSV();
-  // load indexCells
-
-  // after DOMContentent is loaded, add click listener
-  setTimeout(() => {
-    $('.loading-container').show();
-    // start typewriter animatino after the container is loaded
-    typewriterTitle.start();
-    // skip animation after click
-    document.addEventListener('click', function() {
-      if (!skipped) {
-        skipped = true;
-        document.getElementById('typedTitle').style.display = 'none';
-        document.getElementById('typedTitleSkip').style.display = 'block';
-        document.getElementById('typedWords').style.display = 'none';
-        document.getElementById('typedWordsSkip').style.display = 'inline';
-        $('.continue-button').show();
-        skipped = true;
-      } else if (skipped) {
-        $(".continue-button").click();
-      }
-    });
-  }, 2000);
-
-  // if (debug_swiper) {
-    $(".swiper-slide-active").css("border", "1px solid red !important");
-  // }
+// INITIALIZE_SWIPER:
+let swiper = new Swiper('#swiper', {
+  runCallbacksOnInit: false,
+  loop: false,
+  slidesPerView: (currentEndIndex-1),
+  initialSlide: initialSlide,
+  slidesPerGroup: 1,
+  preventInteractionOnTransition: true,
+  speed: 1000,
+  slideToClickedSlide: false,
+  centeredSlides: true,
+  setWrapperSize: true,
+  watchSlidesProgress: true,
+  allowTouchMove: false,
+  on: {
+    resize: function () {
+      resizing = true;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        resizing = false;
+      }, 100);
+    },
+    slideNextTransitionEnd: function () {
+      next();
+    },
+    slidePrevTransitionEnd: function () {
+      prev();
+    },
+  },
+  freeMode: {
+    enabled: false,
+  },
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  spaceBetween: 8,
 });
 
 //////////////////////////////////////////////////////////////
-//* [TYPEWRITER] *//
-// helper function for splitting strings
+// AFTER_DOM_CONTENT_IS_LOADED:
+document.addEventListener('DOMContentLoaded', () => {
+  // hide menu item content text
+  $('#content_text').hide();
+  // hide menu item content arrow buttons
+  $('#upButton').hide();
+  $('#downButton').hide();
+  // hide swiper arrows
+  $('.swiper-button-next').hide();
+  $('.swiper-button-prev').hide();
+  // hide intro screen elements, because they will be faded in
+  $('.continue-button').hide();
+  $('.tab-content-container').hide();
+  // prevent mouse events on swiper
+  document.getElementById("swiper").style.pointerEvents = 'none';
+
+  // load videos
+  fetchCSV();
+  // 2 seconds later after DOMContentent is loaded, add click listener and show intro
+  setTimeout(() => {
+    // show the intro text container
+    $('.loading-container').show();
+    // start typewriter animation
+    typewriterTitle.start();
+    // skip animation after click
+    document.addEventListener('click', function() {
+      // just show all the intro text
+      document.getElementById('typedTitle').style.display = 'none';
+      document.getElementById('typedTitleSkip').style.display = 'block';
+      document.getElementById('typedWords').style.display = 'none';
+      document.getElementById('typedWordsSkip').style.display = 'inline';
+      $('.continue-button').show();
+      document.addEventListener('click', function() {
+        $('.continue-button').click();
+      }, {once: true});
+    }, { once: true });
+  }, 2000);
+});
+
+//////////////////////////////////////////////////////////////
+// INTRO:
+// helper function for splitting strings 
 function stringSplitter(string) {
   str_array = string.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } );;
   return str_array;
@@ -1516,9 +1540,8 @@ typewriterTitle.typeString('Half Truths <b>and</b> Full Lies').pauseFor(1000).ca
   typewriter.start();
 });
 
-
 //////////////////////////////////////////////////////////////
-//* [END OF INTRO] *//
+// AFTER_INTRO:
 // events that happen after the continue button is clicked
 $('.continue-button').on('click', function() {
   menu_button[0].click();
@@ -1541,117 +1564,23 @@ $('.continue-button').on('click', function() {
     $('.swiper-button-prev').fadeIn(3500);
     $('.swiper-button-next').fadeIn(3500);
   }, 2600);
-  afterIntro();
-});
-
-//////////////////////////////////////////////////////////////
-//* [AFTER INTRO] *//
-function afterIntro() {
-  // activate video slider (make it interactible with mouse)
   document.getElementById("swiper").style.pointerEvents = 'auto';
-  // when upper body is hovered
-  // $('.section').hover(
-  //   // if there is no current medium or large video, fade in body info
-  //   function() {
-  //     if (currentLargeVideoPlayer == null && currentMediumVideoPlayer == null) {
-  //       $('#tabContent').fadeIn(500);
-  //     }
-  //   }
-  // );
-  // show swiper buttons
-  // $('.swiper-button-next').show();
-  // $('.swiper-button-prev').show();
-
-  // load cellArray
-}
+});
 
 //////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{
-  /* AUDIO PLAYER */
-}
-$('.audio-container').hover(
-  function() {
-    // $(this).find('.holder').fadeIn(200);
-    // $(this).find('.controls').fadeIn(200);
-  },
-  function() {
-    // $(this).find('.controls').hide();
-    // $(this).find('.holder').hide();
-  }
-);
-
-{
-  /* up/down button settings */
-}
-var timeoutDown,
-  clickerDown = $('#downButton');
-var timeoutUp,
-  clickerUp = $('#upButton');
-var count = 0;
-
-clickerDown.mousedown(function() {
-  timeoutDown = setInterval(function() {
-    document.getElementById('tabContent').scrollTop += 5;
-  }, 50);
-
-  return false;
-});
-
-$(document).mouseup(function() {
-  clearInterval(timeoutDown);
-  return false;
-});
-
-clickerUp.mousedown(function() {
-  timeoutUp = setInterval(function() {
-    document.getElementById('tabContent').scrollTop -= 5;
-  }, 50);
-
-  return false;
-});
-
-$(document).mouseup(function() {
-  clearInterval(timeoutUp);
-  return false;
-});
-
-// temporary fix for button bug
+// MENU:
 menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
 for (var i = 0; i < menu_text.length; i++) {
-  menu_text[i].onclick = function() { //asign a function
-    let thisItem = $(this);
+  menu_text[i].onclick = function() {
+    // temporary fix to make menu close after clicking on a menu item
     menu_button[0].click();
-
+    // get the menu item that was clicked
+    let thisItem = $(this);
+    // fade in the menu item content
     $('#content_text').fadeIn(1000);
+    // menu item content is now visible
+    menu_item_content_visible = true;
     menuItem = thisItem[0].innerText;
     if (menuItem == "Index") {
       index();
@@ -1668,49 +1597,8 @@ for (var i = 0; i < menu_text.length; i++) {
     if (menuItem == "Resources") {
       resources();
     }
-    // pane = getCurrentActivePane();
-    // pane.fadeIn(1000);
   }
 }
-
-indexContent = `
-  <div id="indexContent" class="indexcontent">
-      <table id="indexTable" style="width: 100%;">
-        <tr style="visibility: hidden">
-          <th>Rally in support of Juvenile Lifers</th>
-          <th>0:00</th>
-          <th>0:00</th>
-          <th>0:00</th>
-          <th>0:00</th>
-        </tr>
-      </table>
-  </div>
-`;
-
-aboutCaseContent = `
-  <div id="aboutCaseContent" class="text-block-12">
-  </div>
-`
-
-aboutInstallContent = 
-`
-  <div id="aboutCaseInstallation" class="text-block-13">
-  </div>
-`;
-
-audioContent = 
-`
-  <div id="audioContent" class="indexcontent">
-      <table id="audioTable" style="width: 100%;">
-      </table>
-  </div>
-`
-
-resourcesContent =
-`
-  <div id="resourcesContent">
-  </div>
-`
 
 // temporary fix for button on resize bug
 function resizedw(){
