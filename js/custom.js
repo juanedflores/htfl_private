@@ -39,6 +39,20 @@ panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
+function moveToSlide(index) {
+  console.log("IND: " + index);
+  console.log("INIT SLIDE: " + initialSlide);
+  if (index > initialSlide) {
+    console.log("greater..");
+  }
+  else if (index < initialSlide) {
+    console.log("lesser..");
+  }
+
+  diff = index - swiper.activeIndex;
+  swiper.slideTo(index);
+}
+
 function next() {
   console.log("shifting next");
   currentEndIndex = currentEndIndex+1;
@@ -146,23 +160,11 @@ function prev() {
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
 
-  // update the players array
-  // video_media_array[currentStartIndex-1].player = player;
-  // console.log(video_media_array[currentStartIndex]);
-  // if (currentEndIndex == video_media_array.length-1) {
-  //   video_media_array[0].player = null;
-  // } else {
-  //   video_media_array[currentEndIndex+1].player = null;
-  // }
-  // console.log(video_media_array[currentEndIndex]);
-  // video_media_array[currentStartIndex-1].player = player;
-  //
-
   if (debug_swiper && indexCells.length > 0) {
     for (var i = 0; i < indexCells.length; i++) {
       indexCells[i].style.color = "white";
     }
-
+    // update the players array
     // add
     if (currentStartIndex == (video_media_array.length-1)) {
       video_media_array[video_media_array.length-1].player = player;
@@ -371,7 +373,6 @@ function index() {
         currRow = table.insertRow(rowcount);
         currName = name;
         cell = currRow.insertCell(0);
-        // cell.style.fontWeight = "bold";
         // typewriter
         typecell = new Typewriter(cell, {
           loop: false,
@@ -392,7 +393,8 @@ function index() {
         duration = video_media_array[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
-        a.setAttribute('href', "https://google.com");
+        cellIndex = indexCells.length-1;
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
         // a.innerHTML = duration;
 
         typecell = new Typewriter(a, {
@@ -414,7 +416,8 @@ function index() {
         duration = video_media_array[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
-        a.setAttribute('href', "https://google.com");
+        cellIndex = indexCells.length-1;
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
         // a.innerHTML = duration;
 
         typecell = new Typewriter(a, {
@@ -433,16 +436,16 @@ function index() {
       // debugging slider TODO
       // all loaded slides will be in blue
       // all slides in viewport will be in red
-      if (debug_swiper) {
-        if (i == video_media_array.length - 1) {
-          console.log("it does");
-          for (var j = currentStartIndex; j <= currentEndIndex; j++) {
-            indexCells[j].style.color = "blue";
+      if (i == video_media_array.length - 1) {
+        if (debug_swiper && indexCells.length > 0) {
+          for (var j = 0; j < indexCells.length; j++) {
+            indexCells[j].style.color = "white";
           }
 
           video_media_array.forEach(function(item, index) {
             if (item.player) {
-              let player_swiper_slide = item.player.elements.wrapper.offsetParent.offsetParent.offsetParent;
+              console.log(item.player)
+              let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
                 console.log("VISIBLE");
                 console.log(item.player);
@@ -450,11 +453,14 @@ function index() {
                 console.log(player_swiper_slide);
                 console.log("index: " + (index));
                 indexCells[index].style.color = "green";
-                if (index == initialSlide) {
+                if (player_swiper_slide.classList.contains("swiper-slide-active")) {
+                  console.log("ACTIVE");
                   indexCells[index].style.color = "red";
                 }
               } else {
                 console.log("NOT VISIBLE");
+                console.log("INDEX: " + index);
+                indexCells[index].style.color = "blue";
                 console.log(item.player);
                 console.log(video_media_array[index]);
                 console.log(player_swiper_slide);
