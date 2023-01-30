@@ -530,6 +530,14 @@ body {
     /* border: 1px solid red !important; */
 }
 
+.menubuttondiv {
+    max-width: 40px !important;
+}
+
+.tab-menu {
+    margin-top: 40px !important;
+}
+
 .mediumVideo .video-description {
     width: 20vw;
 }
@@ -574,7 +582,8 @@ body {
     /* top: -60px; */
     top: 75vh;
     /* margin: 0px; */
-    margin-right: 10px;
+    /* margin-right: 10px; */
+    margin-right: 3vw;
     /* background: transparent; */
     /* opacity: 0.5 !important; */
     color: grey !important;
@@ -587,7 +596,7 @@ body {
     /* top: -60px; */
     top: 75vh;
     /* margin: 0px; */
-    margin-left: 10px;
+    margin-left: 3vw;
     /* background: transparent; */
     color: grey !important;
     /* opacity: 0.5 !important; */

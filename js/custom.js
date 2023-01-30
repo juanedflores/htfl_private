@@ -2,45 +2,35 @@
 //* [GLOBAL VARIABLES] *//
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
-let hoverTimerArray = [];
-let swiper;
-let menuEnterTimer, menuLeaveTimer, resizeTimer;
-let updateInterval;
-let backgroundClick;
-let resizing = false;
-let skipped = false;
 let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
 let currentEndIndex = 12;
 let initialSlide = 6;
-let panes_visible = false;
+
+let menuEnterTimer, menuLeaveTimer, resizeTimer;
+let updateInterval;
+let backgroundClick;
+let resizing = false;
+let skipped = false;
 // debugging
 let debug_swiper = false;
 let indexCells = [];
+
 // video player settings
 const playerControls = [
-  // 'play',     // Play/pause playback
-  // 'progress', // The progress bar and scrubber for playback and buffering
-  // 'disabled'
+  'play', // shows play icon
 ];
+// vimeo embed player options
 const vimeoOptions = {
-  // responsive: true,
-  // autoplay: false,
+  responsive: true,
   background: true,
-  // transparent: false,
-  // portrait: false
-  // width: 640
+  transparent: false,
 };
-
-
-// menu items (Temporary Fix) TODO: create non webflow menu
-panes = document.getElementsByClassName("w-tab-pane");
 
 //////////////////////////////////////////////////////////////
 //* [HELPER FUNCTIONS] *//
 function moveToSlide(index) {
-
   let slidediv;
   if (currentMediumVideoPlayer) {
     console.log("There is a player that is medium");
@@ -385,6 +375,7 @@ function playerOnReady(player) {
       // TODO: add event listener for background click
       if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
         backgroundClick = document.addEventListener('click', function() {
+          console.log("clicked the background");
           let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
           player_swiper_slide = $(player_swiper_slide);
           makeMedium(player_swiper_slide, currentLargeVideoPlayer);
@@ -1107,7 +1098,7 @@ function getCurrentActivePane() {
 //////////////////////////////////////////////////////////////
 //* [INITIALIZE LIBRARIES] *//
 // initialize Swiper
-swiper = new Swiper('#swiper', {
+let swiper = new Swiper('#swiper', {
   runCallbacksOnInit: false,
   loop: false,
   slidesPerView: 11,
@@ -1346,6 +1337,7 @@ async function fetchCSV () {
         // TODO: add event listener for background click
         if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
           backgroundClick = document.addEventListener('click', function() {
+            console.log("background click");
             let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
             player_swiper_slide = $(player_swiper_slide);
             makeMedium(player_swiper_slide, currentLargeVideoPlayer);
