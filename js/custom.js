@@ -16,7 +16,7 @@ let currentEndIndex = 12;
 let initialSlide = 6;
 let panes_visible = false;
 // debugging
-let debug_swiper = true;
+let debug_swiper = false;
 let indexCells = [];
 // video player settings
 const playerControls = [
