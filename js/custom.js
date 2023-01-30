@@ -66,6 +66,49 @@ function next() {
   active_index = swiper.activeIndex;
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
+
+  if (debug_swiper && indexCells.length > 0) {
+    for (var i = 0; i < indexCells.length; i++) {
+      indexCells[i].style.color = "white";
+    }
+
+    // // update the players array
+    video_media_array[currentEndIndex].player = player;
+    if (currentStartIndex == 0) {
+      video_media_array[video_media_array.length-1].player = null;
+    } else {
+      video_media_array[currentStartIndex-1].player = null;
+    }
+    console.log(video_media_array[currentEndIndex]);
+
+    video_media_array.forEach(function(item, index) {
+      if (item.player) {
+        console.log(item.player)
+        let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+        if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
+          console.log("VISIBLE");
+          console.log(item.player);
+          console.log(video_media_array[index]);
+          console.log(player_swiper_slide);
+          console.log("index: " + (index));
+          indexCells[index].style.color = "green";
+          if (player_swiper_slide.classList.contains("swiper-slide-active")) {
+            console.log("ACTIVE");
+            indexCells[index].style.color = "red";
+          }
+        } else {
+          console.log("NOT VISIBLE");
+          console.log("INDEX: " + index);
+          indexCells[index].style.color = "blue";
+          console.log(item.player);
+          console.log(video_media_array[index]);
+          console.log(player_swiper_slide);
+        }
+      }
+    })
+  }
+
+
   console.log("total loaded slides: " + swiper.slides.length);
   console.log("index of active slide: " + active_index);
   console.log("slides to the left: " + slides_to_left);
@@ -102,24 +145,74 @@ function prev() {
   active_index = swiper.activeIndex;
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
-  console.log("total loaded slides: " + swiper.slides.length);
-  console.log("index of active slide: " + active_index);
-  console.log("slides to the left: " + slides_to_left);
-  console.log("slides to the right: " + slides_to_right);
-  console.log("total slides: " + video_media_array.length);
-  console.log("currentStartIndex: " + currentStartIndex);
-  console.log("currentEndIndex: " + currentEndIndex);
 
-  // // update the players array
-  // console.log(video_media_array);
-  // for (var i = 0; i < video_media_array.length; i++) {
-  //   if (video_media_array[i].player) {
-  //     console.log("player exists");
-  //     console.log(video_media_array[i].player);
-  //   }
-  //   // video_media_array[i].player = players[i];
+  // update the players array
+  // video_media_array[currentStartIndex-1].player = player;
+  // console.log(video_media_array[currentStartIndex]);
+  // if (currentEndIndex == video_media_array.length-1) {
+  //   video_media_array[0].player = null;
+  // } else {
+  //   video_media_array[currentEndIndex+1].player = null;
   // }
+  // console.log(video_media_array[currentEndIndex]);
+  // video_media_array[currentStartIndex-1].player = player;
+  //
 
+  if (debug_swiper && indexCells.length > 0) {
+    for (var i = 0; i < indexCells.length; i++) {
+      indexCells[i].style.color = "white";
+    }
+
+    // add
+    if (currentStartIndex == (video_media_array.length-1)) {
+      video_media_array[video_media_array.length-1].player = player;
+    } else {
+      video_media_array[currentStartIndex].player = player;
+    }
+    // remove
+    console.log("PLEASE: " + (currentEndIndex+1));
+    if ((currentEndIndex) == video_media_array.length-1) {
+      console.log("HHAHAHA");
+      video_media_array[0].player = null;
+    } else {
+      video_media_array[currentEndIndex+1].player = null;
+    }
+
+    video_media_array.forEach(function(item, index) {
+      if (item.player) {
+        console.log(item.player)
+        let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
+        if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
+          console.log("VISIBLE");
+          console.log(item.player);
+          console.log(video_media_array[index]);
+          console.log(player_swiper_slide);
+          console.log("index: " + (index));
+          indexCells[index].style.color = "green";
+          if (player_swiper_slide.classList.contains("swiper-slide-active")) {
+            console.log("ACTIVE");
+            indexCells[index].style.color = "red";
+          }
+        } else {
+          console.log("NOT VISIBLE");
+          console.log("INDEX: " + index);
+          indexCells[index].style.color = "blue";
+          console.log(item.player);
+          console.log(video_media_array[index]);
+          console.log(player_swiper_slide);
+        }
+      }
+    })
+
+
+    console.log("total loaded slides: " + swiper.slides.length);
+    console.log("index of active slide: " + active_index);
+    console.log("slides to the left: " + slides_to_left);
+    console.log("slides to the right: " + slides_to_right);
+    console.log("total slides: " + video_media_array.length);
+    console.log("currentStartIndex: " + currentStartIndex);
+    console.log("currentEndIndex: " + currentEndIndex);
+  }
 }
 
 function playerOnReady(player) {
@@ -349,10 +442,11 @@ function index() {
 
           video_media_array.forEach(function(item, index) {
             if (item.player) {
-              console.log(item.player);
               let player_swiper_slide = item.player.elements.wrapper.offsetParent.offsetParent.offsetParent;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
                 console.log("VISIBLE");
+                console.log(item.player);
+                console.log(video_media_array[index]);
                 console.log(player_swiper_slide);
                 console.log("index: " + (index));
                 indexCells[index].style.color = "green";
@@ -361,6 +455,8 @@ function index() {
                 }
               } else {
                 console.log("NOT VISIBLE");
+                console.log(item.player);
+                console.log(video_media_array[index]);
                 console.log(player_swiper_slide);
               }
             }
