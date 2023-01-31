@@ -1156,8 +1156,20 @@ function makeSlide(i) {
   return htmlstring;
 }
 
-function getCurrentActivePane() {
-  return $('.w--tab-active');
+function vimeoLoadingThumb(id){    
+    // var url = "http://vimeo.com/api/v2/video/" + id + ".json?callback=showThumb";
+    // var json_parse = JSON.parse(url);
+    // var id_img = "#vimeo-" + id;
+    // var script = document.createElement( 'script' );
+    // script.src = url;
+    // $(id_img).before(script);
+
+    $.getJSON('https://www.vimeo.com/api/v2/video/' + id + '.json?callback=?', {format: "json"}, function(data) { console.log(data[0].thumbnail_large); });
+}
+
+function showThumb(data){
+    var id_img = "#vimeo-" + data[0].id;
+    $(id_img).attr('src',data[0].thumbnail_medium);
 }
 
 // MOUSE_EVENTS:
@@ -1200,6 +1212,8 @@ async function fetchCSV () {
         </div>
       </div>`
     $('.swiper-wrapper').append(htmlstring);
+
+    vimeoLoadingThumb(vimeoID);
   }
 
   // init all video players
