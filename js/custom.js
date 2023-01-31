@@ -30,7 +30,7 @@ const vimeoOptions = {
 };
 
 //////////////////////////////////////////////////////////////
-// HELPER_FUNCTIONS:
+// SLIDER_FUNCTIONS:
 function moveToSlide(index) {
   let slidediv;
   if (currentMediumVideoPlayer) {
@@ -258,6 +258,7 @@ function prev() {
   }
 }
 
+// PLAYER_FUNCTIONS:
 function playerOnReady(player, thumbnail_img) {
   // when player is ready...
   player.on('ready', (event) => {
@@ -968,6 +969,7 @@ function resources() {
 }
 //////////////////////////////////////////////////////////////
 
+// VIDEO_SIZE_FUNCTIONS:
 function makeSmall(element, plyr) {
 
   if (element.hasClass("mediumVideo")){
