@@ -1164,7 +1164,6 @@ function vimeoLoadingThumb(id){
     // script.src = url;
     // $(id_img).before(script);
 
-    $.getJSON('https://www.vimeo.com/api/v2/video/' + id + '.json?callback=?', {format: "json"}, function(data) { console.log(data[0].thumbnail_large); });
 }
 
 function showThumb(data){
@@ -1191,14 +1190,37 @@ async function fetchCSV () {
     let videoTitle = video_media_array[i]["Subject Name"];
     let videoDuration = video_media_array[i]["Video Duration"];
     let videoDescription = video_media_array[i]["Video Description"];
+    let videoThumbnailURL;
+    await $.getJSON('https://vimeo.com/api/oembed.json?url=https://vimeo.com/' + vimeoID + "?width=480&height=360", {format: "json"}, function(data) {
+      videoThumbnail =  data.thumbnail_url;
+    });
+    // htmlstring = 
+    //   `<div role='listitem' class='swiper-slide'>
+    //     <div class='card_video'>
+    //       <div class='w-embed'>
+    //         <div
+    //           class='js-player'
+    //           data-plyr-provider='vimeo'
+    //           data-plyr-embed-id='${vimeoID}'></div>
+    //       </div>
+    //     </div>
+    //     <div class='card_description'>
+    //       <div class='video-top-div'>
+    //         <div class='video-title'>${videoTitle}</div>
+    //         <div class='video-duration'>${videoDuration}</div>
+    //       </div>
+    //       <div class='video-description'>
+    //       ${videoDescription}
+    //       </div>
+    //     </div>
+    //   </div>`
     htmlstring = 
       `<div role='listitem' class='swiper-slide'>
         <div class='card_video'>
           <div class='w-embed'>
-            <div
-              class='js-player'
-              data-plyr-provider='vimeo'
-              data-plyr-embed-id='${vimeoID}'></div>
+            <div class='js-player'>
+              <img src="${videoThumbnail}">
+            </div>
           </div>
         </div>
         <div class='card_description'>
@@ -1212,8 +1234,6 @@ async function fetchCSV () {
         </div>
       </div>`
     $('.swiper-wrapper').append(htmlstring);
-
-    vimeoLoadingThumb(vimeoID);
   }
 
   // init all video players
