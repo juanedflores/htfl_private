@@ -979,7 +979,8 @@ function makeSmall(element, plyr) {
       durationdiv = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
         // console.log(plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1]);
       // }
-      console.log(plyr.elements.wrapper);
+
+      console.log(progressbar);
       progressbar.style.display = "none";
       durationdiv.style.display = "flex";
     }, 1400);
@@ -1532,7 +1533,6 @@ typewriter
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
-    skipped = true;
   });
 
 // start to write the intro text
