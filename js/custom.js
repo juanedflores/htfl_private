@@ -8,6 +8,8 @@ let currentStartIndex = 0;
 let currentEndIndex = 12;
 let initialSlide = 6;
 
+let swiper;
+
 let menuEnterTimer, menuLeaveTimer, resizeTimer;
 let updateInterval;
 let backgroundClick;
@@ -256,10 +258,13 @@ function prev() {
   }
 }
 
-function playerOnReady(player) {
+function playerOnReady(player, thumbnail_img) {
+  // when player is ready...
   player.on('ready', (event) => {
+    setTimeout(function() {
+      thumbnail_img.style.display = "none";
+    }, 100);
     let player = event.detail.plyr 
-    // let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
     let player_swiper_slide = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
     // let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
     let player_videocard = player.elements.wrapper.parentNode.parentNode.parentNode;
@@ -413,6 +418,8 @@ function playerOnReady(player) {
   });
 }
 
+//////////////////////////////////////////////////////////////
+// MENU_ITEM_PAGES:
 function index() {
   console.log("index");
   // html content string
@@ -959,6 +966,7 @@ function resources() {
     .pasteString(typedString)
     .start();
 }
+//////////////////////////////////////////////////////////////
 
 function makeSmall(element, plyr) {
 
@@ -1156,24 +1164,55 @@ function makeSlide(i) {
   return htmlstring;
 }
 
-function vimeoLoadingThumb(id){    
-    // var url = "http://vimeo.com/api/v2/video/" + id + ".json?callback=showThumb";
-    // var json_parse = JSON.parse(url);
-    // var id_img = "#vimeo-" + id;
-    // var script = document.createElement( 'script' );
-    // script.src = url;
-    // $(id_img).before(script);
-
-}
-
-function showThumb(data){
-    var id_img = "#vimeo-" + data[0].id;
-    $(id_img).attr('src',data[0].thumbnail_medium);
-}
-
 // MOUSE_EVENTS:
+function createMouseEvents() {
 
-// INITIALIZE_MEDIA_AND_MOUSE_EVENTS:
+}
+
+//////////////////////////////////////////////////////////////
+// INITIALIZE_SWIPER:
+function initSwiper() {
+  swiper = new Swiper('#swiper', {
+    runCallbacksOnInit: false,
+    loop: false,
+    slidesPerView: (currentEndIndex-1),
+    initialSlide: initialSlide,
+    slidesPerGroup: 1,
+    preventInteractionOnTransition: true,
+    speed: 1000,
+    slideToClickedSlide: false,
+    centeredSlides: true,
+    setWrapperSize: true,
+    watchSlidesProgress: true,
+    allowTouchMove: false,
+    preloadImages: true,
+    on: {
+      resize: function () {
+        resizing = true;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          resizing = false;
+        }, 100);
+      },
+      slideNextTransitionEnd: function () {
+        next();
+      },
+      slidePrevTransitionEnd: function () {
+        prev();
+      },
+    },
+    freeMode: {
+      enabled: false,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    spaceBetween: 8,
+  });
+}
+
+// INITIALIZE_MEDIA:
 async function fetchCSV () {
   // get video info from csv file
   const res = await fetch('video_media.csv');
@@ -1194,32 +1233,12 @@ async function fetchCSV () {
     await $.getJSON('https://vimeo.com/api/oembed.json?url=https://vimeo.com/' + vimeoID + "?width=480&height=360", {format: "json"}, function(data) {
       videoThumbnail =  data.thumbnail_url;
     });
-    // htmlstring = 
-    //   `<div role='listitem' class='swiper-slide'>
-    //     <div class='card_video'>
-    //       <div class='w-embed'>
-    //         <div
-    //           class='js-player'
-    //           data-plyr-provider='vimeo'
-    //           data-plyr-embed-id='${vimeoID}'></div>
-    //       </div>
-    //     </div>
-    //     <div class='card_description'>
-    //       <div class='video-top-div'>
-    //         <div class='video-title'>${videoTitle}</div>
-    //         <div class='video-duration'>${videoDuration}</div>
-    //       </div>
-    //       <div class='video-description'>
-    //       ${videoDescription}
-    //       </div>
-    //     </div>
-    //   </div>`
     htmlstring = 
       `<div role='listitem' class='swiper-slide'>
         <div class='card_video'>
           <div class='w-embed'>
-            <div class='js-player'>
-              <img src="${videoThumbnail}">
+            <div class='js-player' data-plyr-provider='vimeo' data-plyr-embed-id='${vimeoID}'>
+              <img src="${videoThumbnail}" style="visibility: hidden;">
             </div>
           </div>
         </div>
@@ -1236,256 +1255,232 @@ async function fetchCSV () {
     $('.swiper-wrapper').append(htmlstring);
   }
 
-  // init all video players
-  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
 
-  // hide all video players to start
-  for (var i = 0; i < players.length; i++) {
-    players[i].elements.container.style.visibility = "hidden";
-
-    // add player to video_media_array
-    if (i < currentEndIndex+1) {
-      video_media_array[i].player = players[i];
-    }
-  }
-
-  // make video player visible when fully loaded (random between 1 second)
-  for (var i = 0; i < players.length; i++) {
-    // after a video player is ready
-    players[i].on('ready', (event) => {
-      let player = event.detail.plyr 
-      let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
-      let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
-      let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+  // you can init swiper now that the swiper-slide class is in the html
+  await initSwiper();
 
 
-      // debug mode
-      if (debug_swiper) {
-        var styles = `
-        .swiper-slide-active {
-          background: red;
-        }
-        `
-        var styleSheet = document.createElement("style")
-        styleSheet.innerText = styles
-        document.head.appendChild(styleSheet)
-      }
-
-      // add a transition effect
-      player_swiper_slide.style.transition = "all 1400ms ease";
-
-      //////////////////////////////////////////////////////////////
-      // start the volume at 0.6
-      player.volume = 0.6;
-
-      //////////////////////////////////////////////////////////////
-      // add the custom progress bar
-      progressbardiv = document.createElement('div');
-      progressbardiv.style.display = "none";
-      progressbardiv.setAttribute("class","progress");
-      player_videoTopDiv.onclick = function clickEvent(e) {
-        let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-        var parentwidth = progressbar.offsetWidth;
-        if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
-          // clearInterval(updateInterval);
-          var rect = e.target.getBoundingClientRect();
-          var x = e.clientX - rect.right; //x position within the element.
-          player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
-          player.progressbar.set((1-(Math.abs(x) / parentwidth)));
-          // updateInterval = setInterval(function() {
-          //   currenttime = player.currentTime;
-          //   percentage = (currenttime / player.duration);
-          //   player.progressbar.set(percentage);
-          // }, 100);
-        } else {
-          // console.log("no match");
-        }
-      }
-      player_videoTopDiv.append(progressbardiv);
-
-      var progressbar = new ProgressBar.Line(progressbardiv, {
-        color: '#FFFFFF',
-        trailColor: '#808080',
-        strokeWidth: 0.1
-      });
-
-      progressbar.set(0.0);
-      player.progressbar = progressbar;
-
-      /// add end event listener
-      player.on('ended', function(data) {
-        // data is an object containing properties specific to that event
-        let thisItem = $(this);
-        let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
-        makeSmallLarge2(swiper_slide, thisItem);
-        progressbar.set(0.0);
-        player.currentTime = 0;
-      });
-
-      //////////////////////////////////////////////////////////////
-      //* [MOUSE EVENTS FOR SLIDER] *//
-      // add mouse events 
-      let showDelay = 1000, hideDelay = 1000;
-      player_swiper_slide.addEventListener('mouseenter', function() {
-        let thisItem = $(this);
-
-        // clearTimeout(resizeTimer);
-        if (!resizing) {
-          if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
-            clearTimeout(menuLeaveTimer);
-            // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
-            // console.log("medium player: ");
-            // console.log(currentMediumVideoPlayer[0]);
-            prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
-            console.log(prevPlayer)
-            // if any other medium is active
-            makeSmall(prevPlayer, currentMediumVideoPlayer);
-            // make the currently hovered video medium
-            makeMedium(thisItem, player);
-          } 
-          else if (currentLargeVideoPlayer) {
-            // console.log("return");
-          }
-          else {
-            // add active class after a delay
-            menuEnterTimer = setTimeout(function() {
-              makeMedium(thisItem, player);
-            }, showDelay);
-          }
-        }
-        // })
-      });
-
-      // triggered when user's mouse leaves the menu item
-      player_swiper_slide.addEventListener('mouseleave', function() {
-        let thisItem = $(this);
-
-        // clear the opposite timer
-        clearTimeout(menuEnterTimer);
-        // remove active class after a delay
-        menuLeaveTimer = setTimeout(function() {
-          makeSmall(thisItem, player);
-        }, hideDelay);
-
-        // TODO: add event listener for background click
-        if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
-          backgroundClick = document.addEventListener('click', function() {
-            console.log("background click");
-            let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
-            player_swiper_slide = $(player_swiper_slide);
-            makeMedium(player_swiper_slide, currentLargeVideoPlayer);
-          }, { once: true });
-        }
-
-      });
-
-      player_videocard.addEventListener('click', function() {
-        let thisItem = $(player_swiper_slide);
-        // console.log(thisItem);
-
-        // index of clicked slide before updating
-        clicked_index = 0;
-        for (var i = 0; i < swiper.slides.length; i++) {
-          if (swiper.slides[i] == thisItem[0]) {
-            clicked_index = i;
-          }
-        }
-
+  // once images are ready, make them appear in a staggered way
+  swiper.on('imagesReady', () => {
+    console.log("images ready");
+    for (var i = 0; i < swiper.slides.length; i++) {
+      let slide = swiper.slides[i];
+      let image = slide.children[0].children[0].children[0].children[0];
+      let js_player = slide.children[0].children[0].children[0];
+      // add mouse events to the image
+      image.addEventListener('click', () => {
+        // if image is clicked, swap it with video player
+        player = new Plyr(js_player, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+        playerOnReady(player, image);
         swiper.update();
-        // console.log("clickedIndex: " + clicked_index);
-        if (clicked_index < initialSlide) {
-          diff = initialSlide - clicked_index;
-          // console.log("diff prev: " + diff);
-          for (var i = 0; i < diff-1; i++) {
-            prev();
-          }
-          swiper.slideTo(initialSlide-1);
-        }
-        else if (clicked_index > initialSlide) {
-          diff = clicked_index - initialSlide;
-          // console.log("diff next: " + diff);
-          for (var i = 0; i < diff-1; i++) {
-            next();
-          }
-          swiper.slideTo(initialSlide+1);
-        } else {
-          // swiper.slideTo(clicked_index+(diff-1));
-        }
 
-
-        // if the clicked video is currently small, make medium
-        if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
-          makeMedium(thisItem, player);
-        } 
-        // if the clicked video is currently medium, make large
-        else if(thisItem.hasClass("mediumVideo")) {
-          makeLarge(thisItem, player);
-        } 
-        // if the clicked video is currently large, make medium
-        else if (thisItem.hasClass("largeVideo")){
-          makeMedium(thisItem, player);
-        } 
-        else if (currentLargeVideoPlayer) {
-          if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-            // console.log("different")
-          } else {
-            // console.log("same")
-          }
-          let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
-          makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
-        }
       });
-
-      random_Time = Math.random() * 1000;
-      // show video players at a random time
+      // images come in at random time
+      random_Time = (Math.random() * 800) + 500;
       setTimeout(() => {
-        player.elements.container.style.visibility = "visible";
+        image.style.visibility = "visible";
       }, random_Time);
-    });
-  }
+    }
+  });
 
-  loadindex();
+
+  // for (var i = 0; i < players.length; i++) {
+  //   // after a video player is ready
+  //   players[i].on('ready', (event) => {
+  //     let player = event.detail.plyr 
+  //     let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
+  //     let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
+  //     let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
+  //
+  //
+  //     // debug mode
+  //     if (debug_swiper) {
+  //       var styles = `
+  //       .swiper-slide-active {
+  //         background: red;
+  //       }
+  //       `
+  //       var styleSheet = document.createElement("style")
+  //       styleSheet.innerText = styles
+  //       document.head.appendChild(styleSheet)
+  //     }
+  //
+  //     // add a transition effect
+  //     player_swiper_slide.style.transition = "all 1400ms ease";
+  //
+  //     //////////////////////////////////////////////////////////////
+  //     // start the volume at 0.6
+  //     player.volume = 0.6;
+  //
+  //     //////////////////////////////////////////////////////////////
+  //     // add the custom progress bar
+  //     progressbardiv = document.createElement('div');
+  //     progressbardiv.style.display = "none";
+  //     progressbardiv.setAttribute("class","progress");
+  //     player_videoTopDiv.onclick = function clickEvent(e) {
+  //       let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
+  //       var parentwidth = progressbar.offsetWidth;
+  //       if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
+  //         // clearInterval(updateInterval);
+  //         var rect = e.target.getBoundingClientRect();
+  //         var x = e.clientX - rect.right; //x position within the element.
+  //         player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
+  //         player.progressbar.set((1-(Math.abs(x) / parentwidth)));
+  //         // updateInterval = setInterval(function() {
+  //         //   currenttime = player.currentTime;
+  //         //   percentage = (currenttime / player.duration);
+  //         //   player.progressbar.set(percentage);
+  //         // }, 100);
+  //       } else {
+  //         // console.log("no match");
+  //       }
+  //     }
+  //     player_videoTopDiv.append(progressbardiv);
+  //
+  //     var progressbar = new ProgressBar.Line(progressbardiv, {
+  //       color: '#FFFFFF',
+  //       trailColor: '#808080',
+  //       strokeWidth: 0.1
+  //     });
+  //
+  //     progressbar.set(0.0);
+  //     player.progressbar = progressbar;
+  //
+  //     /// add end event listener
+  //     player.on('ended', function(data) {
+  //       // data is an object containing properties specific to that event
+  //       let thisItem = $(this);
+  //       let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
+  //       makeSmallLarge2(swiper_slide, thisItem);
+  //       progressbar.set(0.0);
+  //       player.currentTime = 0;
+  //     });
+  //
+  //     //////////////////////////////////////////////////////////////
+  //     //* [MOUSE EVENTS FOR SLIDER] *//
+  //     // add mouse events 
+  //     let showDelay = 1000, hideDelay = 1000;
+  //     player_swiper_slide.addEventListener('mouseenter', function() {
+  //       let thisItem = $(this);
+  //
+  //       // clearTimeout(resizeTimer);
+  //       if (!resizing) {
+  //         if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
+  //           clearTimeout(menuLeaveTimer);
+  //           // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
+  //           // console.log("medium player: ");
+  //           // console.log(currentMediumVideoPlayer[0]);
+  //           prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
+  //           console.log(prevPlayer)
+  //           // if any other medium is active
+  //           makeSmall(prevPlayer, currentMediumVideoPlayer);
+  //           // make the currently hovered video medium
+  //           makeMedium(thisItem, player);
+  //         } 
+  //         else if (currentLargeVideoPlayer) {
+  //           // console.log("return");
+  //         }
+  //         else {
+  //           // add active class after a delay
+  //           menuEnterTimer = setTimeout(function() {
+  //             makeMedium(thisItem, player);
+  //           }, showDelay);
+  //         }
+  //       }
+  //       // })
+  //     });
+  //
+  //     // triggered when user's mouse leaves the menu item
+  //     player_swiper_slide.addEventListener('mouseleave', function() {
+  //       let thisItem = $(this);
+  //
+  //       // clear the opposite timer
+  //       clearTimeout(menuEnterTimer);
+  //       // remove active class after a delay
+  //       menuLeaveTimer = setTimeout(function() {
+  //         makeSmall(thisItem, player);
+  //       }, hideDelay);
+  //
+  //       // TODO: add event listener for background click
+  //       if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
+  //         backgroundClick = document.addEventListener('click', function() {
+  //           console.log("background click");
+  //           let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
+  //           player_swiper_slide = $(player_swiper_slide);
+  //           makeMedium(player_swiper_slide, currentLargeVideoPlayer);
+  //         }, { once: true });
+  //       }
+  //
+  //     });
+  //
+  //     player_videocard.addEventListener('click', function() {
+  //       let thisItem = $(player_swiper_slide);
+  //       // console.log(thisItem);
+  //
+  //       // index of clicked slide before updating
+  //       clicked_index = 0;
+  //       for (var i = 0; i < swiper.slides.length; i++) {
+  //         if (swiper.slides[i] == thisItem[0]) {
+  //           clicked_index = i;
+  //         }
+  //       }
+  //
+  //       swiper.update();
+  //       // console.log("clickedIndex: " + clicked_index);
+  //       if (clicked_index < initialSlide) {
+  //         diff = initialSlide - clicked_index;
+  //         // console.log("diff prev: " + diff);
+  //         for (var i = 0; i < diff-1; i++) {
+  //           prev();
+  //         }
+  //         swiper.slideTo(initialSlide-1);
+  //       }
+  //       else if (clicked_index > initialSlide) {
+  //         diff = clicked_index - initialSlide;
+  //         // console.log("diff next: " + diff);
+  //         for (var i = 0; i < diff-1; i++) {
+  //           next();
+  //         }
+  //         swiper.slideTo(initialSlide+1);
+  //       } else {
+  //         // swiper.slideTo(clicked_index+(diff-1));
+  //       }
+  //
+  //
+  //       // if the clicked video is currently small, make medium
+  //       if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
+  //         makeMedium(thisItem, player);
+  //       } 
+  //       // if the clicked video is currently medium, make large
+  //       else if(thisItem.hasClass("mediumVideo")) {
+  //         makeLarge(thisItem, player);
+  //       } 
+  //       // if the clicked video is currently large, make medium
+  //       else if (thisItem.hasClass("largeVideo")){
+  //         makeMedium(thisItem, player);
+  //       } 
+  //       else if (currentLargeVideoPlayer) {
+  //         if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
+  //           // console.log("different")
+  //         } else {
+  //           // console.log("same")
+  //         }
+  //         let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
+  //         makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
+  //       }
+  //     });
+  //
+  //     random_Time = Math.random() * 1000;
+  //     // show video players at a random time
+  //     setTimeout(() => {
+  //       player.elements.container.style.visibility = "visible";
+  //     }, random_Time);
+  //   });
+  // }
+
+  // loadindex();
 }
 
-//////////////////////////////////////////////////////////////
-// INITIALIZE_SWIPER:
-let swiper = new Swiper('#swiper', {
-  runCallbacksOnInit: false,
-  loop: false,
-  slidesPerView: (currentEndIndex-1),
-  initialSlide: initialSlide,
-  slidesPerGroup: 1,
-  preventInteractionOnTransition: true,
-  speed: 1000,
-  slideToClickedSlide: false,
-  centeredSlides: true,
-  setWrapperSize: true,
-  watchSlidesProgress: true,
-  allowTouchMove: false,
-  on: {
-    resize: function () {
-      resizing = true;
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        resizing = false;
-      }, 100);
-    },
-    slideNextTransitionEnd: function () {
-      next();
-    },
-    slidePrevTransitionEnd: function () {
-      prev();
-    },
-  },
-  freeMode: {
-    enabled: false,
-  },
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
-  spaceBetween: 8,
-});
 
 //////////////////////////////////////////////////////////////
 // AFTER_DOM_CONTENT_IS_LOADED:
@@ -1503,13 +1498,12 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.tab-content-container').hide();
   // prevent mouse events on swiper
   document.getElementById("swiper").style.pointerEvents = 'none';
-
+  // show the intro text container
+  $('.loading-container').show();
   // load videos
   fetchCSV();
   // 2 seconds later after DOMContentent is loaded, add click listener and show intro
   setTimeout(() => {
-    // show the intro text container
-    $('.loading-container').show();
     // start typewriter animation
     typewriterTitle.start();
     // skip animation after click

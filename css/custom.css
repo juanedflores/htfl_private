@@ -75,6 +75,7 @@ th {
 }
 
 .swiper-section {
+    /* bottom: 10%; */
     /*     position: fixed; */
     /*     left: 0%; */
     /*     top: auto; */
@@ -106,6 +107,7 @@ th {
     /*     margin-bottom: 0px; */
     /*     margin-left: 0px; */
     /*     padding: 0px; */
+    padding-bottom: 10vh;
     z-index: 2;
 }
 
