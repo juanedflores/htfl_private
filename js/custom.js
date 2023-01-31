@@ -15,7 +15,6 @@ let resizing = false;
 // debugging
 let debug_swiper = false;
 let indexCells = [];
-let menu_item_content_visible = false;
 
 // video player settings
 const playerControls = [
@@ -415,7 +414,7 @@ function playerOnReady(player) {
 }
 
 function index() {
-  console.log("index")
+  console.log("index");
   // html content string
   indexContent = 
   `
@@ -962,6 +961,7 @@ function resources() {
 }
 
 function makeSmall(element, plyr) {
+
   if (element.hasClass("mediumVideo")){
     element.removeClass('mediumVideo');
     element.css({ 'min-width' : '1vw' });
@@ -1064,14 +1064,10 @@ function makeMedium(element, plyr) {
     }
   }
   // fade out menu item content to 30%;
-  if (menu_item_content_visible) {
-    $('#content_text').fadeTo(1000, 0.3);
-    $('#content_text').promise().done(function(){
-      med();
-    });
-  } else {
+  $('#content_text').fadeTo(1000, 0.0);
+  $('#content_text').promise().done(function(){
     med();
-  }
+  });
 }
 
 function makeLarge(element, plyr) {
@@ -1164,18 +1160,19 @@ function getCurrentActivePane() {
   return $('.w--tab-active');
 }
 
+// MOUSE_EVENTS:
+
+// INITIALIZE_MEDIA_AND_MOUSE_EVENTS:
 async function fetchCSV () {
-  // video
+  // get video info from csv file
   const res = await fetch('video_media.csv');
   video_media_array = await res.text();
   video_media_array = $.csv.toObjects(video_media_array)
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
-  // audio
+  // get audio info from csv file
   const resaudio = await fetch('audio_media.csv');
   audio_media_array = await resaudio.text();
   audio_media_array = $.csv.toObjects(audio_media_array)
-  // audio_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
-
   // create video players
   for (var i = currentStartIndex; i <= currentEndIndex; i++) { 
     let vimeoID = video_media_array[i]["Vimeo ID"];
@@ -1205,8 +1202,7 @@ async function fetchCSV () {
     $('.swiper-wrapper').append(htmlstring);
   }
 
-
-  // get all video players
+  // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
 
   // hide all video players to start
@@ -1578,13 +1574,12 @@ for (var i = 0; i < menu_text.length; i++) {
     // get the menu item that was clicked
     let thisItem = $(this);
     // fade in the menu item content
-    $('#content_text').fadeIn(1000);
+    $('#content_text').fadeTo(1000, 1.0);
     // menu item content is now visible
-    menu_item_content_visible = true;
     menuItem = thisItem[0].innerText;
     if (menuItem == "Index") {
       index();
-    }
+    } 
     if (menuItem == "About the case") {
       aboutTheCase();
     }
