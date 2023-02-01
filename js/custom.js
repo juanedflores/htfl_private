@@ -2,6 +2,7 @@
 // GLOBAL_VARIABLES:
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
+let currentActivePlayer = null;
 let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
@@ -32,27 +33,30 @@ const vimeoOptions = {
 
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
-function moveToSlide(index) {
-  total_slides = video_media_array.length-1;
-
-  // get the index of the middle slide (swiper.activeIndex should be equal to initialSlide)
-  active_index = swiper.activeIndex + currentStartIndex;
-  // handle wrap around problem
-  if (active_index > total_slides) {
-    active_index = active_index - total_slides;
+function moveToSlide(target_index) {
+  // if there is any medium video, make it small
+  if (currentMediumVideoPlayer) {
+    makeSmall(currentMediumVideoPlayer);
   }
 
+  // TODO: find a more efficient way to do this
+  let active_index;
+  video_media_array.forEach(function(item, index) {
+    if (item.player) {
+      if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
+        active_index = index;
+      }
+    }
+  })
   let distance_to_left;
   let distance_to_right;
-  if (index > active_index) {
-    distance_to_left = active_index + (video_media_array.length - index);
-    distance_to_right = index - active_index;
-  } else if (index < active_index) {
-    distance_to_left = active_index - index;
-    distance_to_right = index + (video_media_array.length - active_index);
+  if (target_index > active_index) {
+    distance_to_left = active_index + (video_media_array.length - target_index);
+    distance_to_right = target_index - active_index;
+  } else if (target_index < active_index) {
+    distance_to_left = active_index - target_index;
+    distance_to_right = target_index + (video_media_array.length - active_index);
   }
-  console.log("LEFT: " + distance_to_left);
-  console.log("RIGHT: " + distance_to_right);
 
   let diff = 0
   // if distance to left is less, do prev
@@ -74,39 +78,13 @@ function moveToSlide(index) {
     console.log("must be same indexx?");
   }
 
-  // greater; move to left (next)
-  // if (index > active_index) {
-  //   console.log("it is greater than 6")
-  //   diff = index - active_index;
-  //   for (var i = 0; i < diff-1; i++) {
-  //     next();
-  //   }
-  //   swiper.slideTo(initialSlide+1);
-  // }
-  // // lesser; move to the right (prev)
-  // else if (index < active_index) {
-  //   console.log("it is less than 6")
-  //   diff = active_index - index;
-  //   for (var i = 0; i < diff-1; i++) {
-  //     prev();
-  //   }
-  //   swiper.slideTo(initialSlide-1);
-  // }
-  console.log("diff: " + diff);
-
-
-  // if outside of viewport, make medium
-  // video_media_array.forEach(function(item, index) {
-  //   if (item.player) {
-  //     if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
-  //       makeMedium(item.player);
-  //     }
-  //   }
-  // })
+  // if there are currently no medium or large video, make it medium (clicke from index page)
+  if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+    makeMedium(video_media_array[target_index].player);
+  }
 }
 
 function next() {
-  console.log("                   NEXT");
   // update beginning and ending indices
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
@@ -127,6 +105,7 @@ function next() {
   player_js = swiper_slide.children[0].childNodes[1].children[0];
   // initialize the player
   player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentEndIndex });
+  player.media_index = currentEndIndex;
   playerOnReady(player);
   // remove slide to the left
   swiper.removeSlide(0);
@@ -175,14 +154,13 @@ function next() {
   active_index = swiper.activeIndex;
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
-  console.log("total loaded slides: " + swiper.slides.length);
-  console.log("index of active slide: " + active_index);
-  console.log("slides to the left: " + slides_to_left);
-  console.log("slides to the right: " + slides_to_right);
+  // console.log("total loaded slides: " + swiper.slides.length);
+  // console.log("index of active slide: " + active_index);
+  // console.log("slides to the left: " + slides_to_left);
+  // console.log("slides to the right: " + slides_to_right);
 }
 
 function prev() {
-  console.log("                   PREV");
   // update beginning and ending indices
   currentEndIndex = currentEndIndex-1;
   currentStartIndex = currentStartIndex-1;
@@ -203,6 +181,7 @@ function prev() {
   player_js = swiper_slide.children[0].childNodes[1].children[0];
   // initialize the player
   player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentStartIndex });
+  player.media_index = currentStartIndex;
   playerOnReady(player);
   // remove slide to the right
   swiper.removeSlide(swiper.slides.length-1);
@@ -249,10 +228,10 @@ function prev() {
   active_index = swiper.activeIndex;
   slides_to_left = active_index;
   slides_to_right = swiper.slides.length - (active_index+1);
-  console.log("total loaded slides: " + swiper.slides.length);
-  console.log("index of active slide: " + active_index);
-  console.log("slides to the left: " + slides_to_left);
-  console.log("slides to the right: " + slides_to_right);
+  // console.log("total loaded slides: " + swiper.slides.length);
+  // console.log("index of active slide: " + active_index);
+  // console.log("slides to the left: " + slides_to_left);
+  // console.log("slides to the right: " + slides_to_right);
 }
 
 // PLAYER_FUNCTIONS:
@@ -325,8 +304,6 @@ function playerOnReady(player) {
       menuEnterTimer = setTimeout(function() {
         // CASE_1: there is already a medium
         if (currentMediumVideoPlayer) {
-          console.log("there is already a medium");
-          console.log(currentMediumVideoPlayer);
           makeSmall(currentMediumVideoPlayer);
         }
         // CASE_2: making medium from small
@@ -373,7 +350,6 @@ function playerOnReady(player) {
 
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
-        console.log("there is a medium video");
         if (player == currentMediumVideoPlayer) {
           makeLarge(player);
         }
@@ -381,7 +357,6 @@ function playerOnReady(player) {
 
       // CASE_2: there is a large video && user clicked on it
       else if (currentLargeVideoPlayer) {
-        console.log("there is a large video");
         if (player == currentLargeVideoPlayer) {
           makeMedium(player);
         }
@@ -663,7 +638,6 @@ function audioFiles() {
       let name = audio_media_array[i]["Name"];
       let slug = audio_media_array[i]["Slug"];
       let audioID = audio_media_array[i]["Google Drive File ID"];
-      // console.log(audioID)
       currRow = table.insertRow(i);
       cell = currRow.insertCell(0);
       cell.style.padding = "10px";
@@ -832,16 +806,6 @@ function makeSmall(plyr) {
     setTimeout(function() {
       plyr.pause();
       clearInterval(updateInterval);
-      // let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-      // let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
-      // if (progressbar == null) {
-        // console.log("NULL")
-      // progressbar = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[2];
-      // durationdiv = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
-        // console.log(plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1]);
-      // }
-
-      // console.log(progressbar);
       plyr.progressbardiv.style.display = "none";
       plyr.durationdiv.style.display = "flex";
     }, 1000);
@@ -942,6 +906,7 @@ function makeMedium(plyr) {
     $('#content_text').fadeTo(1000, 0.0);
     $('#content_text').promise().done(function(){
       med();
+      menu_item_text_visible = false;
     });
   } else {
     med();
@@ -950,7 +915,6 @@ function makeMedium(plyr) {
 }
 
 function makeLarge(plyr) {
-  console.log("trying to make large..")
   let swiper_slide = $(plyr.swiper_slide);
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
@@ -964,9 +928,9 @@ function makeLarge(plyr) {
     // TODO: change back to 1
     fadeAudio(plyr, 0);
     // move largeVideo to center and make it active
-    console.log("moving to.. " + swiper.clickedIndex);
-    if (swiper.activeIndex != swiper.clickedIndex) {
-      moveToSlide(swiper.clickedIndex);
+    console.log("CLICKED INDEX: " + plyr.media_index);
+    if (initialSlide != (plyr.media_index-currentStartIndex)) {
+      moveToSlide(plyr.media_index);
     }
     // show progress bar
     plyr.progressbardiv.style.display = "block";
@@ -979,8 +943,6 @@ function makeLarge(plyr) {
       plyr.progressbar.set(percentage);
     }, 100);
   } 
-  console.log("currentStartIndex: " + currentStartIndex);
-  console.log("currentEndhndex: " + currentEndIndex);
 }
 
 function fadeAudio (plyr, targetVolume) {
@@ -1113,14 +1075,16 @@ async function fetchCSV () {
     // add player entry to video_media_array
     if (i < currentEndIndex+1) {
       video_media_array[i].player = player;
-      video_media_array[i].totalIndex = i;
+      video_media_array[i].player.media_index = i;
+      if (i == initialSlide) {
+        currentActivePlayer = player;
+      }
     }
     // once player is ready, add its event listeners, etc.
     playerOnReady(player);
   }
 
 }
-
 
 //////////////////////////////////////////////////////////////
 // AFTER_DOM_CONTENT_IS_LOADED:
@@ -1244,6 +1208,7 @@ for (var i = 0; i < menu_text.length; i++) {
     // fade in the menu item content
     $('#content_text').fadeTo(1000, 1.0);
     // menu item content is now visible
+    menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
     if (menuItem == "Index") {
       index();
