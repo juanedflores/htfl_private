@@ -22,7 +22,7 @@ let indexCells = [];
 
 // video player settings
 const playerControls = [
-  // 'play', // shows play icon
+  'play', // shows play icon
 ];
 // vimeo embed player options
 const vimeoOptions = {
@@ -33,7 +33,7 @@ const vimeoOptions = {
 
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
-function moveToSlide(target_index) {
+function moveToSlide(target_index, dont_make_target_medium) {
   // if there is any medium video, make it small
   if (currentMediumVideoPlayer) {
     makeSmall(currentMediumVideoPlayer);
@@ -78,8 +78,8 @@ function moveToSlide(target_index) {
     console.log("must be same indexx?");
   }
 
-  // if there are currently no medium or large video, make it medium (clicke from index page)
-  if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+  // if there are currently no medium or large video, make it medium (clicked from index page)
+  if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
     makeMedium(video_media_array[target_index].player);
   }
 }
@@ -252,8 +252,7 @@ function playerOnReady(player) {
     }, random_Time);
     // add a transition effect
     player_swiper_slide.style.transition = "all 1400ms ease";
-    // start the volume at 0.5
-    // TODO: change back to 0.5
+    // init the volume
     player.volume = 0.0;
     // add the custom progress bar
     let progressbardiv = document.createElement('div');
@@ -298,19 +297,30 @@ function playerOnReady(player) {
     //////////////////////////////////////////////////////////////
     //* [MOUSE EVENTS FOR SLIDER] *//
     // add mouse events 
-    let showDelay = 1000, hideDelay = 600;
+    let showDelay = 500, hideDelay = 500;
     player_swiper_slide.addEventListener('mouseenter', function() {
       clearTimeout(menuLeaveTimer);
       menuEnterTimer = setTimeout(function() {
-        // CASE_1: there is already a medium
-        if (currentMediumVideoPlayer) {
-          makeSmall(currentMediumVideoPlayer);
-        }
-        // CASE_2: making medium from small
-        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
-          makeMedium(player);
-        }
+        // if (player.media_index == currentStartIndex+1 || player.media_index == currentStartIndex+2) {
+        //   player.swiper_slide.style.pointerEvents = 'none';
+        //   moveToSlide(currentStartIndex+4, true);
+        // } 
+        // else if (player.media_index == currentEndIndex-1 || player.media_index == currentEndIndex-2) {
+        //   player.swiper_slide.style.pointerEvents = 'none';
+        //   moveToSlide(player.media_index, true);
+        // } 
+        // else {
+          // CASE_1: there is already a medium
+          if (currentMediumVideoPlayer) {
+            makeSmall(currentMediumVideoPlayer);
+          }
+          // CASE_2: making medium from small
+          if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+            makeMedium(player);
+          }
+        // }
       }, showDelay);
+
       // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
       //   makeMedium(player);
       // }
@@ -351,6 +361,7 @@ function playerOnReady(player) {
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
+          clearTimeout(menuEnterTimer);
           makeLarge(player);
         }
       }
@@ -358,9 +369,12 @@ function playerOnReady(player) {
       // CASE_2: there is a large video && user clicked on it
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
+          clearTimeout(menuEnterTimer);
           makeMedium(player);
         }
       }
+
+      // CASE_3: user clicked on a small player
 
       // if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
       //   // if the clicked video is currently small, make medium
@@ -485,9 +499,7 @@ function index() {
         cell.appendChild(a);
         cellcount = cellcount + 1;
       }
-      // debugging slider TODO
-      // all loaded slides will be in blue
-      // all slides in viewport will be in red
+      // DEBUGGING:
       if (i == video_media_array.length - 1) {
         if (indexCells.length > 0) {
           for (var j = 0; j < indexCells.length; j++) {
@@ -842,16 +854,9 @@ function closeAndSwipe(plyr) {
 function makeMedium(plyr) {
   function med() {
     let swiper_slide = $(plyr.swiper_slide);
-    // if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
-    //   element.removeClass('largeVideo');
-    //   element.addClass('mediumVideo');
-    //   currentLargeVideoPlayer = null;
-    //   currentMediumVideoPlayer = plyr;
-    //   element.css({ 'min-width' : '35vw' });
-    //   // fade out the audio
-    //   // TODO: change back to 0.4
-    //   fadeAudio(plyr, 0.0);
-    // } 
+
+    // fade audio to 0.4
+    fadeAudio(plyr, 0.4);
 
     // making medium from small size
     // CASE_1: there is no medium or large player, make medium from small
@@ -902,9 +907,8 @@ function makeLarge(plyr) {
     swiper_slide.css({ 'min-width' : '70vw' });
     // play video
     plyr.play();
-    // fade in audio
-    // TODO: change back to 1
-    fadeAudio(plyr, 0);
+    // fade audio to full volume
+    fadeAudio(plyr, 1);
     // move largeVideo to center and make it active
     console.log("CLICKED INDEX: " + plyr.media_index);
     if (initialSlide != (plyr.media_index-currentStartIndex)) {
@@ -970,11 +974,6 @@ function makeSlide(i) {
 
 
   return htmlstring;
-}
-
-// MOUSE_EVENTS:
-function createMouseEvents() {
-
 }
 
 //////////////////////////////////////////////////////////////
@@ -1219,4 +1218,16 @@ function reportWindowSize() {
 
 window.onresize = reportWindowSize;
 
+
+$(document).click(function(event) {
+  var target = $(event.target);
+  console.log(target);
+  if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
+    makeSmall(currentMediumVideoPlayer);
+  }
+  if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
+    console.log("true..")
+    makeMedium(currentLargeVideoPlayer);
+  }
+});
 

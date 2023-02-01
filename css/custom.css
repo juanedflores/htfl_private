@@ -107,7 +107,7 @@ th {
     /*     margin-bottom: 0px; */
     /*     margin-left: 0px; */
     /*     padding: 0px; */
-    padding-bottom: 10vh;
+    /* padding-bottom: 10vh; */
     z-index: 2;
 }
 
@@ -122,7 +122,6 @@ th {
 /*     display: flex; */
 /*     overflow: visible; */
 /*     /* margin-bottom: 10vh; */
-*/
 /*     padding-right: 0px; */
 /*     padding-left: 0px; */
 /*     padding-bottom: 10vh; */
