@@ -14,13 +14,14 @@ let menuEnterTimer, menuLeaveTimer, resizeTimer;
 let updateInterval;
 let backgroundClick;
 let resizing = false;
+let menu_item_text_visible = false;
 // debugging
-let debug_swiper = false;
+let debug_swiper = true;
 let indexCells = [];
 
 // video player settings
 const playerControls = [
-  'play', // shows play icon
+  // 'play', // shows play icon
 ];
 // vimeo embed player options
 const vimeoOptions = {
@@ -32,58 +33,80 @@ const vimeoOptions = {
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
 function moveToSlide(index) {
-  let slidediv;
-  if (currentMediumVideoPlayer) {
-    console.log("There is a player that is medium");
-    console.log(currentMediumVideoPlayer);
-    slidediv = $(currentMediumVideoPlayer[0].elements.wrapper.parentNode.parentNode.parentNode.parentNode);
-    console.log("SLIDE: ");
-    console.log(slidediv);
-    console.log("making small..");
-    makeSmall(slidediv, currentMediumVideoPlayer[0]);
+  total_slides = video_media_array.length-1;
+
+  // get the index of the middle slide (swiper.activeIndex should be equal to initialSlide)
+  active_index = swiper.activeIndex + currentStartIndex;
+  // handle wrap around problem
+  if (active_index > total_slides) {
+    active_index = active_index - total_slides;
   }
 
-  active_index = swiper.activeIndex + currentStartIndex;
-  let diff = 0
-  // greater; move to right (next)
+  let distance_to_left;
+  let distance_to_right;
   if (index > active_index) {
-    diff = index - active_index;
-    for (var i = 0; i < diff-1; i++) {
-      next();
-    }
-    swiper.slideTo(initialSlide+1);
+    distance_to_left = active_index + (video_media_array.length - index);
+    distance_to_right = index - active_index;
+  } else if (index < active_index) {
+    distance_to_left = active_index - index;
+    distance_to_right = index + (video_media_array.length - active_index);
   }
-  // lesser; move to the left (prev)
-  else if (index < active_index) {
-    diff = active_index - index;
+  console.log("LEFT: " + distance_to_left);
+  console.log("RIGHT: " + distance_to_right);
+
+  let diff = 0
+  // if distance to left is less, do prev
+  if (distance_to_left < distance_to_right) {
+    diff = distance_to_left;
     for (var i = 0; i < diff-1; i++) {
       prev();
     }
     swiper.slideTo(initialSlide-1);
   }
-
-
-  let player;
-  let slide;
-  video_media_array.forEach(function(item, index) {
-    if (item.player) {
-      let curr_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-      if (curr_slide.classList.contains("swiper-slide-active")) {
-        // console.log("found active");
-        slide = $(curr_slide);
-        player = $(item.player);
-        // console.log(slide);
-        // console.log(player);
-      }
+  // if distance to right is less, do next
+  else if (distance_to_left > distance_to_right) {
+    diff = distance_to_right;
+    for (var i = 0; i < diff-1; i++) {
+      next();
     }
-  })
+    swiper.slideTo(initialSlide+1);
+  } else {
+    console.log("must be same indexx?");
+  }
+
+  // greater; move to left (next)
+  // if (index > active_index) {
+  //   console.log("it is greater than 6")
+  //   diff = index - active_index;
+  //   for (var i = 0; i < diff-1; i++) {
+  //     next();
+  //   }
+  //   swiper.slideTo(initialSlide+1);
+  // }
+  // // lesser; move to the right (prev)
+  // else if (index < active_index) {
+  //   console.log("it is less than 6")
+  //   diff = active_index - index;
+  //   for (var i = 0; i < diff-1; i++) {
+  //     prev();
+  //   }
+  //   swiper.slideTo(initialSlide-1);
+  // }
+  console.log("diff: " + diff);
 
 
-  makeMedium(slide, player);
+  // if outside of viewport, make medium
+  // video_media_array.forEach(function(item, index) {
+  //   if (item.player) {
+  //     if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
+  //       makeMedium(item.player);
+  //     }
+  //   }
+  // })
 }
 
 function next() {
-  console.log("shifting next");
+  console.log("                   NEXT");
   // update beginning and ending indices
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
@@ -94,241 +117,201 @@ function next() {
   if (currentEndIndex > video_media_array.length-1) { 
     currentEndIndex = 0;
   }
-
-  // add slide to the right
+  // returns a string of html for slide
   slide = makeSlide(currentEndIndex);
+  // appends the slide to the end
   swiper.appendSlide(slide);
-  swiper_obj = swiper.slides[swiper.slides.length-1];
-  player_js = swiper_obj.children[0].childNodes[1].children[0];
-  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  // this is the swiper_slide dom element
+  swiper_slide = swiper.slides[swiper.slides.length-1];
+  // this is the player-js dom element
+  player_js = swiper_slide.children[0].childNodes[1].children[0];
+  // initialize the player
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentEndIndex });
   playerOnReady(player);
   // remove slide to the left
   swiper.removeSlide(0);
   // update the swiper
   swiper.update()
 
-  // check how many slides are to the left of active slide
-  active_index = swiper.activeIndex;
-  slides_to_left = active_index;
-  slides_to_right = swiper.slides.length - (active_index+1);
+  // update the new slide
+  player.swiper_slide = swiper_slide;
+  video_media_array[currentEndIndex].player = player;
+  if (currentStartIndex == 0) {
+    // currentStartIndex is 0, then the last index (42) is to be deleted
+    video_media_array[video_media_array.length-1].player = null;
+  } else {
+    // else just delete the one before the currentStartIndex
+    video_media_array[currentStartIndex-1].player = null;
+  }
 
+  // DEBUGGING: for index page
   if (indexCells.length > 0) {
-    for (var i = 0; i < indexCells.length; i++) {
-      indexCells[i].style.color = "white";
+    // make all cells white first
+    if (debug_swiper) {
+      for (var i = 0; i < indexCells.length; i++) {
+        indexCells[i].style.color = "white";
+      }
     }
-
-    // // update the players array
-    video_media_array[currentEndIndex].player = player;
-    if (currentStartIndex == 0) {
-      video_media_array[video_media_array.length-1].player = null;
-    } else {
-      video_media_array[currentStartIndex-1].player = null;
-    }
-    // console.log(video_media_array[currentEndIndex]);
-
     video_media_array.forEach(function(item, index) {
       if (item.player) {
-        // console.log(item.player)
-        let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-        if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-          // console.log("VISIBLE");
-          // console.log(item.player);
-          // console.log(video_media_array[index]);
-          // console.log(player_swiper_slide);
-          // console.log("index: " + (index));
+        if (item.player.swiper_slide.classList.contains("swiper-slide-visible")) {
           if (debug_swiper) {
             indexCells[index].style.color = "green";
           }
-          if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-            // console.log("ACTIVE");
+          if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
             if (debug_swiper) {
               indexCells[index].style.color = "red";
             }
           }
         } else {
-          // console.log("NOT VISIBLE");
-          // console.log("INDEX: " + index);
           if (debug_swiper) {
             indexCells[index].style.color = "blue";
           }
-          // console.log(item.player);
-          // console.log(video_media_array[index]);
-          // console.log(player_swiper_slide);
         }
       }
-    })
+    });
   }
-
-  // console.log("total slides: " + video_media_array.length);
-  // console.log("currentStartIndex: " + currentStartIndex);
-  // console.log("currentEndIndex: " + currentEndIndex);
-  // console.log("total loaded slides: " + swiper.slides.length);
-  // console.log("index of active slide: " + active_index);
-  // console.log("slides to the left: " + slides_to_left);
-  // console.log("slides to the right: " + slides_to_right);
-  // active_index = swiper.activeIndex + currentStartIndex;
+  // DEBUGGING:
+  active_index = swiper.activeIndex;
+  slides_to_left = active_index;
+  slides_to_right = swiper.slides.length - (active_index+1);
+  console.log("total loaded slides: " + swiper.slides.length);
+  console.log("index of active slide: " + active_index);
+  console.log("slides to the left: " + slides_to_left);
+  console.log("slides to the right: " + slides_to_right);
 }
 
 function prev() {
-  console.log("shifting prev");
+  console.log("                   PREV");
+  // update beginning and ending indices
   currentEndIndex = currentEndIndex-1;
   currentStartIndex = currentStartIndex-1;
+  // handle wrap around
   if (currentStartIndex < 0) { 
     currentStartIndex = video_media_array.length-1;
   }
   if (currentEndIndex < 0) { 
     currentEndIndex = video_media_array.length-1;
   }
-
+  // returns a string of html for slide
   slide = makeSlide(currentStartIndex);
   // add a slide to the beginning
   swiper.prependSlide(slide);
-  swiper_obj = swiper.slides[0];
-  player_js = swiper_obj.children[0].childNodes[1].children[0];
-  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  // this is the swiper_slide dom element
+  swiper_slide = swiper.slides[0];
+  // this is the player-js dom element
+  player_js = swiper_slide.children[0].childNodes[1].children[0];
+  // initialize the player
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentStartIndex });
   playerOnReady(player);
-  // delete the slide on the end
+  // remove slide to the right
   swiper.removeSlide(swiper.slides.length-1);
-  // update swiper
+  // update the swiper
   swiper.update()
 
-  // check how many slides are to the left of active slide
-  active_index = swiper.activeIndex;
-  slides_to_left = active_index;
-  slides_to_right = swiper.slides.length - (active_index+1);
+  // update the players array
+  player.swiper_slide = swiper_slide;
+  video_media_array[currentStartIndex].player = player;
+  if ((currentEndIndex) == video_media_array.length-1) {
+    // if currentEnd is video_media_array.length-1, then 0 should be deleted
+    video_media_array[0].player = null;
+  } else {
+    // else just delete currentEndIndex+1
+    video_media_array[currentEndIndex+1].player = null;
+  }
 
+  // DEBUGGING: for index page
   if (indexCells.length > 0) {
+    // make all cells white first
     for (var i = 0; i < indexCells.length; i++) {
       indexCells[i].style.color = "white";
     }
-    // update the players array
-    // add
-    if (currentStartIndex == (video_media_array.length-1)) {
-      video_media_array[video_media_array.length-1].player = player;
-    } else {
-      video_media_array[currentStartIndex].player = player;
-    }
-    // remove
-    if ((currentEndIndex) == video_media_array.length-1) {
-      video_media_array[0].player = null;
-    } else {
-      video_media_array[currentEndIndex+1].player = null;
-    }
-
     video_media_array.forEach(function(item, index) {
       if (item.player) {
-        // console.log(item.player)
-        let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-        if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-          // console.log("VISIBLE");
-          // console.log(item.player);
-          // console.log(video_media_array[index]);
-          // console.log(player_swiper_slide);
-          // console.log("index: " + (index));
-
+        if (item.player.swiper_slide.classList.contains("swiper-slide-visible")) {
           if (debug_swiper) {
             indexCells[index].style.color = "green";
           }
-          if (player_swiper_slide.classList.contains("swiper-slide-active")) {
+          if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
             if (debug_swiper) {
               indexCells[index].style.color = "red";
             }
-            // console.log("ACTIVE");
           }
         } else {
           if (debug_swiper) {
             indexCells[index].style.color = "blue";
           }
-          // console.log("NOT VISIBLE");
-          // console.log("INDEX: " + index);
-          // console.log(item.player);
-          // console.log(video_media_array[index]);
-          // console.log(player_swiper_slide);
         }
       }
     })
-
-    // console.log("total slides: " + video_media_array.length);
-    // console.log("currentStartIndex: " + currentStartIndex);
-    // console.log("currentEndIndex: " + currentEndIndex);
-    // console.log("total loaded slides: " + swiper.slides.length);
-    // console.log("index of active slide: " + active_index);
-    // console.log("slides to the left: " + slides_to_left);
-    // console.log("slides to the right: " + slides_to_right);
   }
+  // DEBUGGING:
+  active_index = swiper.activeIndex;
+  slides_to_left = active_index;
+  slides_to_right = swiper.slides.length - (active_index+1);
+  console.log("total loaded slides: " + swiper.slides.length);
+  console.log("index of active slide: " + active_index);
+  console.log("slides to the left: " + slides_to_left);
+  console.log("slides to the right: " + slides_to_right);
 }
 
 // PLAYER_FUNCTIONS:
-function playerOnReady(player, thumbnail_img) {
+function playerOnReady(player) {
   // when player is ready...
   player.on('ready', (event) => {
-    setTimeout(function() {
-      thumbnail_img.style.display = "none";
-    }, 100);
     let player = event.detail.plyr 
     let player_swiper_slide = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-    // let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
+    let player_card_description = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1];
     let player_videocard = player.elements.wrapper.parentNode.parentNode.parentNode;
-    // console.log("Player: ");
-    // console.log(player_videocard);
-    // let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
-    // let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
-    let player_videoTopDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-    // console.log("TopDIv: ");
-    // console.log(player_videoTopDiv);
-
+    let player_videoTopDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0];
+    let player_durationDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
+    // make videos appear randomly on intro
+    // TODO: do this only on page enter
+    let random_Time = Math.random() * 1000;
+    setTimeout(() => {
+      player.elements.container.style.visibility = "visible";
+    }, random_Time);
     // add a transition effect
     player_swiper_slide.style.transition = "all 1400ms ease";
-
-    //////////////////////////////////////////////////////////////
-    // start the volume at 0.6
-    player.volume = 0.6;
-
-    //////////////////////////////////////////////////////////////
+    // start the volume at 0.5
+    // TODO: change back to 0.5
+    player.volume = 0.0;
     // add the custom progress bar
-    progressbardiv = document.createElement('div');
+    let progressbardiv = document.createElement('div');
     progressbardiv.style.display = "none";
-    progressbardiv.setAttribute("class","progress");
+    progressbardiv.setAttribute("class", "progress");
     player_videoTopDiv.onclick = function clickEvent(e) {
-      // let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-      let progressbar = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.childNodes[5]
-      // console.log("progressbar new: ");
-      // console.log(player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.childNodes[5]);
-      // console.log("progressbar_original: ");
-      // console.log(progressbar);
-      var parentwidth = progressbar.offsetWidth;
+      var parentwidth = progressbardiv.offsetWidth;
+      // if it's not video-title
       if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
-        // clearInterval(updateInterval);
         var rect = e.target.getBoundingClientRect();
         var x = e.clientX - rect.right; //x position within the element.
         player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
         player.progressbar.set((1-(Math.abs(x) / parentwidth)));
-        // updateInterval = setInterval(function() {
-        //   currenttime = player.currentTime;
-        //   percentage = (currenttime / player.duration);
-        //   player.progressbar.set(percentage);
-        // }, 100);
-      } else {
-        // console.log("no match");
       }
     }
+    // append the div to html
     player_videoTopDiv.append(progressbardiv);
-
+    // initialize progressbar
     var progressbar = new ProgressBar.Line(progressbardiv, {
       color: '#FFFFFF',
       trailColor: '#808080',
       strokeWidth: 0.1
     });
-
+    // set the progressbar to 0
     progressbar.set(0.0);
-    player.progressbar = progressbar;
 
-    /// add end event listener
+    // add a entries to the player object
+    player.swiper_slide = player_swiper_slide;
+    player.card_description = player_card_description;
+    player.progressbardiv = progressbardiv;
+    player.progressbar = progressbar;
+    player.topdiv = player_videoTopDiv;
+    player.durationdiv = player_durationDiv;
+
+    /// add an end event listener
     player.on('ended', function(data) {
-      // data is an object containing properties specific to that event
-      let thisItem = $(this);
-      let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
-      makeSmallLarge2(swiper_slide, thisItem);
+      makeSmallLarge2(player.swiper_slide, player);
       progressbar.set(0.0);
       player.currentTime = 0;
     });
@@ -336,85 +319,97 @@ function playerOnReady(player, thumbnail_img) {
     //////////////////////////////////////////////////////////////
     //* [MOUSE EVENTS FOR SLIDER] *//
     // add mouse events 
-    let showDelay = 1000, hideDelay = 1000;
+    let showDelay = 1000, hideDelay = 600;
     player_swiper_slide.addEventListener('mouseenter', function() {
-      let thisItem = $(this);
-
-      // clearTimeout(resizeTimer);
-      if (!resizing) {
-        if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
-          clearTimeout(menuLeaveTimer);
-          // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
-          // console.log("MEDPLAYER: ");
-          console.log(currentMediumVideoPlayer[0]);
-          prevPlayer = $(currentMediumVideoPlayer[0].elements.wrapper.parentNode.parentNode);
-          // console.log(prevPlayer)
-          // if any other medium is active
-          makeSmall(prevPlayer, currentMediumVideoPlayer);
-          // make the currently hovered video medium
-          makeMedium(thisItem, player);
-        } 
-        else if (currentLargeVideoPlayer) {
-          // console.log("return");
+      clearTimeout(menuLeaveTimer);
+      menuEnterTimer = setTimeout(function() {
+        // CASE_1: there is already a medium
+        if (currentMediumVideoPlayer) {
+          console.log("there is already a medium");
+          console.log(currentMediumVideoPlayer);
+          makeSmall(currentMediumVideoPlayer);
         }
-        else {
-          // add active class after a delay
-          menuEnterTimer = setTimeout(function() {
-            makeMedium(thisItem, player);
-          }, showDelay);
+        // CASE_2: making medium from small
+        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+          makeMedium(player);
         }
-      }
-      // })
+      }, showDelay);
+      // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+      //   makeMedium(player);
+      // }
+      // if (!resizing) {
+        // if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
+        //   clearTimeout(menuLeaveTimer);
+        //   prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
+        //   makeSmall(currentMediumVideoPlayer.swiper_slide, currentMediumVideoPlayer);
+        //   makeMedium(thisItem, player);
+        // } 
+        // else {
+        //   // add active class after a delay
+        // }
+      // }
     });
 
-    // triggered when user's mouse leaves the menu item
+    // triggered when user's mouse leaves the swiper item
     player_swiper_slide.addEventListener('mouseleave', function() {
-      let thisItem = $(this);
-
-      // clear the opposite timer
       clearTimeout(menuEnterTimer);
-      // remove active class after a delay
       menuLeaveTimer = setTimeout(function() {
-        makeSmall(thisItem, player);
+        makeSmall(player);
       }, hideDelay);
 
       // TODO: add event listener for background click
-      if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
-        backgroundClick = document.addEventListener('click', function() {
-          console.log("clicked the background");
-          let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
-          player_swiper_slide = $(player_swiper_slide);
-          makeMedium(player_swiper_slide, currentLargeVideoPlayer);
-        }, { once: true });
-      }
+      // if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
+      //   backgroundClick = document.addEventListener('click', function() {
+      //     console.log("clicked the background");
+      //     let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
+      //     player_swiper_slide = $(player_swiper_slide);
+      //     makeMedium(player_swiper_slide, currentLargeVideoPlayer);
+      //   }, { once: true });
+      // }
 
     });
 
     player_videocard.addEventListener('click', function() {
-      if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
-        let thisItem = $(player_swiper_slide);
-        // if the clicked video is currently small, make medium
-        if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
-          makeMedium(thisItem, player);
-        } 
-        // if the clicked video is currently medium, make large
-        else if(thisItem.hasClass("mediumVideo")) {
-          makeLarge(thisItem, player);
-        } 
-        // if the clicked video is currently large, make medium
-        else if (thisItem.hasClass("largeVideo")){
-          makeMedium(thisItem, player);
-        } 
-        else if (currentLargeVideoPlayer) {
-          if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-            // console.log("different")
-          } else {
-            // console.log("same")
-          }
-          let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
-          makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
+
+      // CASE_1: there is a medium video && user clicked on it
+      if (currentMediumVideoPlayer) {
+        console.log("there is a medium video");
+        if (player == currentMediumVideoPlayer) {
+          makeLarge(player);
         }
       }
+
+      // CASE_2: there is a large video && user clicked on it
+      else if (currentLargeVideoPlayer) {
+        console.log("there is a large video");
+        if (player == currentLargeVideoPlayer) {
+          makeMedium(player);
+        }
+      }
+
+      // if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
+      //   // if the clicked video is currently small, make medium
+      //   if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
+      //     makeMedium(thisItem, player);
+      //   } 
+      //   // if the clicked video is currently medium, make large
+      //   else if(thisItem.hasClass("mediumVideo")) {
+      //     makeLarge(thisItem, player);
+      //   } 
+      //   // if the clicked video is currently large, make medium
+      //   else if (thisItem.hasClass("largeVideo")){
+      //     makeMedium(thisItem, player);
+      //   } 
+      //   else if (currentLargeVideoPlayer) {
+      //     if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
+      //       // console.log("different")
+      //     } else {
+      //       // console.log("same")
+      //     }
+      //     let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
+      //     makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
+      //   }
+      // }
     });
   });
 }
@@ -449,151 +444,6 @@ function index() {
 
   function task(i) {
     setTimeout(function() {
-      // console.log("rowcount: " + rowcount)
-      // console.log("cellcount: " + cellcount)
-      let name = video_media_array[i]["Subject Name"];
-      if (name != currName) {
-        cellcount = 0;
-        currRow = table.insertRow(rowcount);
-        currName = name;
-        cell = currRow.insertCell(0);
-        // typewriter
-        typecell = new Typewriter(cell, {
-          loop: false,
-          cursor: '',
-          delay: 50,
-        });
-
-        typecell
-          .typeString(name)
-          .start();
-
-        // cell.innerHTML = name;
-        rowcount = rowcount + 1;
-        cellcount = cellcount + 1;
-
-        // add the time
-        cell = currRow.insertCell(cellcount);
-        duration = video_media_array[i]["Video Duration"];
-        a = document.createElement('a');
-        indexCells.push(a);
-        cellIndex = indexCells.length-1;
-        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
-        // a.innerHTML = duration;
-
-        typecell = new Typewriter(a, {
-          loop: false,
-          cursor: '',
-          delay: 50,
-        });
-
-        typecell
-          .typeString(duration)
-          .start();
-
-        cell.appendChild(a);
-        // cell.innerHTML = duration;
-        cellcount = cellcount + 1;
-      }
-      else {
-        cell = currRow.insertCell(cellcount);
-        duration = video_media_array[i]["Video Duration"];
-        a = document.createElement('a');
-        indexCells.push(a);
-        cellIndex = indexCells.length-1;
-        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
-        // a.innerHTML = duration;
-
-        typecell = new Typewriter(a, {
-          loop: false,
-          cursor: '',
-          delay: 50,
-        });
-
-        typecell
-          .typeString(duration)
-          .start();
-
-        cell.appendChild(a);
-        cellcount = cellcount + 1;
-      }
-      // debugging slider TODO
-      // all loaded slides will be in blue
-      // all slides in viewport will be in red
-      if (i == video_media_array.length - 1) {
-        if (indexCells.length > 0) {
-          for (var j = 0; j < indexCells.length; j++) {
-            indexCells[j].style.color = "white";
-          }
-
-          video_media_array.forEach(function(item, index) {
-            if (item.player) {
-              // console.log(item.player)
-              let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
-              if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
-                // console.log("VISIBLE");
-                // console.log(item.player);
-                // console.log(video_media_array[index]);
-                // console.log(player_swiper_slide);
-                // console.log("index: " + (index));
-                if (debug_swiper) {
-                  indexCells[index].style.color = "green";
-                }
-                if (player_swiper_slide.classList.contains("swiper-slide-active")) {
-                  // console.log("ACTIVE");
-                  if (debug_swiper) {
-                    indexCells[index].style.color = "red";
-                  }
-                }
-              } else {
-                // console.log("NOT VISIBLE");
-                // console.log("INDEX: " + index);
-                if (debug_swiper) {
-                  indexCells[index].style.color = "blue";
-                }
-                // console.log(item.player);
-                // console.log(video_media_array[index]);
-                // console.log(player_swiper_slide);
-              }
-            }
-          })
-        }
-      }
-    }, 100 * i);
-  }
-
-  for (var i = 0; i <= video_media_array.length - 1; i++) {
-    task(i);
-  }
-}
-
-function loadindex() {
-  // console.log("loading index")
-  // html content string
-  indexContent = 
-    `
-    <div id="indexContent" class="indexcontent">
-        <table id="indexTable" style="width: 100%;">
-          <tr style="visibility: hidden">
-            <th>Rally in support of Juvenile Lifers</th>
-            <th>0:00</th>
-            <th>0:00</th>
-            <th>0:00</th>
-            <th>0:00</th>
-          </tr>
-        </table>
-    </div>
-  `;
-  document.getElementById("content_text").innerHTML = indexContent;
-  indexCells = [];
-  currName = "";
-  currRow = null;
-  rowcount = 0;
-  cellcount = 0;
-  table = document.getElementById("indexTable");
-
-  function task(i) {
-    setTimeout(function() {
       let name = video_media_array[i]["Subject Name"];
       if (name != currName) {
         cellcount = 0;
@@ -696,8 +546,6 @@ function loadindex() {
   for (var i = 0; i <= video_media_array.length - 1; i++) {
     task(i);
   }
-
-  // $('#content_text').hide();
 }
 
 function aboutTheCase() {
@@ -970,11 +818,14 @@ function resources() {
 //////////////////////////////////////////////////////////////
 
 // VIDEO_SIZE_FUNCTIONS:
-function makeSmall(element, plyr) {
+function makeSmall(plyr) {
+  let swiper_slide = $(plyr.swiper_slide);
 
-  if (element.hasClass("mediumVideo")){
-    element.removeClass('mediumVideo');
-    element.css({ 'min-width' : '1vw' });
+  // making small from medium
+  // CASE_1: there is a medium player and user hovered out of it
+  if (swiper_slide.hasClass("mediumVideo") && currentMediumVideoPlayer == plyr) {
+    swiper_slide.removeClass('mediumVideo');
+    swiper_slide.css({ 'min-width' : '1vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
@@ -985,21 +836,23 @@ function makeSmall(element, plyr) {
       // let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
       // if (progressbar == null) {
         // console.log("NULL")
-      progressbar = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[2];
-      durationdiv = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
+      // progressbar = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[2];
+      // durationdiv = plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
         // console.log(plyr.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1]);
       // }
 
-      console.log(progressbar);
-      progressbar.style.display = "none";
-      durationdiv.style.display = "flex";
-    }, 1400);
+      // console.log(progressbar);
+      plyr.progressbardiv.style.display = "none";
+      plyr.durationdiv.style.display = "flex";
+    }, 1000);
     // hide the description
-    let description = $(element[0].children[1]);
+    let description = $(plyr.card_description);
     description.fadeOut(400);
     // update global variables
     currentMediumVideoPlayer = null;
+    currentLargeVideoPlayer = null;
   } 
+
 }
 
 function makeSmallLarge(element, plyr, element2, plyr2) {
@@ -1044,74 +897,90 @@ function makeSmallLarge2(element, plyr) {
   } 
 }
 
-function makeMedium(element, plyr) {
+function makeMedium(plyr) {
   function med() {
-    if (!resizing) {
-      if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
-        element.removeClass('largeVideo');
-        element.addClass('mediumVideo');
-        currentLargeVideoPlayer = null;
-        currentMediumVideoPlayer = plyr;
-        element.css({ 'min-width' : '35vw' });
-        // fade out the audio
-        fadeAudio(plyr, 0.6);
-      } 
-      // if video is not medium or large
-      if (!element.hasClass("mediumVideo") && !element.hasClass("largeVideo") && currentMediumVideoPlayer == null){
-        element.addClass('mediumVideo');
-        let description = $(element[0].children[1]);
-        // fade in the description
-        setTimeout(function() {
-          if (plyr == currentMediumVideoPlayer) { 
-            description.fadeIn(600);
-          }
-        }, 400);
-        // set the size
-        element.css({ 'min-width' : '35vw' });
-        // update global variable
-        currentMediumVideoPlayer = plyr;
-      }
+    let swiper_slide = $(plyr.swiper_slide);
+    // if (element.hasClass("largeVideo") && !element.hasClass("mediumVideo")){
+    //   element.removeClass('largeVideo');
+    //   element.addClass('mediumVideo');
+    //   currentLargeVideoPlayer = null;
+    //   currentMediumVideoPlayer = plyr;
+    //   element.css({ 'min-width' : '35vw' });
+    //   // fade out the audio
+    //   // TODO: change back to 0.4
+    //   fadeAudio(plyr, 0.0);
+    // } 
+
+    // making medium from small size
+    // CASE_1: there is no medium or large player, make medium from small
+    if (!swiper_slide.hasClass("mediumVideo") && !swiper_slide.hasClass("largeVideo") && currentMediumVideoPlayer == null && currentLargeVideoPlayer == null){
+      // making current small player to medium..
+      swiper_slide.addClass('mediumVideo');
+      swiper_slide.css({ 'min-width' : '35vw' });
+      // fade in the description
+      setTimeout(function() {
+        $(plyr.card_description).fadeIn(600);
+      }, 400);
+      // update global variable
+      currentMediumVideoPlayer = plyr;
+      currentLargeVideoPlayer = null;
+    }
+
+    // CASE_2: there is a large player and user clicked on it
+    if (swiper_slide.hasClass("largeVideo") && currentLargeVideoPlayer == plyr){
+      // making current small player to medium..
+      swiper_slide.removeClass('largeVideo');
+      swiper_slide.addClass('mediumVideo');
+      swiper_slide.css({ 'min-width' : '35vw' });
+      // update global variables
+      currentMediumVideoPlayer = plyr;
+      currentLargeVideoPlayer = null;
     }
   }
-  // fade out menu item content to 30%;
-  $('#content_text').fadeTo(1000, 0.0);
-  $('#content_text').promise().done(function(){
+  // whenever we make a video medium, menu item content will disappear
+  if (menu_item_text_visible) {
+    $('#content_text').fadeTo(1000, 0.0);
+    $('#content_text').promise().done(function(){
+      med();
+    });
+  } else {
     med();
-  });
+  }
+  currentLargeVideoPlayer = null;
 }
 
-function makeLarge(element, plyr) {
-  // fade out menu item content completely
-  $('#content_text').fadeTo(1000, 0.0);
-  $('#content_text').promise().done(function(){
-    if (element.hasClass("mediumVideo")){
-      element.removeClass('mediumVideo');
-      element.addClass('largeVideo');
-      // play video
-      plyr.play();
-      // fade in audio
-      fadeAudio(plyr, 1);
-
-      currentMediumVideoPlayer = null;
-      currentLargeVideoPlayer = plyr;
-      // move largeVideo to center and make it active
-      swiper.slideTo(swiper.clickedIndex);
-      element.css({ 'min-width' : '70vw' });
-      // show progress bar
-      let progressbar = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-      // console.log("make large prog:");
-      // console.log(progressbar);
-      let durationdiv = plyr.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[1];
-      progressbar.style.display = "block";
-      durationdiv.style.display = "none";
-
-      updateInterval = setInterval(function() {
-        currenttime = plyr.currentTime;
-        percentage = (currenttime / plyr.duration);
-        plyr.progressbar.set(percentage);
-      }, 100);
-    } 
-  });
+function makeLarge(plyr) {
+  console.log("trying to make large..")
+  let swiper_slide = $(plyr.swiper_slide);
+  if (swiper_slide.hasClass("mediumVideo")){
+    swiper_slide.removeClass('mediumVideo');
+    swiper_slide.addClass('largeVideo');
+    currentMediumVideoPlayer = null;
+    currentLargeVideoPlayer = plyr;
+    swiper_slide.css({ 'min-width' : '70vw' });
+    // play video
+    plyr.play();
+    // fade in audio
+    // TODO: change back to 1
+    fadeAudio(plyr, 0);
+    // move largeVideo to center and make it active
+    console.log("moving to.. " + swiper.clickedIndex);
+    if (swiper.activeIndex != swiper.clickedIndex) {
+      moveToSlide(swiper.clickedIndex);
+    }
+    // show progress bar
+    plyr.progressbardiv.style.display = "block";
+    // hide duration div
+    plyr.durationdiv.style.display = "none";
+    // update progress baras video is playing
+    updateInterval = setInterval(function() {
+      currenttime = plyr.currentTime;
+      percentage = (currenttime / plyr.duration);
+      plyr.progressbar.set(percentage);
+    }, 100);
+  } 
+  console.log("currentStartIndex: " + currentStartIndex);
+  console.log("currentEndhndex: " + currentEndIndex);
 }
 
 function fadeAudio (plyr, targetVolume) {
@@ -1142,13 +1011,10 @@ function makeSlide(i) {
   let videoDuration = video_media_array[i]["Video Duration"];
   let videoDescription = video_media_array[i]["Video Description"];
   htmlstring = 
-      `<div role='listitem' class='swiper-slide'>
+    `<div role='listitem' class='swiper-slide'>
         <div class='card_video'>
           <div class='w-embed'>
-            <div
-              class='js-player'
-              data-plyr-provider='vimeo'
-              data-plyr-embed-id='${vimeoID}'></div>
+            <div class='js-player' data-plyr-provider='vimeo' data-plyr-embed-id='${vimeoID}'></div>
           </div>
         </div>
         <div class='card_description'>
@@ -1192,6 +1058,8 @@ function initSwiper() {
       resize: function () {
         resizing = true;
         clearTimeout(resizeTimer);
+        clearTimeout(menuEnterTimer);
+        clearTimeout(menuLeaveTimer);
         resizeTimer = setTimeout(() => {
           resizing = false;
         }, 100);
@@ -1231,235 +1099,26 @@ async function fetchCSV () {
     let videoTitle = video_media_array[i]["Subject Name"];
     let videoDuration = video_media_array[i]["Video Duration"];
     let videoDescription = video_media_array[i]["Video Description"];
-    htmlstring = 
-      `<div role='listitem' class='swiper-slide'>
-        <div class='card_video'>
-          <div class='w-embed'>
-            <div class='js-player' data-plyr-provider='vimeo' data-plyr-embed-id='${vimeoID}'>
-            </div>
-          </div>
-        </div>
-        <div class='card_description'>
-          <div class='video-top-div'>
-            <div class='video-title'>${videoTitle}</div>
-            <div class='video-duration'>${videoDuration}</div>
-          </div>
-          <div class='video-description'>
-          ${videoDescription}
-          </div>
-        </div>
-      </div>`
+    htmlstring = makeSlide(i);
     $('.swiper-wrapper').append(htmlstring);
   }
   // you can init swiper now that the swiper-slide class is in the html
   await initSwiper();
-
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
-
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
-    players[i].elements.container.style.visibility = "hidden";
-
-    // add player to video_media_array
+    player = players[i];
+    player.elements.container.style.visibility = "hidden";
+    // add player entry to video_media_array
     if (i < currentEndIndex+1) {
-      video_media_array[i].player = players[i];
+      video_media_array[i].player = player;
+      video_media_array[i].totalIndex = i;
     }
+    // once player is ready, add its event listeners, etc.
+    playerOnReady(player);
   }
 
-  for (var i = 0; i < players.length; i++) {
-    // after a video player is ready
-    players[i].on('ready', (event) => {
-      let player = event.detail.plyr 
-      let player_swiper_slide = player.elements.container.offsetParent.offsetParent;
-      let player_videocard = player.elements.container.offsetParent.offsetParent.children[0];
-      let player_videoTopDiv = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0];
-
-
-      // debug mode
-      if (debug_swiper) {
-        var styles = `
-        .swiper-slide-active {
-          background: red;
-        }
-        `
-        var styleSheet = document.createElement("style")
-        styleSheet.innerText = styles
-        document.head.appendChild(styleSheet)
-      }
-
-      // add a transition effect
-      player_swiper_slide.style.transition = "all 1400ms ease";
-
-      //////////////////////////////////////////////////////////////
-      // start the volume at 0.6
-      player.volume = 0.6;
-
-      //////////////////////////////////////////////////////////////
-      // add the custom progress bar
-      progressbardiv = document.createElement('div');
-      progressbardiv.style.display = "none";
-      progressbardiv.setAttribute("class","progress");
-      player_videoTopDiv.onclick = function clickEvent(e) {
-        let progressbar = player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[2];
-        var parentwidth = progressbar.offsetWidth;
-        if (e.target != player.elements.container.offsetParent.offsetParent.lastElementChild.children[0].children[0]) {
-          // clearInterval(updateInterval);
-          var rect = e.target.getBoundingClientRect();
-          var x = e.clientX - rect.right; //x position within the element.
-          player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
-          player.progressbar.set((1-(Math.abs(x) / parentwidth)));
-          // updateInterval = setInterval(function() {
-          //   currenttime = player.currentTime;
-          //   percentage = (currenttime / player.duration);
-          //   player.progressbar.set(percentage);
-          // }, 100);
-        } else {
-          // console.log("no match");
-        }
-      }
-      player_videoTopDiv.append(progressbardiv);
-
-      var progressbar = new ProgressBar.Line(progressbardiv, {
-        color: '#FFFFFF',
-        trailColor: '#808080',
-        strokeWidth: 0.1
-      });
-
-      progressbar.set(0.0);
-      player.progressbar = progressbar;
-
-      /// add end event listener
-      player.on('ended', function(data) {
-        // data is an object containing properties specific to that event
-        let thisItem = $(this);
-        let swiper_slide = $(thisItem[0].offsetParent.offsetParent);
-        makeSmallLarge2(swiper_slide, thisItem);
-        progressbar.set(0.0);
-        player.currentTime = 0;
-      });
-
-      //////////////////////////////////////////////////////////////
-      //* [MOUSE EVENTS FOR SLIDER] *//
-      // add mouse events 
-      let showDelay = 1000, hideDelay = 1000;
-      player_swiper_slide.addEventListener('mouseenter', function() {
-        let thisItem = $(this);
-
-        // clearTimeout(resizeTimer);
-        if (!resizing) {
-          if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
-            clearTimeout(menuLeaveTimer);
-            // prevPlayer = $(currentMediumVideoPlayer.elements.container.offsetParent.offsetParent);
-            // console.log("medium player: ");
-            // console.log(currentMediumVideoPlayer[0]);
-            prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
-            console.log(prevPlayer)
-            // if any other medium is active
-            makeSmall(prevPlayer, currentMediumVideoPlayer);
-            // make the currently hovered video medium
-            makeMedium(thisItem, player);
-          } 
-          else if (currentLargeVideoPlayer) {
-            // console.log("return");
-          }
-          else {
-            // add active class after a delay
-            menuEnterTimer = setTimeout(function() {
-              makeMedium(thisItem, player);
-            }, showDelay);
-          }
-        }
-        // })
-      });
-
-      // triggered when user's mouse leaves the menu item
-      player_swiper_slide.addEventListener('mouseleave', function() {
-        let thisItem = $(this);
-
-        // clear the opposite timer
-        clearTimeout(menuEnterTimer);
-        // remove active class after a delay
-        menuLeaveTimer = setTimeout(function() {
-          makeSmall(thisItem, player);
-        }, hideDelay);
-
-        // TODO: add event listener for background click
-        if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
-          backgroundClick = document.addEventListener('click', function() {
-            console.log("background click");
-            let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
-            player_swiper_slide = $(player_swiper_slide);
-            makeMedium(player_swiper_slide, currentLargeVideoPlayer);
-          }, { once: true });
-        }
-
-      });
-
-      player_videocard.addEventListener('click', function() {
-        let thisItem = $(player_swiper_slide);
-        // console.log(thisItem);
-
-        // index of clicked slide before updating
-        clicked_index = 0;
-        for (var i = 0; i < swiper.slides.length; i++) {
-          if (swiper.slides[i] == thisItem[0]) {
-            clicked_index = i;
-          }
-        }
-
-        swiper.update();
-        // console.log("clickedIndex: " + clicked_index);
-        if (clicked_index < initialSlide) {
-          diff = initialSlide - clicked_index;
-          // console.log("diff prev: " + diff);
-          for (var i = 0; i < diff-1; i++) {
-            prev();
-          }
-          swiper.slideTo(initialSlide-1);
-        }
-        else if (clicked_index > initialSlide) {
-          diff = clicked_index - initialSlide;
-          // console.log("diff next: " + diff);
-          for (var i = 0; i < diff-1; i++) {
-            next();
-          }
-          swiper.slideTo(initialSlide+1);
-        } else {
-          // swiper.slideTo(clicked_index+(diff-1));
-        }
-
-
-        // if the clicked video is currently small, make medium
-        if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
-          makeMedium(thisItem, player);
-        } 
-        // if the clicked video is currently medium, make large
-        else if(thisItem.hasClass("mediumVideo")) {
-          makeLarge(thisItem, player);
-        } 
-        // if the clicked video is currently large, make medium
-        else if (thisItem.hasClass("largeVideo")){
-          makeMedium(thisItem, player);
-        } 
-        else if (currentLargeVideoPlayer) {
-          if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-            // console.log("different")
-          } else {
-            // console.log("same")
-          }
-          let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
-          makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
-        }
-      });
-
-      random_Time = Math.random() * 1000;
-      // show video players at a random time
-      setTimeout(() => {
-        player.elements.container.style.visibility = "visible";
-      }, random_Time);
-    });
-  }
 }
 
 
