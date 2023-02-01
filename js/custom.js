@@ -1221,12 +1221,10 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  console.log(target);
   if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
     makeSmall(currentMediumVideoPlayer);
   }
   if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
-    console.log("true..")
     makeMedium(currentLargeVideoPlayer);
   }
 });
