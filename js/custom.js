@@ -310,14 +310,14 @@ function playerOnReady(player) {
         //   moveToSlide(player.media_index, true);
         // } 
         // else {
-          // CASE_1: there is already a medium
-          if (currentMediumVideoPlayer) {
-            makeSmall(currentMediumVideoPlayer);
-          }
-          // CASE_2: making medium from small
-          if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
-            makeMedium(player);
-          }
+        // CASE_1: there is already a medium
+        if (currentMediumVideoPlayer) {
+          makeSmall(currentMediumVideoPlayer);
+        }
+        // CASE_2: making medium from small
+        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+          makeMedium(player);
+        }
         // }
       }, showDelay);
 
@@ -361,7 +361,7 @@ function playerOnReady(player) {
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
-          clearTimeout(menuEnterTimer);
+          console.log("make large..");
           makeLarge(player);
         }
       }
@@ -369,12 +369,17 @@ function playerOnReady(player) {
       // CASE_2: there is a large video && user clicked on it
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
-          clearTimeout(menuEnterTimer);
           makeMedium(player);
         }
       }
 
       // CASE_3: user clicked on a small player
+      // else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+      //   clearTimer(menuEnterTimer);
+      //   clearTimer(menuLeaveTimer);
+      //   makeMedium(player);
+      // }
+
 
       // if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
       //   // if the clicked video is currently small, make medium
@@ -902,6 +907,7 @@ function makeLarge(plyr) {
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.addClass('largeVideo');
+    console.log("added large class")
     currentMediumVideoPlayer = null;
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
@@ -1221,11 +1227,11 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
-    makeSmall(currentMediumVideoPlayer);
-  }
-  if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
-    makeMedium(currentLargeVideoPlayer);
-  }
+  // if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
+  //   makeSmall(currentMediumVideoPlayer);
+  // }
+  // if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
+  //   makeMedium(currentLargeVideoPlayer);
+  // }
 });
 
