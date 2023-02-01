@@ -17,7 +17,7 @@ let backgroundClick;
 let resizing = false;
 let menu_item_text_visible = false;
 // debugging
-let debug_swiper = true;
+let debug_swiper = false;
 let indexCells = [];
 
 // video player settings
@@ -290,7 +290,7 @@ function playerOnReady(player) {
 
     /// add an end event listener
     player.on('ended', function(data) {
-      makeSmallLarge2(player.swiper_slide, player);
+      closeAndSwipe(player);
       progressbar.set(0.0);
       player.currentTime = 0;
     });
@@ -819,43 +819,21 @@ function makeSmall(plyr) {
 
 }
 
-function makeSmallLarge(element, plyr, element2, plyr2) {
-  if (element.hasClass("largeVideo")){
-    element.removeClass('largeVideo');
-    element.css({ 'min-width' : '1vw' });
+function closeAndSwipe(plyr) {
+  swiper_slide = $(plyr.swiper_slide);
+  if (swiper_slide.hasClass("largeVideo")){
+    swiper_slide.removeClass('largeVideo');
+    swiper_slide.css({ 'min-width' : '1vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
     setTimeout(function() {
       plyr.pause();
       clearInterval(updateInterval);
-      makeMedium(element2, plyr2);
-    }, 1400);
+      moveToSlide(plyr.media_index+6);
+    }, 1000);
     // hide the description
-    let description = $(element[0].children[1]);
-    description.fadeOut(300);
-    // update global variables
-    currentLargeVideoPlayer = null;
-  } 
-}
-
-function makeSmallLarge2(element, plyr) {
-  if (element.hasClass("largeVideo")){
-    element.removeClass('largeVideo');
-    element.css({ 'min-width' : '1vw' });
-    // lower volume to 0
-    fadeAudio(plyr, 0);
-    // pause the video after ms it takes to return to small
-    setTimeout(function() {
-      // plyr.pause();
-      clearInterval(updateInterval);
-      for (let i = 0; i < 5; i++) {
-        swiper.slideNext();
-      }
-    }, 1400);
-    // hide the description
-    let description = $(element[0].children[1]);
-    description.fadeOut(300);
+    $(plyr.card_description).fadeOut(300);
     // update global variables
     currentLargeVideoPlayer = null;
   } 
