@@ -944,14 +944,6 @@ function makeMedium(plyr) {
       currentLargeVideoPlayer = null;
     }
   }
-  // whenever we make a video medium, menu item content will disappear
-  // if (index_page_clicked) {
-  //   $('#content_text').fadeTo(1000, 0.3);
-  //   $('#content_text').promise().done(function(){
-  //     med();
-  //     menu_item_text_visible = false;
-  //   });
-  // }
 
   $('#swiper').fadeTo(1000, 1.0);
   if (menu_item_text_visible) {
@@ -960,6 +952,9 @@ function makeMedium(plyr) {
       $('#content_text').fadeTo(1000, 0.3);
     } else {
       $('#content_text').fadeTo(1000, 0.0);
+      $('#content_text').promise().done(function(){
+        document.getElementById("content_text").innerHTML = "";
+      });
     }
     $('#content_text').promise().done(function(){
       med();
@@ -973,6 +968,9 @@ function makeMedium(plyr) {
 function makeLarge(plyr) {
   if (index_page_clicked) {
     $('#content_text').fadeTo(1000, 0.0);
+    $('#content_text').promise().done(function(){
+      document.getElementById("content_text").innerHTML = "";
+    });
   } 
 
   let swiper_slide = $(plyr.swiper_slide);
