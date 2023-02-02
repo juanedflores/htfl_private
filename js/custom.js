@@ -9,6 +9,10 @@ let currentStartIndex = 0;
 let currentEndIndex = 12;
 let initialSlide = 6;
 
+// slides that are unclickable from edge
+let unclickable_slides_amount = 2;
+let unclickable_slides = [];
+
 let swiper;
 
 let menuEnterTimer, menuLeaveTimer, resizeTimer;
@@ -123,6 +127,17 @@ function next() {
     video_media_array[currentStartIndex-1].player = null;
   }
 
+  // make the slides on the edges uninteractable
+  swiper.slides.forEach(function(item, index) {
+    if (unclickable_slides.includes(index)) {
+      item.style.opacity = '0.5';
+      item.style.pointerEvents = 'none';
+    } else {
+      item.style.opacity = '1';
+      item.style.pointerEvents = 'auto';
+    }
+  });
+
   // DEBUGGING: for index page
   if (indexCells.length > 0) {
     // make all cells white first
@@ -199,6 +214,17 @@ function prev() {
     video_media_array[currentEndIndex+1].player = null;
   }
 
+  // make the slides on the edges uninteractable
+  swiper.slides.forEach(function(item, index) {
+    if (unclickable_slides.includes(index)) {
+      item.style.opacity = '0.5';
+      item.style.pointerEvents = 'none';
+    } else {
+      item.style.opacity = '1';
+      item.style.pointerEvents = 'auto';
+    }
+  });
+
   // DEBUGGING: for index page
   if (indexCells.length > 0) {
     // make all cells white first
@@ -254,6 +280,11 @@ function playerOnReady(player) {
     player_swiper_slide.style.transition = "all 1400ms ease";
     // init the volume
     player.volume = 0.0;
+    // make unclickable ones
+    if (player.unclickable) {
+      console.log("true")
+      player_swiper_slide.style.pointerEvents = "none";
+    }
     // add the custom progress bar
     let progressbardiv = document.createElement('div');
     progressbardiv.style.display = "none";
@@ -1049,16 +1080,25 @@ async function fetchCSV () {
   }
   // you can init swiper now that the swiper-slide class is in the html
   await initSwiper();
+  // determine the unclickable_slides indices
+  for (var i = 0; i < unclickable_slides_amount; i++) {
+    unclickable_slides.push(swiper.visibleSlidesIndexes[0 + i]);
+    unclickable_slides.push(swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i]);
+  }
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
     player = players[i];
     player.elements.container.style.visibility = "hidden";
+
     // add player entry to video_media_array
     if (i < currentEndIndex+1) {
       video_media_array[i].player = player;
       video_media_array[i].player.media_index = i;
+      if (unclickable_slides.includes(i)) {
+        video_media_array[i].player.unclickable = true;
+      }
       if (i == initialSlide) {
         currentActivePlayer = player;
       }
@@ -1066,7 +1106,6 @@ async function fetchCSV () {
     // once player is ready, add its event listeners, etc.
     playerOnReady(player);
   }
-
 }
 
 //////////////////////////////////////////////////////////////
@@ -1106,6 +1145,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }, {once: true});
     }, { once: true });
   }, 2000);
+
+  // $(".borderprev").mouseover(function() {
+  //   moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-3, true);
+  // });
+  // $(".bordernext").mouseover(function() {
+  //   moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+3, true);
+  // });
 });
 
 //////////////////////////////////////////////////////////////
@@ -1227,11 +1273,11 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  // if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
-  //   makeSmall(currentMediumVideoPlayer);
-  // }
-  // if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
-  //   makeMedium(currentLargeVideoPlayer);
-  // }
+  if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
+    makeSmall(currentMediumVideoPlayer);
+  }
+  if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
+    makeMedium(currentLargeVideoPlayer);
+  }
 });
 
