@@ -294,8 +294,6 @@ function playerOnReady(player) {
     player_swiper_slide.style.transition = "all 1400ms ease";
     // init the volume
     player.volume = 0.0;
-    // disable control mouse events
-    // TODO
     // make unclickable ones
     if (player.unclickable) {
       console.log("true")
@@ -411,20 +409,23 @@ function playerOnReady(player) {
 
     });
 
-    player_videocard.addEventListener('click', function() {
+    player_videocard.addEventListener('click', function(event) {
+      console.log(event);
 
-      // CASE_1: there is a medium video && user clicked on it
-      if (currentMediumVideoPlayer) {
-        if (player == currentMediumVideoPlayer) {
-          console.log("make large..");
-          makeLarge(player);
+      if (event.target) {
+        // CASE_1: there is a medium video && user clicked on it
+        if (currentMediumVideoPlayer) {
+          if (player == currentMediumVideoPlayer) {
+            console.log("make large..");
+            makeLarge(player);
+          }
         }
-      }
 
-      // CASE_2: there is a large video && user clicked on it
-      else if (currentLargeVideoPlayer) {
-        if (player == currentLargeVideoPlayer) {
-          makeMedium(player);
+        // CASE_2: there is a large video && user clicked on it
+        else if (currentLargeVideoPlayer) {
+          if (player == currentLargeVideoPlayer) {
+            makeMedium(player);
+          }
         }
       }
 
@@ -1005,7 +1006,7 @@ function makeLarge(plyr) {
       currenttime = plyr.currentTime;
       percentage = (currenttime / plyr.duration);
       plyr.progressbar.set(percentage);
-    }, 100);
+    }, 20);
   } 
 }
 
