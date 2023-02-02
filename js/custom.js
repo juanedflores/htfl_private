@@ -20,6 +20,7 @@ let updateInterval;
 let backgroundClick;
 let resizing = false;
 let menu_item_text_visible = false;
+let index_page_clicked = false;
 // debugging
 let debug_swiper = false;
 let indexCells = [];
@@ -38,6 +39,12 @@ const vimeoOptions = {
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
 function moveToSlide(target_index, dont_make_target_medium) {
+  if (index_page_clicked) {
+    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+    $('#swiper').fadeTo(1000, 1.0);
+    $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+  }
+
   // if there is any medium video, make it small
   if (currentMediumVideoPlayer) {
     makeSmall(currentMediumVideoPlayer);
@@ -443,6 +450,7 @@ function playerOnReady(player) {
 // MENU_ITEM_PAGES:
 function index() {
   console.log("index");
+  index_page_clicked = true;
   // html content string
   indexContent = 
   `
@@ -1241,8 +1249,17 @@ for (var i = 0; i < menu_text.length; i++) {
     menuItem = thisItem[0].innerText;
     if (menuItem == "Index") {
       index();
-    } 
+      index_page_clicked = true;
+      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+      $('#swiper').fadeTo(1000, 0.4);
+      $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+    } else {
+      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+      $('#swiper').fadeTo(1000, 1.0);
+      $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+    }
     if (menuItem == "About the case") {
+      index_page_clicked = false;
       aboutTheCase();
     }
     if (menuItem == "About the installation") {
