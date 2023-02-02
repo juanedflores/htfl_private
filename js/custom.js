@@ -42,7 +42,12 @@ function moveToSlide(target_index, dont_make_target_medium) {
   if (index_page_clicked) {
     $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
     $('#swiper').fadeTo(1000, 1.0);
-    $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+    $('#content_text').fadeTo(1000, 0.4);
+
+    $('#swiper').promise().done(function(){
+      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+      $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+    });
   }
 
   // if there is any medium video, make it small
@@ -450,7 +455,6 @@ function playerOnReady(player) {
 // MENU_ITEM_PAGES:
 function index() {
   console.log("index");
-  index_page_clicked = true;
   // html content string
   indexContent = 
   `
@@ -929,11 +933,24 @@ function makeMedium(plyr) {
     }
   }
   // whenever we make a video medium, menu item content will disappear
+  // if (index_page_clicked) {
+  //   $('#content_text').fadeTo(1000, 0.3);
+  //   $('#content_text').promise().done(function(){
+  //     med();
+  //     menu_item_text_visible = false;
+  //   });
+  // }
+
+  $('#swiper').fadeTo(1000, 1.0);
   if (menu_item_text_visible) {
-    $('#content_text').fadeTo(1000, 0.0);
+    menu_item_text_visible = false;
+    if (index_page_clicked) {
+      $('#content_text').fadeTo(1000, 0.3);
+    } else {
+      $('#content_text').fadeTo(1000, 0.0);
+    }
     $('#content_text').promise().done(function(){
       med();
-      menu_item_text_visible = false;
     });
   } else {
     med();
@@ -942,6 +959,10 @@ function makeMedium(plyr) {
 }
 
 function makeLarge(plyr) {
+  if (index_page_clicked) {
+    $('#content_text').fadeTo(1000, 0.0);
+  } 
+
   let swiper_slide = $(plyr.swiper_slide);
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
@@ -1238,6 +1259,8 @@ menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {
+    // reset menu content text
+    document.getElementById("content_text").innerHTML = "";
     // temporary fix to make menu close after clicking on a menu item
     menu_button[0].click();
     // get the menu item that was clicked
@@ -1248,18 +1271,22 @@ for (var i = 0; i < menu_text.length; i++) {
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
     if (menuItem == "Index") {
-      index();
       index_page_clicked = true;
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       $('#swiper').fadeTo(1000, 0.4);
-      $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
-    } else {
+      $('#swiper').promise().done(function(){
+        $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+        $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+        index();
+      });
+    } 
+    else {
+      index_page_clicked = false;
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       $('#swiper').fadeTo(1000, 1.0);
       $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
     }
     if (menuItem == "About the case") {
-      index_page_clicked = false;
       aboutTheCase();
     }
     if (menuItem == "About the installation") {
@@ -1298,3 +1325,8 @@ $(document).click(function(event) {
   }
 });
 
+$(".section").hover(function(event) {
+  if (index_page_clicked && !currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+    $('#content_text').fadeTo(500, 1.0);
+  }
+});
