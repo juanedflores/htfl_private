@@ -322,6 +322,13 @@ function playerOnReady(player) {
     // set the progressbar to 0
     progressbar.set(0.0);
 
+    // disable double click to fullscreen feature
+    player.eventListeners.forEach(function(eventListener) {
+      if(eventListener.type === 'dblclick') {
+        eventListener.element.removeEventListener(eventListener.type, eventListener.callback, eventListener.options);
+      }
+    });
+
     // add a entries to the player object
     player.swiper_slide = player_swiper_slide;
     player.card_description = player_card_description;
@@ -1059,6 +1066,7 @@ function initSwiper() {
     watchSlidesProgress: true,
     allowTouchMove: false,
     preloadImages: true,
+    fullscreen: {enabled: false},
     on: {
       resize: function () {
         resizing = true;
@@ -1317,10 +1325,11 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  if (!target.hasClass("plyr__poster") && currentMediumVideoPlayer){
+  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && currentMediumVideoPlayer){
+    console.log(target.attr("class"));
     makeSmall(currentMediumVideoPlayer);
   }
-  if (!target.hasClass("plyr__poster") && currentLargeVideoPlayer){
+  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && currentLargeVideoPlayer){
     makeMedium(currentLargeVideoPlayer);
   }
 });
