@@ -74,6 +74,10 @@ th {
     margin-top: 6vh !important;
 }
 
+.plyr__controls {
+    display: flex;
+}
+
 .swiper-section {
     /* bottom: 10%; */
     /*     position: fixed; */

@@ -282,6 +282,8 @@ function playerOnReady(player) {
     let player_videocard = player.elements.wrapper.parentNode.parentNode.parentNode;
     let player_videoTopDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0];
     let player_durationDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
+    let player_controls = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.firstElementChild.firstElementChild;
+
     // make videos appear randomly on intro
     // TODO: do this only on page enter
     let random_Time = Math.random() * 1000;
@@ -292,6 +294,8 @@ function playerOnReady(player) {
     player_swiper_slide.style.transition = "all 1400ms ease";
     // init the volume
     player.volume = 0.0;
+    // disable control mouse events
+    // TODO
     // make unclickable ones
     if (player.unclickable) {
       console.log("true")
@@ -336,6 +340,7 @@ function playerOnReady(player) {
     player.progressbar = progressbar;
     player.topdiv = player_videoTopDiv;
     player.durationdiv = player_durationDiv;
+    player.player_controls = player_controls;
 
     /// add an end event listener
     player.on('ended', function(data) {
@@ -875,6 +880,8 @@ function makeSmall(plyr) {
       clearInterval(updateInterval);
       plyr.progressbardiv.style.display = "none";
       plyr.durationdiv.style.display = "flex";
+      // hide controls
+      // plyr.player_controls.style.display = "none";
     }, 1000);
     // hide the description
     let description = $(plyr.card_description);
@@ -991,6 +998,8 @@ function makeLarge(plyr) {
     plyr.progressbardiv.style.display = "block";
     // hide duration div
     plyr.durationdiv.style.display = "none";
+    // hide controls
+    // plyr.player_controls.style.display = "none";
     // update progress baras video is playing
     updateInterval = setInterval(function() {
       currenttime = plyr.currentTime;
@@ -1325,11 +1334,11 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && currentMediumVideoPlayer){
-    console.log(target.attr("class"));
+  console.log(target.attr("class"));
+  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentMediumVideoPlayer){
     makeSmall(currentMediumVideoPlayer);
   }
-  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && currentLargeVideoPlayer){
+  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentLargeVideoPlayer){
     makeMedium(currentLargeVideoPlayer);
   }
 });
