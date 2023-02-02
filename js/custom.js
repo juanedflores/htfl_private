@@ -310,7 +310,8 @@ function playerOnReady(player) {
         var rect = e.target.getBoundingClientRect();
         var x = e.clientX - rect.right; //x position within the element.
         player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
-        player.progressbar.set((1-(Math.abs(x) / parentwidth)));
+        // player.progressbar.set((1-(Math.abs(x) / parentwidth)));
+        console.log("set a new value")
       }
     }
     // append the div to html
@@ -410,22 +411,18 @@ function playerOnReady(player) {
     });
 
     player_videocard.addEventListener('click', function(event) {
-      console.log(event);
-
-      if (event.target) {
-        // CASE_1: there is a medium video && user clicked on it
-        if (currentMediumVideoPlayer) {
-          if (player == currentMediumVideoPlayer) {
-            console.log("make large..");
-            makeLarge(player);
-          }
+      // CASE_1: there is a medium video && user clicked on it
+      if (currentMediumVideoPlayer) {
+        if (player == currentMediumVideoPlayer) {
+          console.log("make large..");
+          makeLarge(player);
         }
+      }
 
-        // CASE_2: there is a large video && user clicked on it
-        else if (currentLargeVideoPlayer) {
-          if (player == currentLargeVideoPlayer) {
-            makeMedium(player);
-          }
+      // CASE_2: there is a large video && user clicked on it
+      else if (currentLargeVideoPlayer) {
+        if (player == currentLargeVideoPlayer) {
+          makeMedium(player);
         }
       }
 
@@ -1335,12 +1332,13 @@ window.onresize = reportWindowSize;
 
 $(document).click(function(event) {
   var target = $(event.target);
-  console.log(target.attr("class"));
-  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentMediumVideoPlayer){
-    makeSmall(currentMediumVideoPlayer);
-  }
-  if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentLargeVideoPlayer){
-    makeMedium(currentLargeVideoPlayer);
+  if (target.attr("class")) {
+    if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentMediumVideoPlayer){
+      makeSmall(currentMediumVideoPlayer);
+    }
+    if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentLargeVideoPlayer){
+      makeMedium(currentLargeVideoPlayer);
+    }
   }
 });
 
