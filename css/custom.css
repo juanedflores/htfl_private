@@ -130,7 +130,7 @@ th {
 
     margin-bottom: 5vh;
     z-index: 3;
-    transition-timing-function: linear;
+    transition-timing-function: linear !important;
 }
 
 /* .swiper-wrapper { */

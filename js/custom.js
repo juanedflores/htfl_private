@@ -1202,6 +1202,11 @@ async function fetchCSV () {
 //////////////////////////////////////////////////////////////
 // AFTER_DOM_CONTENT_IS_LOADED:
 document.addEventListener('DOMContentLoaded', () => {
+  // hide the border prev and next buttons
+  $(".borderprev").hide();
+  $(".bordernext").hide();
+  // add the move transition behaviour
+  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // hide menu item content text
   $('#content_text').hide();
   // hide menu item content arrow buttons
@@ -1250,7 +1255,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $(".borderprev").mouseenter(function() {
     is_on_edge_left = true;
-    $(".swiper-section").css("transition-timing-function", "linear");
     moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
   });
   $(".borderprev").mouseleave(function() {
@@ -1258,7 +1262,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   $(".bordernext").mouseenter(function() {
     is_on_edge_right = true;
-    $(".swiper-section").css("transition-timing-function", "linear");
     moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
   });
   $(".bordernext").mouseleave(function() {
@@ -1316,11 +1319,14 @@ $('.continue-button').on('click', function() {
   menu_button[0].click();
   menu_button[0].click();
 
+  $(".borderprev").show();
+  $(".bordernext").show();
+
   $('.continue-button').fadeOut(600);
   setTimeout(function() {
     $('#typedWords').fadeOut(800);
     $('#typedWordsSkip').fadeOut(800);
-    $('.continue-button').css("display", "none");
+    // $('.continue-button').css("display", "none");
   }, 600);
   setTimeout(function() {
     $('#typedTitle').fadeOut(1000);
