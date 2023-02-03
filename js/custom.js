@@ -10,7 +10,7 @@ let currentEndIndex = 12;
 let initialSlide = 6;
 
 // slides that are unclickable from edge
-let unclickable_slides_amount = 2;
+let unclickable_slides_amount = 1;
 let unclickable_slides = [];
 
 let swiper;
@@ -27,13 +27,13 @@ let indexCells = [];
 
 // video player settings
 const playerControls = [
-  'play', // shows play icon
+  // 'play', // shows play icon
 ];
 // vimeo embed player options
 const vimeoOptions = {
-  responsive: true,
+  responsive: false,
   background: true,
-  transparent: false,
+  transparent: true,
 };
 
 //////////////////////////////////////////////////////////////
@@ -283,6 +283,10 @@ function playerOnReady(player) {
     let player_videoTopDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0];
     let player_durationDiv = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode.children[1].children[0].children[1];
     let player_controls = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.firstElementChild.firstElementChild;
+    let player_iframe = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[0].children[0];
+    let player_plyrposter = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[1];
+
+    // console.log(player.media);
 
     // make videos appear randomly on intro
     // TODO: do this only on page enter
@@ -341,6 +345,7 @@ function playerOnReady(player) {
     player.durationdiv = player_durationDiv;
     player.player_controls = player_controls;
 
+
     /// add an end event listener
     player.on('ended', function(data) {
       closeAndSwipe(player);
@@ -373,6 +378,7 @@ function playerOnReady(player) {
           makeMedium(player);
         }
         // }
+
       }, showDelay);
 
       // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
@@ -394,9 +400,11 @@ function playerOnReady(player) {
     // triggered when user's mouse leaves the swiper item
     player_swiper_slide.addEventListener('mouseleave', function() {
       clearTimeout(menuEnterTimer);
-      menuLeaveTimer = setTimeout(function() {
-        makeSmall(player);
-      }, hideDelay);
+      if (currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+        menuLeaveTimer = setTimeout(function() {
+          makeSmall(player);
+        }, hideDelay);
+      }
 
       // TODO: add event listener for background click
       // if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
@@ -871,16 +879,17 @@ function makeSmall(plyr) {
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.removeClass('largeVideo');
     swiper_slide.css({ 'min-width' : '1vw' });
+
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
     setTimeout(function() {
-      plyr.pause();
       clearInterval(updateInterval);
       plyr.progressbardiv.style.display = "none";
       plyr.durationdiv.style.display = "flex";
       // hide controls
       // plyr.player_controls.style.display = "none";
+      plyr.pause();
     }, 1000);
     // hide the description
     let description = $(plyr.card_description);
@@ -989,7 +998,6 @@ function makeLarge(plyr) {
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
     // play video
-    plyr.play();
     // fade audio to full volume
     fadeAudio(plyr, 1);
     // move largeVideo to center and make it active
@@ -1009,6 +1017,10 @@ function makeLarge(plyr) {
       percentage = (currenttime / plyr.duration);
       plyr.progressbar.set(percentage);
     }, 20);
+
+    plyr.play();
+    // setTimeout(function() {
+    // }, 2000);
   } 
 }
 
@@ -1039,11 +1051,20 @@ function makeSlide(i) {
   let videoTitle = video_media_array[i]["Subject Name"];
   let videoDuration = video_media_array[i]["Video Duration"];
   let videoDescription = video_media_array[i]["Video Description"];
+
+  // <div class='js-player' data-plyr-provider='vimeo' data-plyr-embed-id='${vimeoID}'></div>
   htmlstring = 
     `<div role='listitem' class='swiper-slide'>
         <div class='card_video'>
           <div class='w-embed'>
-            <div class='js-player' data-plyr-provider='vimeo' data-plyr-embed-id='${vimeoID}'></div>
+            <div class="plyr__video-embed js-player">
+              <iframe
+                src="https://player.vimeo.com/video/${vimeoID}?loop=false&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=0&amp;gesture=media"
+                allowfullscreen
+                allowtransparency
+                allow="autoplay"
+              ></iframe>
+            </div>
           </div>
         </div>
         <div class='card_description'>
@@ -1135,7 +1156,7 @@ async function fetchCSV () {
     unclickable_slides.push(swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i]);
   }
   // init all video players
-  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions });
+  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, loadSprite: false, hideControls: true });
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
     player = players[i];
