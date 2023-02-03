@@ -79,7 +79,14 @@ th {
     display: flex;
 }
 
+.swiper-wrapper {
+    transition-timing-function: ease;
+}
+
 .swiper-section {
+    /* position: relative; */
+    width: 100%;
+    padding: 0 40px;
     /* bottom: 10%; */
     /*     position: fixed; */
     /*     left: 0%; */
@@ -586,31 +593,42 @@ body {
 }
 
 .swiper-button-next {
-    /* position: absolute; */
     right: 0;
-    /* top: -60px; */
-    top: 75vh;
-    /* margin: 0px; */
-    /* margin-right: 10px; */
+    bottom: 25vh;
     margin-right: 3vw;
-    /* background: transparent; */
-    /* opacity: 0.5 !important; */
     color: grey !important;
-    /* z-index: 20; */
+    transition: all 0.7s linear;
 }
 
 .swiper-button-prev {
-    /* position: absolute; */
     left: 0;
-    /* top: -60px; */
-    top: 75vh;
-    /* margin: 0px; */
+    bottom: 25vh;
     margin-left: 3vw;
-    /* background: transparent; */
     color: grey !important;
-    /* opacity: 0.5 !important; */
-    /* z-index: 20; */
+    transition: all 0.7s linear;
 }
+
+/* .swiper-button-next { */
+/*     right: 0; */
+/*     top: -60px; */
+/*     margin: 0px; */
+/*     margin-right: 10px; */
+/*     background: transparent; */
+/*     opacity: 0.5 !important; */
+/*     color: grey !important; */
+/*     z-index: 20; */
+/* } */
+
+/* .swiper-button-prev { */
+/*     left: 0; */
+/*     top: -60px; */
+/*     margin: 0px; */
+/*     margin-left: 10px; */
+/*     background: transparent; */
+/*     color: grey !important; */
+/*     opacity: 0.5 !important; */
+/*     z-index: 20; */
+/* } */
 
 .swiper-button-prev:hover {
     color: white !important;

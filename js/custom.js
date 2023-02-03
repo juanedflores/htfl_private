@@ -10,7 +10,7 @@ let currentEndIndex = 12;
 let initialSlide = 6;
 
 // slides that are unclickable from edge
-let unclickable_slides_amount = 1;
+let unclickable_slides_amount = 2;
 let unclickable_slides = [];
 
 let swiper;
@@ -27,7 +27,7 @@ let indexCells = [];
 
 // video player settings
 const playerControls = [
-  // 'play', // shows play icon
+  'play', // shows play icon
 ];
 // vimeo embed player options
 const vimeoOptions = {
@@ -47,6 +47,8 @@ function moveToSlide(target_index, dont_make_target_medium) {
     $('#swiper').promise().done(function(){
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+      $('.swiper-button-prev').css({ 'bottom': '20vh' });
+      $('.swiper-button-next').css({ 'bottom': '20vh' });
     });
   }
 
@@ -1152,11 +1154,11 @@ async function fetchCSV () {
   await initSwiper();
   // determine the unclickable_slides indices
   for (var i = 0; i < unclickable_slides_amount; i++) {
-    unclickable_slides.push(swiper.visibleSlidesIndexes[0 + i]);
-    unclickable_slides.push(swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i]);
+    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-1);
+    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+1);
   }
   // init all video players
-  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, loadSprite: false, hideControls: true });
+  const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
     player = players[i];
@@ -1333,6 +1335,8 @@ for (var i = 0; i < menu_text.length; i++) {
       $('#swiper').promise().done(function(){
         $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
         $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+        $('.swiper-button-prev').css({ 'bottom': '15vh' });
+        $('.swiper-button-next').css({ 'bottom': '15vh' });
         index();
       });
     } 
@@ -1341,6 +1345,8 @@ for (var i = 0; i < menu_text.length; i++) {
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       $('#swiper').fadeTo(1000, 1.0);
       $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+      $('.swiper-button-prev').css({ 'bottom': '20vh' });
+      $('.swiper-button-next').css({ 'bottom': '20vh' });
     }
     if (menuItem == "About the case") {
       aboutTheCase();
