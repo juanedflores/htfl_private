@@ -13,6 +13,9 @@ let initialSlide = 6;
 let unclickable_slides_amount = 2;
 let unclickable_slides = [];
 
+let is_on_edge_left = false;
+let is_on_edge_right = false;
+
 let swiper;
 
 let menuEnterTimer, menuLeaveTimer, resizeTimer;
@@ -38,67 +41,72 @@ const vimeoOptions = {
 
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
-function moveToSlide(target_index, dont_make_target_medium) {
-  if (index_page_clicked) {
-    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-    $('#swiper').fadeTo(1000, 1.0);
-    $('#content_text').fadeTo(1000, 0.4);
+function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
+  console.log(swiper.animating);
+  if (!swiper.animating) {
 
-    $('#swiper').promise().done(function(){
+    if (index_page_clicked) {
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-      $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
-      $('.swiper-button-prev').css({ 'bottom': '20vh' });
-      $('.swiper-button-next').css({ 'bottom': '20vh' });
-    });
-  }
+      $('#swiper').fadeTo(1000, 1.0);
+      $('#content_text').fadeTo(1000, 0.4);
 
-  // if there is any medium video, make it small
-  if (currentMediumVideoPlayer) {
-    makeSmall(currentMediumVideoPlayer);
-  }
+      $('#swiper').promise().done(function(){
+        $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+        $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+        $('.swiper-button-prev').css({ 'bottom': '20vh' });
+        $('.swiper-button-next').css({ 'bottom': '20vh' });
+      });
+    }
 
-  // TODO: find a more efficient way to do this
-  let active_index;
-  video_media_array.forEach(function(item, index) {
-    if (item.player) {
-      if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
-        active_index = index;
+    // if there is any medium video, make it small
+    if (currentMediumVideoPlayer) {
+      makeSmall(currentMediumVideoPlayer);
+    }
+
+    // TODO: find a more efficient way to do this
+    let active_index;
+    video_media_array.forEach(function(item, index) {
+      if (item.player) {
+        if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
+          active_index = index;
+        }
       }
+    })
+    let distance_to_left;
+    let distance_to_right;
+    if (target_index > active_index) {
+      distance_to_left = active_index + (video_media_array.length - target_index);
+      distance_to_right = target_index - active_index;
+    } else if (target_index < active_index) {
+      distance_to_left = active_index - target_index;
+      distance_to_right = target_index + (video_media_array.length - active_index);
     }
-  })
-  let distance_to_left;
-  let distance_to_right;
-  if (target_index > active_index) {
-    distance_to_left = active_index + (video_media_array.length - target_index);
-    distance_to_right = target_index - active_index;
-  } else if (target_index < active_index) {
-    distance_to_left = active_index - target_index;
-    distance_to_right = target_index + (video_media_array.length - active_index);
-  }
 
-  let diff = 0
-  // if distance to left is less, do prev
-  if (distance_to_left < distance_to_right) {
-    diff = distance_to_left;
-    for (var i = 0; i < diff-1; i++) {
-      prev();
+    let diff = 0
+    // if distance to left is less, do prev
+    if (distance_to_left < distance_to_right) {
+      diff = distance_to_left;
+      for (var i = 0; i < diff-1; i++) {
+        prev();
+      }
+      swiper.slideTo(initialSlide-1, speed);
     }
-    swiper.slideTo(initialSlide-1);
-  }
-  // if distance to right is less, do next
-  else if (distance_to_left > distance_to_right) {
-    diff = distance_to_right;
-    for (var i = 0; i < diff-1; i++) {
-      next();
+    // if distance to right is less, do next
+    else if (distance_to_left > distance_to_right) {
+      diff = distance_to_right;
+      for (var i = 0; i < diff-1; i++) {
+        next();
+      }
+      swiper.slideTo(initialSlide+1, speed);
+    } else {
+      console.log("must be same indexx?");
     }
-    swiper.slideTo(initialSlide+1);
-  } else {
-    console.log("must be same indexx?");
-  }
 
-  // if there are currently no medium or large video, make it medium (clicked from index page)
-  if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
-    makeMedium(video_media_array[target_index].player);
+    // if there are currently no medium or large video, make it medium (clicked from index page)
+    if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+      makeMedium(video_media_array[target_index].player);
+    }
+
   }
 }
 
@@ -528,7 +536,7 @@ function index() {
         a = document.createElement('a');
         indexCells.push(a);
         cellIndex = indexCells.length-1;
-        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex}, false, 1000)`);
         // a.innerHTML = duration;
 
         typecell = new Typewriter(a, {
@@ -551,7 +559,7 @@ function index() {
         a = document.createElement('a');
         indexCells.push(a);
         cellIndex = indexCells.length-1;
-        a.setAttribute('href', `javascript:moveToSlide(${cellIndex})`);
+        a.setAttribute('href', `javascript:moveToSlide(${cellIndex}, false, 1000)`);
         // a.innerHTML = duration;
 
         typecell = new Typewriter(a, {
@@ -914,7 +922,7 @@ function closeAndSwipe(plyr) {
     setTimeout(function() {
       plyr.pause();
       clearInterval(updateInterval);
-      moveToSlide(plyr.media_index+6);
+      moveToSlide(plyr.media_index+6, false, 1000);
     }, 1000);
     // hide the description
     $(plyr.card_description).fadeOut(300);
@@ -1005,7 +1013,7 @@ function makeLarge(plyr) {
     // move largeVideo to center and make it active
     console.log("CLICKED INDEX: " + plyr.media_index);
     if (initialSlide != (plyr.media_index-currentStartIndex)) {
-      moveToSlide(plyr.media_index);
+      moveToSlide(plyr.media_index, false, 1000);
     }
     // show progress bar
     plyr.progressbardiv.style.display = "block";
@@ -1113,10 +1121,21 @@ function initSwiper() {
         }, 100);
       },
       slideNextTransitionEnd: function () {
+        console.log("check if mouse is still over thing?")
         next();
+        if (is_on_edge_right) {
+          moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
+        } else if (is_on_edge_left) {
+          moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
+        }
       },
       slidePrevTransitionEnd: function () {
         prev();
+        if (is_on_edge_left) {
+          moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
+        } else if (is_on_edge_right) {
+          moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
+        }
       },
     },
     freeMode: {
@@ -1229,12 +1248,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
   }, 2000);
 
-  // $(".borderprev").mouseover(function() {
-  //   moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-3, true);
-  // });
-  // $(".bordernext").mouseover(function() {
-  //   moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+3, true);
-  // });
+  $(".borderprev").mouseenter(function() {
+    is_on_edge_left = true;
+    $(".swiper-section").css("transition-timing-function", "linear");
+    moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
+  });
+  $(".borderprev").mouseleave(function() {
+    is_on_edge_left = false;
+  });
+  $(".bordernext").mouseenter(function() {
+    is_on_edge_right = true;
+    $(".swiper-section").css("transition-timing-function", "linear");
+    moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
+  });
+  $(".bordernext").mouseleave(function() {
+    is_on_edge_right = false;
+  });
 });
 
 //////////////////////////////////////////////////////////////

@@ -19,6 +19,13 @@ body {
     scroll-behavior: smooth;
 }
 
+#upButton {
+    top: -4vh;
+}
+
+#downButton {
+}
+
 .swiper-wrapper {
     opacity: 1 !important;
     /* z-index: 2 !important; */
@@ -123,6 +130,7 @@ th {
 
     margin-bottom: 5vh;
     z-index: 3;
+    transition-timing-function: linear;
 }
 
 /* .swiper-wrapper { */

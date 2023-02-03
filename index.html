@@ -18,12 +18,20 @@
 </head>
 
 <body class="body">
-    <div class="borderprev" style="height: 100%; width: 10vw; position: absolute"></div>
+    <div class="borderprev" style="
+                height: 40%;
+                width: 10vw;
+                bottom: 0;
+                position: absolute;
+                z-index: 5;
+            "></div>
     <div class="bordernext" style="
-                height: 100%;
+                height: 40%;
                 width: 10vw;
                 position: absolute;
                 right: 0;
+                bottom: 0;
+                z-index: 5;
             "></div>
     <div class="section hero wf-section">
         <div class="loading-container w-container">
@@ -72,16 +80,8 @@
                 </div>
             </div>
         </div>
+
         <div class="tab-content-container w-container">
-            <div class="menu-button">
-                <div id="menuDiv" class="menubuttondiv">
-                    <div data-w-id="c1715fc9-64e4-7856-55b5-c4a3735be47c" data-is-ix2-target="1" class="lottieanimation"
-                        data-animation-type="lottie"
-                        data-src="https://uploads-ssl.webflow.com/62d643985f63b7bcefb79d94/632bd2efc6c60597bbd2b3a3_lf30_editor_sq2xszgr.json"
-                        data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="1"
-                        data-duration="0.3" data-ix2-initial-state="100"></div>
-                </div>
-            </div>
             <div style="display: none" class="arrow-buttons-div">
                 <img class="up-button"
                     src="https://uploads-ssl.webflow.com/62d643985f63b7bcefb79d94/631bf00475a7c1e5b008824f_noun-direction-2135462-FFFFFF.png"
@@ -101,8 +101,17 @@
                             https://uploads-ssl.webflow.com/62d643985f63b7bcefb79d94/631bf00806796a28a845cf97_noun-direction-2135468-FFFFFF.png        1200w
                         " />
             </div>
+            <div class="menu-button">
+                <div id="menuDiv" class="menubuttondiv">
+                    <div data-w-id="c1715fc9-64e4-7856-55b5-c4a3735be47c" data-is-ix2-target="1" class="lottieanimation"
+                        data-animation-type="lottie"
+                        data-src="https://uploads-ssl.webflow.com/62d643985f63b7bcefb79d94/632bd2efc6c60597bbd2b3a3_lf30_editor_sq2xszgr.json"
+                        data-loop="0" data-direction="1" data-autoplay="0" data-renderer="svg" data-default-duration="1"
+                        data-duration="0.3" data-ix2-initial-state="100"></div>
+                </div>
+            </div>
             <div data-current="Resources" data-easing="ease-in-out" data-duration-in="500" data-duration-out="150"
-                class="tabs w-tabs">
+                class="tabs w-tabs" style="margin-bottom: 5vh">
                 <div data-w-id="aefdc136-92f9-49e4-0f4c-d51ac894426c" style="display: flex" class="tab-menu w-tab-menu">
                     <a data-w-tab="Index" data-w-id="aefdc136-92f9-49e4-0f4c-d51ac894426d"
                         class="menu-item w-inline-block w-tab-link">
@@ -147,10 +156,10 @@
             <div style="opacity: 1" role="list" class="swiper-wrapper"></div>
         </div>
     </div>
-    <div class="swiper-button-prev"
-        onclick="moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-3, true)"></div>
-    <div class="swiper-button-next"
-        onclick="moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+3, true)"></div>
+    <!-- <div class="swiper-button-prev" -->
+    <!--     onclick="moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-3, true)"></div> -->
+    <!-- <div class="swiper-button-next" -->
+    <!--     onclick="moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+3, true)"></div> -->
 </body>
 
 </html>
