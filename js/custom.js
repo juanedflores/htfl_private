@@ -52,7 +52,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
 
       $('#swiper').promise().done(function(){
         $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-        $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+        $('.swiper-wrapper').css({ 'margin-bottom': '10vh' });
         $('.swiper-button-prev').css({ 'bottom': '20vh' });
         $('.swiper-button-next').css({ 'bottom': '20vh' });
       });
@@ -938,12 +938,12 @@ function makeMedium(plyr) {
     // fade audio to 0.4
     fadeAudio(plyr, 0.4);
 
-    $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+    $('.swiper-wrapper').css({ 'margin-bottom': '10vh' });
     $('.swiper-wrapper').promise().done(function(){
       $('#swiper').fadeTo(1000, 1);
       // $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
-      $('.swiper-button-prev').css({ 'bottom': '15vh' });
-      $('.swiper-button-next').css({ 'bottom': '15vh' });
+      $('.swiper-button-prev').css({ 'bottom': '20vh' });
+      $('.swiper-button-next').css({ 'bottom': '20vh' });
       // index();
     });
 
@@ -1374,7 +1374,7 @@ for (var i = 0; i < menu_text.length; i++) {
     menuItem = thisItem[0].innerText;
 
     $('#swiper').fadeTo(1000, 0.4);
-    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+
     if (menuItem == "Index") {
       index_page_clicked = true;
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
