@@ -469,6 +469,10 @@ th {
     animation: none;
 }
 
+#upButton {
+    transition: all 1000ms ease !important;
+}
+
 /* UP/DOWN SCROLL BUTTONS */
 /* html { */
 /*     scroll-behavior: smooth; */

@@ -951,10 +951,14 @@ function makeMedium(plyr) {
     menu_item_text_visible = false;
     if (index_page_clicked) {
       $('#content_text').fadeTo(1000, 0.3);
+      $('#upButton').fadeTo(1000, 0.3);
+      $('#downButton').fadeTo(1000, 0.3);
     } else {
       $('#content_text').fadeTo(1000, 0.0);
       $('#content_text').promise().done(function(){
         document.getElementById("content_text").innerHTML = "";
+        $('#upButton').hide();
+        $('#downButton').hide();
       });
     }
     $('#content_text').promise().done(function(){
@@ -969,6 +973,8 @@ function makeMedium(plyr) {
 function makeLarge(plyr) {
   if (index_page_clicked) {
     $('#content_text').fadeTo(1000, 0.0);
+    $('#upButton').fadeTo(1000, 0.0);
+    $('#downButton').fadeTo(1000, 0.0);
     $('#content_text').promise().done(function(){
       document.getElementById("content_text").innerHTML = "";
     });
@@ -1274,8 +1280,8 @@ $('.continue-button').on('click', function() {
     $('.tab-content-container').fadeIn(3500);
     $('.swiper-button-prev').fadeIn(3500);
     $('.swiper-button-next').fadeIn(3500);
-    $('#upButton').show();
-    $('#downButton').show();
+    // $('#upButton').show();
+    // $('#downButton').show();
   }, 2600);
   document.getElementById("swiper").style.pointerEvents = 'auto';
 });
@@ -1294,6 +1300,8 @@ for (var i = 0; i < menu_text.length; i++) {
     let thisItem = $(this);
     // fade in the menu item content
     $('#content_text').fadeTo(1000, 1.0);
+    $('#upButton').fadeTo(1000, 1.0);
+    $('#downButton').fadeTo(1000, 1.0);
     // menu item content is now visible
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
