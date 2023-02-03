@@ -1388,8 +1388,11 @@ for (var i = 0; i < menu_text.length; i++) {
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
 
-    $('#swiper').fadeTo(1000, 0.4);
+    if (currentLargeVideoPlayer) {
+      makeSmall(currentLargeVideoPlayer);
+    }
 
+    $('#swiper').fadeTo(1000, 0.4);
     if (menuItem == "Index") {
       index_page_clicked = true;
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
