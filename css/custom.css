@@ -87,7 +87,7 @@ th {
 }
 
 .swiper-wrapper {
-    transition-timing-function: ease;
+    /* transition-timing-function: ease; */
 }
 
 .swiper-section {

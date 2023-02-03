@@ -938,6 +938,15 @@ function makeMedium(plyr) {
     // fade audio to 0.4
     fadeAudio(plyr, 0.4);
 
+    $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+    $('.swiper-wrapper').promise().done(function(){
+      $('#swiper').fadeTo(1000, 1);
+      // $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
+      $('.swiper-button-prev').css({ 'bottom': '15vh' });
+      $('.swiper-button-next').css({ 'bottom': '15vh' });
+      // index();
+    });
+
     // making medium from small size
     // CASE_1: there is no medium or large player, make medium from small
     if (!swiper_slide.hasClass("mediumVideo") && !swiper_slide.hasClass("largeVideo") && currentMediumVideoPlayer == null && currentLargeVideoPlayer == null){
@@ -1363,12 +1372,21 @@ for (var i = 0; i < menu_text.length; i++) {
     // menu item content is now visible
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
+
+    $('#swiper').fadeTo(1000, 0.4);
+    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
     if (menuItem == "Index") {
       index_page_clicked = true;
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-      $('#swiper').fadeTo(1000, 0.4);
+      // $('#swiper').fadeTo(1000, 0.4);
+      // $('#swiper').promise().done(function(){
+      //   $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+      //   $('.swiper-button-prev').css({ 'bottom': '15vh' });
+      //   $('.swiper-button-next').css({ 'bottom': '15vh' });
+      //   index();
+      // });
+
       $('#swiper').promise().done(function(){
-        $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
         $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
         $('.swiper-button-prev').css({ 'bottom': '15vh' });
         $('.swiper-button-next').css({ 'bottom': '15vh' });
@@ -1376,12 +1394,13 @@ for (var i = 0; i < menu_text.length; i++) {
       });
     } 
     else {
+
+      $('#swiper').promise().done(function(){
+        $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+        $('.swiper-button-prev').css({ 'bottom': '15vh' });
+        $('.swiper-button-next').css({ 'bottom': '15vh' });
+      });
       index_page_clicked = false;
-      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-      $('#swiper').fadeTo(1000, 1.0);
-      $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
-      $('.swiper-button-prev').css({ 'bottom': '20vh' });
-      $('.swiper-button-next').css({ 'bottom': '20vh' });
     }
     if (menuItem == "About the case") {
       aboutTheCase();
