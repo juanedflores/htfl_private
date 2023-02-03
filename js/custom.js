@@ -867,8 +867,9 @@ function makeSmall(plyr) {
 
   // making small from medium
   // CASE_1: there is a medium player and user hovered out of it
-  if (swiper_slide.hasClass("mediumVideo") && currentMediumVideoPlayer == plyr) {
+  if ((swiper_slide.hasClass("mediumVideo") && currentMediumVideoPlayer == plyr) || (swiper_slide.hasClass("largeVideo") && currentLargeVideoPlayer == plyr)) {
     swiper_slide.removeClass('mediumVideo');
+    swiper_slide.removeClass('largeVideo');
     swiper_slide.css({ 'min-width' : '1vw' });
     // lower volume to 0
     fadeAudio(plyr, 0);
@@ -1335,7 +1336,7 @@ $(document).click(function(event) {
       makeSmall(currentMediumVideoPlayer);
     }
     if (!target.hasClass("plyr__poster") && !target.hasClass("video-top-div") && !target.hasClass("video-description") && !target.hasClass("plyr__control") && !target.hasClass("plyr__controls") && currentLargeVideoPlayer){
-      makeMedium(currentLargeVideoPlayer);
+      makeSmall(currentLargeVideoPlayer);
     }
   }
 });
