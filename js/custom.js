@@ -1159,6 +1159,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // hide menu item content arrow buttons
   $('#upButton').hide();
   $('#downButton').hide();
+  scrollDown = $('#downButton');
+  scrollUp = $('#upButton');
+
+  scrollDown.mousedown(function() {
+    var y = $('#tabContent').scrollTop();
+    $('#tabContent').animate({ scrollTop: y + 150 }, 'slow')
+  });
+  scrollUp.mousedown(function() {
+    var y = $('#tabContent').scrollTop();
+    $('#tabContent').animate({ scrollTop: y - 150 }, 'slow')
+  });
   // hide swiper arrows
   $('.swiper-button-next').hide();
   $('.swiper-button-prev').hide();
@@ -1263,6 +1274,8 @@ $('.continue-button').on('click', function() {
     $('.tab-content-container').fadeIn(3500);
     $('.swiper-button-prev').fadeIn(3500);
     $('.swiper-button-next').fadeIn(3500);
+    $('#upButton').show();
+    $('#downButton').show();
   }, 2600);
   document.getElementById("swiper").style.pointerEvents = 'auto';
 });
