@@ -6,8 +6,9 @@ let currentActivePlayer = null;
 let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
-let currentEndIndex = 12;
-let initialSlide = 6;
+let currentEndIndex = 14;
+let initialSlide = currentEndIndex/2;
+let bufferSize = 2;
 
 // slides that are unclickable from edge
 let unclickable_slides_amount = 2;
@@ -152,11 +153,18 @@ function next() {
   // make the slides on the edges uninteractable
   swiper.slides.forEach(function(item, index) {
     if (unclickable_slides.includes(index)) {
+
+      if (debug_swiper) {
+        item.style.background = 'red';
+      }
       item.style.opacity = '0.5';
       item.style.pointerEvents = 'none';
     } else {
       item.style.opacity = '1';
       item.style.pointerEvents = 'auto';
+      if (debug_swiper) {
+        item.style.background = 'black';
+      }
     }
   });
 
@@ -239,9 +247,17 @@ function prev() {
   // make the slides on the edges uninteractable
   swiper.slides.forEach(function(item, index) {
     if (unclickable_slides.includes(index)) {
+
+      if (debug_swiper) {
+        item.style.background = 'red';
+      }
       item.style.opacity = '0.5';
+
       item.style.pointerEvents = 'none';
     } else {
+      if (debug_swiper) {
+        item.style.background = 'black';
+      }
       item.style.opacity = '1';
       item.style.pointerEvents = 'auto';
     }
@@ -310,7 +326,6 @@ function playerOnReady(player) {
     player.volume = 0.0;
     // make unclickable ones
     if (player.unclickable) {
-      console.log("true")
       player_swiper_slide.style.pointerEvents = "none";
     }
     // add the custom progress bar
@@ -1107,7 +1122,7 @@ function initSwiper() {
   swiper = new Swiper('#swiper', {
     runCallbacksOnInit: false,
     loop: false,
-    slidesPerView: (currentEndIndex-1),
+    slidesPerView: (currentEndIndex-1)-(bufferSize*2),
     initialSlide: initialSlide,
     slidesPerGroup: 1,
     preventInteractionOnTransition: true,
@@ -1182,8 +1197,8 @@ async function fetchCSV () {
   await initSwiper();
   // determine the unclickable_slides indices
   for (var i = 0; i < unclickable_slides_amount; i++) {
-    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-1);
-    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+1);
+    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-1-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+1-(bufferSize+1));
   }
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});

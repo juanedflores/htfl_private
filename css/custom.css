@@ -157,6 +157,8 @@ th {
     /*     align-items: flex-end; */
     /*     border: 1px solid transparent; */
     margin-bottom: 10vh;
+
+    transition: 'all 0.7s linear';
 }
 
 .card_video {
