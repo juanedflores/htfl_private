@@ -11,7 +11,7 @@ let initialSlide = currentEndIndex/2;
 let bufferSize = 2;
 
 // slides that are unclickable from edge
-let unclickable_slides_amount = 2;
+let unclickable_slides_amount = 4;
 let unclickable_slides = [];
 
 let is_on_edge_left = false;
@@ -109,7 +109,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
               makeMedium(video_media_array[target_index].player);
             }
           }, 2000);
-        }, 3000);
+        }, 2000);
       } 
       else {
         for (var i = 0; i < diff-1; i++) {
@@ -143,7 +143,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
               makeMedium(video_media_array[target_index].player);
             }
           }, 2000);
-        }, 3000);
+        }, 2000);
       } 
       else {
         for (var i = 0; i < diff-1; i++) {
@@ -1327,8 +1327,8 @@ async function fetchCSV () {
   await initSwiper();
   // determine the unclickable_slides indices
   for (var i = 0; i < unclickable_slides_amount; i++) {
-    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-1-(bufferSize+1));
-    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+1-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-3-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+3-(bufferSize+1));
   }
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
