@@ -26,7 +26,7 @@ let resizing = false;
 let menu_item_text_visible = false;
 let index_page_clicked = false;
 // debugging
-let debug_swiper = false;
+let debug_swiper = true;
 let indexCells = [];
 
 // video player settings
@@ -43,72 +43,127 @@ const vimeoOptions = {
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
 function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
-  console.log(swiper.animating);
-  if (!swiper.animating) {
+  // $('.swiper-wrapper').css({ 'transition': 'all 0s' });
 
-    if (index_page_clicked) {
-      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-      $('#swiper').fadeTo(1000, 1.0);
-      $('#content_text').fadeTo(1000, 0.4);
-
-      $('#swiper').promise().done(function(){
-        $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
-        $('.swiper-wrapper').css({ 'margin-bottom': '10vh' });
-        $('.swiper-button-prev').css({ 'bottom': '20vh' });
-        $('.swiper-button-next').css({ 'bottom': '20vh' });
-      });
-    }
-
-    // if there is any medium video, make it small
-    if (currentMediumVideoPlayer) {
-      makeSmall(currentMediumVideoPlayer);
-    }
-
-    // TODO: find a more efficient way to do this
-    let active_index;
-    video_media_array.forEach(function(item, index) {
-      if (item.player) {
-        if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
-          active_index = index;
-        }
-      }
-    })
-    let distance_to_left;
-    let distance_to_right;
-    if (target_index > active_index) {
-      distance_to_left = active_index + (video_media_array.length - target_index);
-      distance_to_right = target_index - active_index;
-    } else if (target_index < active_index) {
-      distance_to_left = active_index - target_index;
-      distance_to_right = target_index + (video_media_array.length - active_index);
-    }
-
-    let diff = 0
-    // if distance to left is less, do prev
-    if (distance_to_left < distance_to_right) {
-      diff = distance_to_left;
-      for (var i = 0; i < diff-1; i++) {
-        prev();
-      }
-      swiper.slideTo(initialSlide-1, speed);
-    }
-    // if distance to right is less, do next
-    else if (distance_to_left > distance_to_right) {
-      diff = distance_to_right;
-      for (var i = 0; i < diff-1; i++) {
-        next();
-      }
-      swiper.slideTo(initialSlide+1, speed);
-    } else {
-      console.log("must be same indexx?");
-    }
+  loadSlideRight();
+  // if (!swiper.animating) {
+  //   // only move the slide when the swiper is not animating
+  //   if (index_page_clicked) {
+  //     $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+  //     $('#swiper').fadeTo(1000, 1.0);
+  //     $('#content_text').fadeTo(1000, 0.4);
+  //     $('#swiper').promise().done(function(){
+  //       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+  //       $('.swiper-wrapper').css({ 'margin-bottom': '10vh' });
+  //       $('.swiper-button-prev').css({ 'bottom': '20vh' });
+  //       $('.swiper-button-next').css({ 'bottom': '20vh' });
+  //     });
+  //   }
+  //
+  //   // if there is any medium video, make it small
+  //   if (currentMediumVideoPlayer) {
+  //     makeSmall(currentMediumVideoPlayer);
+  //   }
+  //
+  //   // TODO: find a more efficient way to do this
+  //   let active_index;
+  //   video_media_array.forEach(function(item, index) {
+  //     if (item.player) {
+  //       if (item.player.swiper_slide.classList.contains("swiper-slide-active")) {
+  //         active_index = index;
+  //       }
+  //     }
+  //   })
+  //   let distance_to_left;
+  //   let distance_to_right;
+  //   if (target_index > active_index) {
+  //     distance_to_left = active_index + (video_media_array.length - target_index);
+  //     distance_to_right = target_index - active_index;
+  //   } else if (target_index < active_index) {
+  //     distance_to_left = active_index - target_index;
+  //     distance_to_right = target_index + (video_media_array.length - active_index);
+  //   }
+  //
+  //   let diff = 0
+  //   // if distance to left is less, do prev
+  //   if (distance_to_left < distance_to_right) {
+  //     diff = distance_to_left;
+  //     if (diff > swiper.visibleSlidesIndexes.length) {
+  //       console.log("greater than visible slides")
+  //       for (var i = 0; i < diff-1; i++) {
+  //         // loadSlideLeft();
+  //       }
+  //     } else {
+  //       for (var i = 0; i < diff-1; i++) {
+  //         prev();
+  //       }
+  //       swiper.slideTo(initialSlide-1, speed);
+  //     }
+  //   }
+  //   // if distance to right is less, do next
+  //   else if (distance_to_left > distance_to_right) {
+  //     diff = distance_to_right;
+  //     if (diff > swiper.visibleSlidesIndexes.length) {
+  //       console.log("greater than visible slides RIGHT/NEXT")
+  //       // for (var i = 0; i < diff-1; i++) {
+  //       loadSlideRight();
+  //       // }
+  //     } else {
+  //       for (var i = 0; i < diff-1; i++) {
+  //         console.log("nexting..")
+  //         next();
+  //       }
+  //       swiper.slideTo(initialSlide+1, speed);
+  //     }
+  //   } else {
+  //     console.log("must be same indexx?");
+  //   }
 
     // if there are currently no medium or large video, make it medium (clicked from index page)
-    if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
-      makeMedium(video_media_array[target_index].player);
-    }
+    // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+    //   makeMedium(video_media_array[target_index].player);
+    // }
 
+  // }
+}
+
+
+function loadSlideRight() { 
+  // update beginning and ending indices
+  currentEndIndex = currentEndIndex+1;
+  currentStartIndex = currentStartIndex+1;
+  // handle wrap around
+  if (currentStartIndex > video_media_array.length-1) { 
+    currentStartIndex = 0;
   }
+  if (currentEndIndex > video_media_array.length-1) { 
+    currentEndIndex = 0;
+  }
+  // returns a string of html for slide
+  slide = makeSlide(currentEndIndex);
+  // appends the slide to the end
+  swiper.appendSlide(slide);
+  // this is the swiper_slide dom element
+  swiper_slide = swiper.slides[swiper.slides.length-1];
+  // this is the player-js dom element
+  player_js = swiper_slide.children[0].childNodes[1].children[0];
+  // initialize the player
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentEndIndex });
+  player.media_index = currentEndIndex;
+  playerOnReady(player);
+  // update the new slide
+  player.swiper_slide = swiper_slide;
+  // video_media_array[currentEndIndex].player = player;
+  // if (currentStartIndex == 0) {
+  //   // currentStartIndex is 0, then the last index (42) is to be deleted
+  //   video_media_array[video_media_array.length-1].player = null;
+  // } else {
+  //   // else just delete the one before the currentStartIndex
+  //   video_media_array[currentStartIndex-1].player = null;
+  // }
+}
+
+function nextLoadFirst(num_slides) {
 }
 
 function next() {
@@ -135,25 +190,24 @@ function next() {
   player.media_index = currentEndIndex;
   playerOnReady(player);
   // remove slide to the left
-  swiper.removeSlide(0);
+  // swiper.removeSlide(0);
   // update the swiper
-  swiper.update()
+  // swiper.update()
 
-  // update the new slide
-  player.swiper_slide = swiper_slide;
-  video_media_array[currentEndIndex].player = player;
-  if (currentStartIndex == 0) {
-    // currentStartIndex is 0, then the last index (42) is to be deleted
-    video_media_array[video_media_array.length-1].player = null;
-  } else {
-    // else just delete the one before the currentStartIndex
-    video_media_array[currentStartIndex-1].player = null;
-  }
+  // // update the new slide
+  // player.swiper_slide = swiper_slide;
+  // video_media_array[currentEndIndex].player = player;
+  // if (currentStartIndex == 0) {
+  //   // currentStartIndex is 0, then the last index (42) is to be deleted
+  //   video_media_array[video_media_array.length-1].player = null;
+  // } else {
+  //   // else just delete the one before the currentStartIndex
+  //   video_media_array[currentStartIndex-1].player = null;
+  // }
 
   // make the slides on the edges uninteractable
   swiper.slides.forEach(function(item, index) {
     if (unclickable_slides.includes(index)) {
-
       if (debug_swiper) {
         item.style.background = 'red';
       }
@@ -229,20 +283,20 @@ function prev() {
   player.media_index = currentStartIndex;
   playerOnReady(player);
   // remove slide to the right
-  swiper.removeSlide(swiper.slides.length-1);
+  // swiper.removeSlide(swiper.slides.length-1);
   // update the swiper
-  swiper.update()
+  // swiper.update()
 
-  // update the players array
-  player.swiper_slide = swiper_slide;
-  video_media_array[currentStartIndex].player = player;
-  if ((currentEndIndex) == video_media_array.length-1) {
-    // if currentEnd is video_media_array.length-1, then 0 should be deleted
-    video_media_array[0].player = null;
-  } else {
-    // else just delete currentEndIndex+1
-    video_media_array[currentEndIndex+1].player = null;
-  }
+  // // update the players array
+  // player.swiper_slide = swiper_slide;
+  // video_media_array[currentStartIndex].player = player;
+  // if ((currentEndIndex) == video_media_array.length-1) {
+  //   // if currentEnd is video_media_array.length-1, then 0 should be deleted
+  //   video_media_array[0].player = null;
+  // } else {
+  //   // else just delete currentEndIndex+1
+  //   video_media_array[currentEndIndex+1].player = null;
+  // }
 
   // make the slides on the edges uninteractable
   swiper.slides.forEach(function(item, index) {
@@ -321,7 +375,7 @@ function playerOnReady(player) {
       player.elements.container.style.visibility = "visible";
     }, random_Time);
     // add a transition effect
-    player_swiper_slide.style.transition = "all 1400ms ease";
+    // player_swiper_slide.style.transition = "all 1400ms ease";
     // init the volume
     player.volume = 0.0;
     // make unclickable ones
@@ -383,6 +437,7 @@ function playerOnReady(player) {
     // add mouse events 
     let showDelay = 500, hideDelay = 500;
     player_swiper_slide.addEventListener('mouseenter', function() {
+      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       clearTimeout(menuLeaveTimer);
       menuEnterTimer = setTimeout(function() {
         // if (player.media_index == currentStartIndex+1 || player.media_index == currentStartIndex+2) {
@@ -444,6 +499,7 @@ function playerOnReady(player) {
     });
 
     player_videocard.addEventListener('click', function(event) {
+      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
@@ -1133,6 +1189,7 @@ function initSwiper() {
     watchSlidesProgress: true,
     allowTouchMove: false,
     preloadImages: true,
+    observer: false,
     fullscreen: {enabled: false},
     on: {
       resize: function () {
@@ -1226,11 +1283,12 @@ async function fetchCSV () {
 //////////////////////////////////////////////////////////////
 // AFTER_DOM_CONTENT_IS_LOADED:
 document.addEventListener('DOMContentLoaded', () => {
+
   // hide the border prev and next buttons
   $(".borderprev").hide();
   $(".bordernext").hide();
   // add the move transition behaviour
-  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+  // $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // hide menu item content text
   $('#content_text').hide();
   // hide menu item content arrow buttons
@@ -1372,8 +1430,16 @@ $('.continue-button').on('click', function() {
 // MENU:
 menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
+menu_button[0].onclick = function() {
+  console.log("clicked menu")
+  if (currentLargeVideoPlayer) {
+    makeSmall(currentLargeVideoPlayer);
+  }
+}
+// add event listener for on hover to make audio lower and video dimmer
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {
+    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
     // reset menu content text
     document.getElementById("content_text").innerHTML = "";
     // temporary fix to make menu close after clicking on a menu item
@@ -1387,15 +1453,10 @@ for (var i = 0; i < menu_text.length; i++) {
     // menu item content is now visible
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
-
-    if (currentLargeVideoPlayer) {
-      makeSmall(currentLargeVideoPlayer);
-    }
-
     $('#swiper').fadeTo(1000, 0.4);
     if (menuItem == "Index") {
       index_page_clicked = true;
-      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+      // $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       // $('#swiper').fadeTo(1000, 0.4);
       // $('#swiper').promise().done(function(){
       //   $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
