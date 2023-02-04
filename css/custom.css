@@ -130,7 +130,7 @@ th {
 
     margin-bottom: 5vh;
     z-index: 3;
-    transition-timing-function: linear !important;
+    /* transition-timing-function: linear !important; */
 }
 
 .swiper-wrapper {
@@ -158,7 +158,7 @@ th {
     /*     border: 1px solid transparent; */
     margin-bottom: 10vh;
 
-    transition: 'all 0.7s linear';
+    /* transition: all 0.7s linear !important; */
 }
 
 .card_video {

@@ -1372,8 +1372,15 @@ $('.continue-button').on('click', function() {
 // MENU:
 menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
+menu_button[0].onclick = function() {
+  console.log("clicked menu")
+  if (currentLargeVideoPlayer) {
+    makeSmall(currentLargeVideoPlayer);
+  }
+}
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {
+    $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
     // reset menu content text
     document.getElementById("content_text").innerHTML = "";
     // temporary fix to make menu close after clicking on a menu item
@@ -1392,7 +1399,7 @@ for (var i = 0; i < menu_text.length; i++) {
 
     if (menuItem == "Index") {
       index_page_clicked = true;
-      $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+      // $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       // $('#swiper').fadeTo(1000, 0.4);
       // $('#swiper').promise().done(function(){
       //   $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
