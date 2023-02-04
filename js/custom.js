@@ -87,27 +87,157 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
     // if distance to left is less, do prev
     if (distance_to_left < distance_to_right) {
       diff = distance_to_left;
-      for (var i = 0; i < diff-1; i++) {
-        prev();
+      if (diff > swiper.visibleSlidesIndexes.length) {
+        console.log("DIFF IS GREATER")
+        console.log("diff: " + diff)
+        for (var i = 0; i < diff-1; i++) {
+          console.log(i)
+          loadSlidesLeft();
+        }
+        setTimeout(function() {
+          swiper.slideTo(initialSlide-1, 1000);
+
+          setTimeout(function() {
+            // unload the ones on left
+            for (var i = 0; i < diff-1; i++) {
+              // remove slide to the right
+              swiper.removeSlide(swiper.slides.length-1);
+            }
+            // update the swiper
+            swiper.update()
+            if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+              makeMedium(video_media_array[target_index].player);
+            }
+          }, 2000);
+        }, 3000);
+      } 
+      else {
+        for (var i = 0; i < diff-1; i++) {
+          prev();
+        }
+        swiper.slideTo(initialSlide-1, speed);
+        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+          makeMedium(video_media_array[target_index].player);
+        }
       }
-      swiper.slideTo(initialSlide-1, speed);
     }
     // if distance to right is less, do next
     else if (distance_to_left > distance_to_right) {
       diff = distance_to_right;
-      for (var i = 0; i < diff-1; i++) {
-        next();
+      if (diff > swiper.visibleSlidesIndexes.length) {
+        for (var i = 0; i < diff-1; i++) {
+          loadSlidesRight();
+        }
+        setTimeout(function() {
+          swiper.slideTo(initialSlide+diff, 1000);
+
+          setTimeout(function() {
+            // unload the ones on left
+            for (var i = 0; i < diff-1; i++) {
+              // remove slide to the left
+              swiper.removeSlide(0);
+            }
+            // update the swiper
+            swiper.update()
+            if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+              makeMedium(video_media_array[target_index].player);
+            }
+          }, 2000);
+        }, 3000);
+      } 
+      else {
+        for (var i = 0; i < diff-1; i++) {
+          next();
+        }
+        swiper.slideTo(initialSlide+1, speed);
+        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+          makeMedium(video_media_array[target_index].player);
+        }
       }
-      swiper.slideTo(initialSlide+1, speed);
     } else {
       console.log("must be same indexx?");
     }
 
     // if there are currently no medium or large video, make it medium (clicked from index page)
-    if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
-      makeMedium(video_media_array[target_index].player);
-    }
+    // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
+    //   makeMedium(video_media_array[target_index].player);
+    // }
 
+  }
+}
+
+function loadSlidesRight() {
+  $('.swiper-wrapper').css({ transition: 'all 0s' });
+  // update beginning and ending indices
+  currentEndIndex = currentEndIndex+1;
+  currentStartIndex = currentStartIndex+1;
+  // handle wrap around
+  if (currentStartIndex > video_media_array.length-1) { 
+    currentStartIndex = 0;
+  }
+  if (currentEndIndex > video_media_array.length-1) { 
+    currentEndIndex = 0;
+  }
+  // returns a string of html for slide
+  slide = makeSlide(currentEndIndex);
+  // appends the slide to the end
+  swiper.appendSlide(slide);
+  // this is the swiper_slide dom element
+  swiper_slide = swiper.slides[swiper.slides.length-1];
+  // this is the player-js dom element
+  player_js = swiper_slide.children[0].childNodes[1].children[0];
+  // initialize the player
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentEndIndex });
+  player.media_index = currentEndIndex;
+  // update the new slide
+  player.swiper_slide = swiper_slide;
+  playerOnReady(player);
+
+  video_media_array[currentEndIndex].player = player;
+  if (currentStartIndex == 0) {
+    // currentStartIndex is 0, then the last index (42) is to be deleted
+    video_media_array[video_media_array.length-1].player = null;
+  } else {
+    // else just delete the one before the currentStartIndex
+    video_media_array[currentStartIndex-1].player = null;
+  }
+}
+
+function loadSlidesLeft() {
+  console.log("load")
+  $('.swiper-wrapper').css({ transition: 'all 0s' });
+  // update beginning and ending indices
+  currentEndIndex = currentEndIndex-1;
+  currentStartIndex = currentStartIndex-1;
+  // handle wrap around
+  if (currentStartIndex < 0) { 
+    currentStartIndex = video_media_array.length-1;
+  }
+  if (currentEndIndex < 0) { 
+    currentEndIndex = video_media_array.length-1;
+  }
+  // returns a string of html for slide
+  slide = makeSlide(currentStartIndex);
+  // appends the slide to the end
+  swiper.prependSlide(slide);
+  // this is the swiper_slide dom element
+  swiper_slide = swiper.slides[0];
+  // this is the player-js dom element
+  player_js = swiper_slide.children[0].childNodes[1].children[0];
+  // initialize the player
+  player = new Plyr(player_js, { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions, index: currentEndIndex });
+  player.media_index = currentStartIndex;
+  // update the new slide
+  player.swiper_slide = swiper_slide;
+  playerOnReady(player);
+
+  video_media_array[currentStartIndex].player = player;
+  if ((currentEndIndex) == video_media_array.length-1) {
+    // if currentEnd is video_media_array.length-1, then 0 should be deleted
+    video_media_array[0].player = null;
+  } else {
+    // else just delete currentEndIndex+1
+    video_media_array[currentEndIndex+1].player = null;
   }
 }
 
