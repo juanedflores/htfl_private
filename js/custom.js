@@ -1063,6 +1063,8 @@ function makeSmall(plyr) {
   if ((swiper_slide.hasClass("mediumVideo") && currentMediumVideoPlayer == plyr) || (swiper_slide.hasClass("largeVideo") && currentLargeVideoPlayer == plyr)) {
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.removeClass('largeVideo');
+    vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+    console.log("vw: " + vw);
     swiper_slide.css({ 'min-width' : '1vw' });
 
     // lower volume to 0
