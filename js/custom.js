@@ -87,9 +87,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
     // if distance to left is less, do prev
     if (distance_to_left < distance_to_right) {
       diff = distance_to_left;
-      if (diff > swiper.visibleSlidesIndexes.length) {
-        console.log("DIFF IS GREATER")
-        console.log("diff: " + diff)
+      if (diff >= swiper.visibleSlidesIndexes.length) {
         for (var i = 0; i < diff-1; i++) {
           console.log(i)
           loadSlidesLeft();
@@ -105,6 +103,22 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
             }
             // update the swiper
             swiper.update()
+            // make the slides on the edges uninteractable
+            swiper.slides.forEach(function(item, index) {
+              if (unclickable_slides.includes(index)) {
+                if (debug_swiper) {
+                  item.style.background = 'red';
+                }
+                item.style.opacity = '0.5';
+                item.style.pointerEvents = 'none';
+              } else {
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+                if (debug_swiper) {
+                  item.style.background = 'black';
+                }
+              }
+            });
             if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
               makeMedium(video_media_array[target_index].player);
             }
@@ -124,7 +138,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
     // if distance to right is less, do next
     else if (distance_to_left > distance_to_right) {
       diff = distance_to_right;
-      if (diff > swiper.visibleSlidesIndexes.length) {
+      if (diff >= swiper.visibleSlidesIndexes.length) {
         for (var i = 0; i < diff-1; i++) {
           loadSlidesRight();
         }
@@ -139,6 +153,22 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
             }
             // update the swiper
             swiper.update()
+            // make the slides on the edges uninteractable
+            swiper.slides.forEach(function(item, index) {
+              if (unclickable_slides.includes(index)) {
+                if (debug_swiper) {
+                  item.style.background = 'red';
+                }
+                item.style.opacity = '0.5';
+                item.style.pointerEvents = 'none';
+              } else {
+                item.style.opacity = '1';
+                item.style.pointerEvents = 'auto';
+                if (debug_swiper) {
+                  item.style.background = 'black';
+                }
+              }
+            });
             if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
               makeMedium(video_media_array[target_index].player);
             }
@@ -239,6 +269,7 @@ function loadSlidesLeft() {
     // else just delete currentEndIndex+1
     video_media_array[currentEndIndex+1].player = null;
   }
+
 }
 
 function next() {
@@ -283,7 +314,6 @@ function next() {
   // make the slides on the edges uninteractable
   swiper.slides.forEach(function(item, index) {
     if (unclickable_slides.includes(index)) {
-
       if (debug_swiper) {
         item.style.background = 'red';
       }
@@ -1327,8 +1357,8 @@ async function fetchCSV () {
   await initSwiper();
   // determine the unclickable_slides indices
   for (var i = 0; i < unclickable_slides_amount; i++) {
-    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-3-(bufferSize+1));
-    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i])+3-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1)));
   }
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
@@ -1360,7 +1390,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(".borderprev").hide();
   $(".bordernext").hide();
   // add the move transition behaviour
-  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+  // $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // hide menu item content text
   $('#content_text').hide();
   // hide menu item content arrow buttons
