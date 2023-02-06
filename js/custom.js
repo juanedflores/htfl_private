@@ -84,6 +84,8 @@ function showAudioPlayer(i) {
   if (!audio_media_array[i].has_click_listener) {
     audio_media_array[i].has_click_listener = true;
     play_button.on('click', function() {
+      console.log("isanimating")
+      console.log(swiper.animating)
       fade_timer = setTimeout(function() {
         if (!audio_media_array[i].playing) {
           play_button.css('padding-left', "0%");
@@ -1021,9 +1023,19 @@ function audioFiles() {
       // cell.innerText = name;
 
       a = document.createElement('a');
-      a.innerText = name;
+      // a.innerText = name;
       a.setAttribute('href', `javascript:showAudioPlayer(${i})`);
       cell.append(a);
+
+      typecell = new Typewriter(a, {
+        loop: false,
+        cursor: '',
+        delay: 10,
+      });
+
+      typecell
+        .typeString(name)
+        .start();
       // cell.push(a);
 
       audioPlayerString = `<div id="${slug}" class="audio-player"><audio id="audioPlayer" class="audioAudio"><source src="https://docs.google.com/uc?export=download&id=${audioID}" type="audio/mpeg" /></audio></div>`

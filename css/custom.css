@@ -19,6 +19,15 @@ body {
     scroll-behavior: smooth;
 }
 
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 #upButton {
     top: -4vh;
 }
