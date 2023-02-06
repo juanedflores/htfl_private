@@ -1543,7 +1543,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $(".borderprev").hide();
   $(".bordernext").hide();
   // add the move transition behaviour
-  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
+  // $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // hide menu item content text
   $('#content_text').hide();
   // hide menu item content arrow buttons
