@@ -811,6 +811,14 @@ body {
         display: none;
     }
 
+    .down-button {
+        display: none;
+    }
+
+    .up-button {
+        display: none;
+    }
+
     .video-description {
         line-height: 14px !important;
     }
