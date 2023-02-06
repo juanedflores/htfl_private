@@ -12,6 +12,8 @@ let bufferSize = 2;
 
 let audio_amounts = [];
 
+let fading_audio = false;
+
 // slides that are unclickable from edge
 let unclickable_slides_amount = 4;
 let unclickable_slides = [];
@@ -42,10 +44,15 @@ const vimeoOptions = {
   transparent: true,
 };
 
+function vw_convert(percent) {
+  var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  return (percent * w) / 100;
+}
+
+
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
 function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
-  console.log(swiper.animating);
   if (!swiper.animating) {
 
     if (index_page_clicked) {
@@ -328,15 +335,16 @@ function next() {
         item.style.background = 'black';
       }
     }
-    if (currentLargeVideoPlayer && !currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active") && currentLargeVideoPlayer.swiper_slide == item) {
-      fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
-      if (index < 2 || index > (swiper.slides.length - 2)) {
-        makeSmall(currentLargeVideoPlayer);
+    if (currentLargeVideoPlayer && currentLargeVideoPlayer.swiper_slide == item) {
+      if (!currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active")) {
+        fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
+        if (index < 2 || index > (swiper.slides.length - 2)) {
+          makeSmall(currentLargeVideoPlayer);
+        }
+      } else {
+        fadeAudio(currentLargeVideoPlayer, 1);
       }
     }
-    // if (currentLargeVideoPlayer.swiper_slide == item && currentLargeVideoPlayer.swiper) {
-    //   fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
-    // }
   });
 
 
@@ -434,28 +442,17 @@ function prev() {
       item.style.opacity = '1';
       item.style.pointerEvents = 'auto';
     }
-    if (currentLargeVideoPlayer && !currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active") && currentLargeVideoPlayer.swiper_slide == item) {
-      fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
-      if (index < 2 || index > (swiper.slides.length - 2)) {
-        makeSmall(currentLargeVideoPlayer);
+    if (currentLargeVideoPlayer && currentLargeVideoPlayer.swiper_slide == item) {
+      if (!currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active")) {
+        fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
+        if (index < 2 || index > (swiper.slides.length - 2)) {
+          makeSmall(currentLargeVideoPlayer);
+        }
+      } else {
+        fadeAudio(currentLargeVideoPlayer, 1);
       }
     }
   });
-
-
-  // let j = 0;
-  // video_media_array.forEach(function(item, index) {
-  //   if (item.player) {
-  //     if (currentLargeVideoPlayer == item.player) {
-  //       fadeAudio(item.player, audio_amounts[j]);
-  //       // if (unclickable_slides.includes(j)) {
-  //       //   makeSmall(item.player);
-  //       // }
-  //     }
-  //     j++;
-  //   }
-  // });
-
 
   // DEBUGGING: for index page
   if (indexCells.length > 0) {
@@ -640,27 +637,42 @@ function playerOnReady(player) {
     });
 
     player_videocard.addEventListener('click', function(event) {
+
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
-          console.log("make large..");
-          makeLarge(player);
+          if ($(player_card_description).is(":visible")){
+            console.log($(currentMediumVideoPlayer.swiper_slide).css("min-width"));
+            if (vw_convert(35) == parseFloat($(currentMediumVideoPlayer.swiper_slide).css("min-width"))) {
+              makeLarge(player);
+            }
+          }
         } else {
           // CASE_3: there is a medium video && user clicked on another video
+          // fadeAudio(currentMediumVideoPlayer, 0);
           makeSmall(currentMediumVideoPlayer);
-          makeMedium(player);
+          setTimeout(function() {
+            makeMedium(player);
+          }, 1000);
         }
       }
 
       // CASE_2: there is a large video && user clicked on it
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
-          makeMedium(player);
+          if ($(player_card_description).is(":visible")) {
+            if (vw_convert(70) == parseFloat($(currentLargeVideoPlayer.swiper_slide).css("min-width"))) { 
+              makeMedium(player);
+            }
+          }
         } 
         else {
           // CASE_4: there is a large video && user clicked on another video
+          // fadeAudio(currentLargeVideoPlayer, 0);
           makeSmall(currentLargeVideoPlayer);
-          makeMedium(player);
+          setTimeout(function() {
+            makeMedium(player);
+          }, 1000)
         }
       }
 
@@ -1111,14 +1123,13 @@ function makeSmall(plyr) {
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.removeClass('largeVideo');
     vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-    console.log("vw: " + vw);
     swiper_slide.css({ 'min-width' : '1vw' });
 
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
     setTimeout(function() {
-      clearInterval(updateInterval);
+      // clearInterval(updateInterval);
       plyr.progressbardiv.style.display = "none";
       plyr.durationdiv.style.display = "flex";
       // hide controls
@@ -1240,7 +1251,6 @@ function makeLarge(plyr) {
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.addClass('largeVideo');
-    console.log("added large class")
     currentMediumVideoPlayer = null;
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
@@ -1248,7 +1258,6 @@ function makeLarge(plyr) {
     // fade audio to full volume
     fadeAudio(plyr, 1);
     // move largeVideo to center and make it active
-    console.log("CLICKED INDEX: " + plyr.media_index);
     if (initialSlide != (plyr.media_index-currentStartIndex)) {
       moveToSlide(plyr.media_index, false, 1000);
     }
@@ -1279,18 +1288,20 @@ function fadeAudio (plyr, targetVolume) {
     fadeIn = false;
   }
   var fadeAudio = setInterval(function () {
+    fading_audio=true;
     // Only fade if past the fade out point or not at zero already
     // When volume close to zero stop all the intervalling
     if (Math.abs(plyr.volume - targetVolume) >= 0.05) {
       if (fadeIn) { 
-        plyr.volume += 0.10;
+        plyr.volume += 0.05;
       } else {
-        plyr.volume -= 0.10;
+        plyr.volume -= 0.05;
       }
     } else {
+      fading_audio = false;;
       clearInterval(fadeAudio);
     }
-  }, 100);
+  }, 50);
 }
 
 function makeSlide(i) {
