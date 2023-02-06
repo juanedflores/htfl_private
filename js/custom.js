@@ -609,6 +609,10 @@ function playerOnReady(player) {
         if (player == currentMediumVideoPlayer) {
           console.log("make large..");
           makeLarge(player);
+        } else {
+          // CASE_3: there is a medium video && user clicked on another video
+          makeSmall(currentMediumVideoPlayer);
+          makeMedium(player);
         }
       }
 
@@ -616,8 +620,15 @@ function playerOnReady(player) {
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
           makeMedium(player);
+        } 
+        else {
+          // CASE_4: there is a large video && user clicked on another video
+          makeSmall(currentLargeVideoPlayer);
+          makeMedium(player);
         }
       }
+
+
 
       // CASE_3: user clicked on a small player
       // else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
@@ -795,8 +806,7 @@ function aboutTheCase() {
   `;
   document.getElementById("content_text").innerHTML = aboutCaseContent;
 
-  typedText = `
-    In 1989, at age 15, Efrén Paredes, Jr. was
+  typedText = `In 1989, at age 15, Efrén Paredes, Jr. was
     convicted for a murder and armed robbery. The
     crime took place in St. Joseph, Michigan, at a
     local store where Efrén was working at the time.
@@ -1232,9 +1242,9 @@ function fadeAudio (plyr, targetVolume) {
     // When volume close to zero stop all the intervalling
     if (Math.abs(plyr.volume - targetVolume) >= 0.05) {
       if (fadeIn) { 
-        plyr.volume += 0.05;
+        plyr.volume += 0.10;
       } else {
-        plyr.volume -= 0.05;
+        plyr.volume -= 0.10;
       }
     } else {
       clearInterval(fadeAudio);
@@ -1607,6 +1617,8 @@ for (var i = 0; i < menu_text.length; i++) {
 // temporary fix for button on resize bug
 function resizedw(){
   document.body.click();
+  menu_button[0].click();
+  menu_button[0].click();
   let right_padding = $(window).width() - ($('.menu-button').offset().left + $('.menu-button').width()); 
   $('.tab-menu').css('padding-right', right_padding);
 }
