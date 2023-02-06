@@ -629,6 +629,17 @@ function playerOnReady(player) {
       }
 
 
+      $(".plyr__control--pressed").on('click', function(event) {
+        console.log("pressed");
+        if (currentMediumVideoPlayer) {
+          makeSmall(currentMediumVideoPlayer);
+        }
+        if (currentLargeVideoPlayer) {
+          makeSmall(currentLargeVideoPlayer);
+        }
+      });
+
+
 
       // CASE_3: user clicked on a small player
       // else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
