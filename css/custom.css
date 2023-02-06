@@ -270,7 +270,7 @@ th {
 .video-duration {
     position: absolute;
     left: auto;
-    top: 0%;
+    top: 3px;
     right: 2%; /* added space on right side */
     bottom: 0%;
     /* display: -webkit-box; */
@@ -783,8 +783,8 @@ body {
     }
 
     .video-duration {
-        font-size: 0.8rem;
-        line-height: 0.8rem;
+        font-size: 0.6rem;
+        line-height: 0.6rem;
     }
 
     .tab-content {
