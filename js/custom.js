@@ -1494,8 +1494,10 @@ async function fetchCSV () {
   await initSwiper();
   // determine the unclickable_slides indices
   for (var i = 0; i < unclickable_slides_amount; i++) {
-    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize)-unclickable_slides_amount);
-    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1) - unclickable_slides_amount+1));
+    // unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize)-unclickable_slides_amount);
+    // unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1) - unclickable_slides_amount+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize+1));
+    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1)));
   }
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
