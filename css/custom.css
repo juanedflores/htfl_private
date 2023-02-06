@@ -756,6 +756,18 @@ body {
     display: none !important;
 }
 
+.menu-button {
+    position: absolute;
+    top: 5vh;
+    right: 5vw;
+}
+
+.tab-menu {
+    position: absolute;
+    top: 5vh;
+    padding-right: 5vw;
+}
+
 @media screen and (max-width: 479px) {
     .video-title {
         margin-right: 15px;

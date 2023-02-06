@@ -1539,6 +1539,9 @@ menu_button[0].onclick = function() {
   if (currentLargeVideoPlayer) {
     makeSmall(currentLargeVideoPlayer);
   }
+  let right_padding = $(window).width() - ($('.menu-button').offset().left + $('.menu-button').width()); 
+  $('.tab-menu').css('padding-right', right_padding);
+
 }
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {
@@ -1604,6 +1607,8 @@ for (var i = 0; i < menu_text.length; i++) {
 // temporary fix for button on resize bug
 function resizedw(){
   document.body.click();
+  let right_padding = $(window).width() - ($('.menu-button').offset().left + $('.menu-button').width()); 
+  $('.tab-menu').css('padding-right', right_padding);
 }
 
 let winresizeTimer;
