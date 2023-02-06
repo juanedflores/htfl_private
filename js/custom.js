@@ -1627,8 +1627,13 @@ for (var i = 0; i < menu_text.length; i++) {
     let thisItem = $(this);
     // fade in the menu item content
     $('#content_text').fadeTo(1000, 1.0);
+
+    $('.arrow-buttons-div').css('display', 'block');
+    $('.arrow-buttons-div').fadeTo(1000, 1.0);
     $('#upButton').fadeTo(1000, 1.0);
     $('#downButton').fadeTo(1000, 1.0);
+
+
     // menu item content is now visible
     menu_item_text_visible = true;
     menuItem = thisItem[0].innerText;
