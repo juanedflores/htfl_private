@@ -339,6 +339,8 @@ function loadSlidesLeft() {
 }
 
 function next() {
+
+  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // update beginning and ending indices
   currentEndIndex = currentEndIndex+1;
   currentStartIndex = currentStartIndex+1;
@@ -445,6 +447,8 @@ function next() {
 }
 
 function prev() {
+
+  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
   // update beginning and ending indices
   currentEndIndex = currentEndIndex-1;
   currentStartIndex = currentStartIndex-1;
