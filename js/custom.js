@@ -49,6 +49,43 @@ function vw_convert(percent) {
   return (percent * w) / 100;
 }
 
+function showAudioPlayer(i) {
+  let play_button = $(audio_media_array[i].audio_player.children[0].children[0]);
+  let progress_bar = $(audio_media_array[i].audio_player.children[0].children[1]);
+
+  play_button.fadeTo(1000, 1.0);
+
+  progress_bar.css('visibility', 'visible');
+  progress_bar.fadeTo(1000, 1.0);
+  play_button.css('width', "100%");
+
+  progress_bar.css('pointer-events', 'auto');
+  play_button.css('pointer-events', 'auto');
+
+  if (!audio_media_array[i].has_click_listener) {
+    audio_media_array[i].has_click_listener = true;
+    play_button.on('click', function() {
+      console.log(audio_media_array[i].playing);
+      fade_timer = setTimeout(function() {
+        if (!audio_media_array[i].playing) {
+          console.log("playing..")
+          audio_media_array[i].playing = !audio_media_array[i].playing;
+          progress_bar.fadeTo(1000, 1.0);
+          play_button.css('width', "10%");
+        } 
+        else {
+          console.log("pausing..")
+          audio_media_array[i].playing = !audio_media_array[i].playing;
+          play_button.css('width', "100%");
+          progress_bar.fadeTo(1000, 0.0);
+          play_button.fadeTo(1000, 0.0);
+          progress_bar.css('pointer-events', 'none');
+          play_button.css('pointer-events', 'none');
+        }
+      }, 1000)
+    });
+  }
+}
 
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
@@ -963,12 +1000,21 @@ function audioFiles() {
       currRow = table.insertRow(i);
       cell = currRow.insertCell(0);
       cell.style.padding = "10px";
-      cell.innerText = name;
+      // cell.innerText = name;
+
+      a = document.createElement('a');
+      a.innerText = name;
+      a.setAttribute('href', `javascript:showAudioPlayer(${i})`);
+      cell.append(a);
+      // cell.push(a);
 
       audioPlayerString = `<div id="${slug}" class="audio-player"><audio id="audioPlayer" class="audioAudio"><source src="https://docs.google.com/uc?export=download&id=${audioID}" type="audio/mpeg" /></audio></div>`
 
       cell = currRow.insertCell(1);
       cell.innerHTML = audioPlayerString;
+      audio_media_array[i].audio_player = cell;
+      audio_media_array[i].playing = false;
+      audio_media_array[i].has_click_listener = false;
       new GreenAudioPlayer('#' + slug);
     }, 100 * i);
   }
@@ -977,13 +1023,6 @@ function audioFiles() {
   for (var i = 0; i <= audio_media_array.length - 1; i++) {
     task(i);
   }
-
-  // initialize GreenAudioPlayer
-  // GreenAudioPlayer.init({
-  //   selector: '.audio-player', // inits Green Audio Player on each audio container that has class "player"
-  //   stopOthersOnPlay: true,
-  //   showTooltips: true,
-  // });
 }
 
 function resources() {
@@ -1700,6 +1739,8 @@ function resizedw(){
   menu_button[0].click();
   let right_padding = $(window).width() - ($('.menu-button').offset().left + $('.menu-button').width()); 
   $('.tab-menu').css('padding-right', right_padding);
+  // add the move transition behaviour
+  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
 }
 
 let winresizeTimer;

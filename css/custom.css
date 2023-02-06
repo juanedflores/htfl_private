@@ -23,6 +23,22 @@ body {
     top: -4vh;
 }
 
+.holder {
+    display: none;
+    transition: all 1s ease !important;
+}
+
+.green-audio-player .holder {
+    display: none;
+    position: relative;
+    transition: all 1s ease;
+}
+
+.controls {
+    visibility: hidden;
+    transition: all 1s ease;
+}
+
 td {
     padding-left: 0px;
 }
