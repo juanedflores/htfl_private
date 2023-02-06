@@ -63,6 +63,8 @@ function showAudioPlayer(i) {
   progress_bar.fadeTo(1000, 1.0);
   play_button.css('width', "100%");
 
+  play_button.css('padding-left', "50%");
+
   progress_bar.css('pointer-events', 'auto');
   play_button.css('pointer-events', 'auto');
 
@@ -82,16 +84,15 @@ function showAudioPlayer(i) {
   if (!audio_media_array[i].has_click_listener) {
     audio_media_array[i].has_click_listener = true;
     play_button.on('click', function() {
-      console.log(audio_media_array[i].playing);
       fade_timer = setTimeout(function() {
         if (!audio_media_array[i].playing) {
-          console.log("playing..")
+          play_button.css('padding-left', "0%");
           audio_media_array[i].playing = !audio_media_array[i].playing;
           progress_bar.fadeTo(1000, 1.0);
           play_button.css('width', "10%");
         } 
         else {
-          console.log("pausing..")
+          play_button.css('padding-left', "99%");
           audio_media_array[i].playing = !audio_media_array[i].playing;
           play_button.css('width', "100%");
           progress_bar.fadeTo(1000, 0.0);
