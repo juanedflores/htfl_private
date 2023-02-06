@@ -836,7 +836,7 @@ function aboutTheCase() {
     typeString.pasteString(stringArray[i] + " ");
   }
   typeString
-    .typeString(' <br><br> He is currently 49 years-old.')
+    .typeString('<br><br>He is currently 49 years-old.')
     .start();
 }
 
@@ -1556,7 +1556,6 @@ menu_button[0].onclick = function() {
   }
   let right_padding = $(window).width() - ($('.menu-button').offset().left + $('.menu-button').width()); 
   $('.tab-menu').css('padding-right', right_padding);
-
 }
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {

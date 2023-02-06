@@ -766,6 +766,7 @@ body {
     position: absolute;
     top: 5vh;
     padding-right: 5vw;
+    z-index: 5;
 }
 
 @media screen and (max-width: 479px) {
