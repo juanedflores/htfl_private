@@ -1398,6 +1398,8 @@ async function fetchCSV () {
 //////////////////////////////////////////////////////////////
 // AFTER_DOM_CONTENT_IS_LOADED:
 document.addEventListener('DOMContentLoaded', () => {
+
+  $("#menuDiv").hide();
   // hide the border prev and next buttons
   $(".borderprev").hide();
   $(".bordernext").hide();
@@ -1518,6 +1520,8 @@ $('.continue-button').on('click', function() {
   $(".borderprev").show();
   $(".bordernext").show();
 
+
+
   $('.continue-button').fadeOut(600);
   setTimeout(function() {
     $('#typedWords').fadeOut(800);
@@ -1534,6 +1538,7 @@ $('.continue-button').on('click', function() {
     $('.tab-content-container').fadeIn(3500);
     $('.swiper-button-prev').fadeIn(3500);
     $('.swiper-button-next').fadeIn(3500);
+    $("#menuDiv").fadeIn(3500);
     // $('#upButton').show();
     // $('#downButton').show();
   }, 2600);
