@@ -270,7 +270,7 @@ th {
 .video-duration {
     position: absolute;
     left: auto;
-    top: 3px;
+    top: 5px;
     right: 2%; /* added space on right side */
     bottom: 0%;
     /* display: -webkit-box; */
@@ -809,5 +809,17 @@ body {
 
     .arrow-buttons-div {
         display: none;
+    }
+
+    .video-description {
+        line-height: 14px !important;
+    }
+
+    .card_description {
+        padding: 0 0 !important;
+    }
+
+    .video-duration {
+        top: 30%;
     }
 }
