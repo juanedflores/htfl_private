@@ -3,6 +3,7 @@
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
 let currentActivePlayer = null;
+let currentAudioPlayer = null;
 let video_media_array;
 let audio_media_array;
 let currentStartIndex = 0;
@@ -50,8 +51,11 @@ function vw_convert(percent) {
 }
 
 function showAudioPlayer(i) {
+  let audio_player = $(audio_media_array[i].audio_player.children[0]);
   let play_button = $(audio_media_array[i].audio_player.children[0].children[0]);
   let progress_bar = $(audio_media_array[i].audio_player.children[0].children[1]);
+
+  audio_player.fadeTo(1000, 1.0);
 
   play_button.fadeTo(1000, 1.0);
 
@@ -61,6 +65,19 @@ function showAudioPlayer(i) {
 
   progress_bar.css('pointer-events', 'auto');
   play_button.css('pointer-events', 'auto');
+
+  if (!currentAudioPlayer) {
+    currentAudioPlayer = audio_media_array[i];
+  }
+  else if (currentAudioPlayer != audio_media_array[i].audio_player.children[0]) {
+    if (currentAudioPlayer.playing) {
+      $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+    }
+    $(currentAudioPlayer.audio_player.children[0]).fadeTo(1000, 0.0);
+    $(currentAudioPlayer.audio_player.children[0].children[0]).css('pointer-events', 'none');
+    $(currentAudioPlayer.audio_player.children[0].children[1]).css('pointer-events', 'none');
+    currentAudioPlayer = audio_media_array[i];
+  }
 
   if (!audio_media_array[i].has_click_listener) {
     audio_media_array[i].has_click_listener = true;
@@ -999,7 +1016,7 @@ function audioFiles() {
       let audioID = audio_media_array[i]["Google Drive File ID"];
       currRow = table.insertRow(i);
       cell = currRow.insertCell(0);
-      cell.style.padding = "10px";
+      cell.style.padding = "0 10px";
       // cell.innerText = name;
 
       a = document.createElement('a');
@@ -1015,7 +1032,7 @@ function audioFiles() {
       audio_media_array[i].audio_player = cell;
       audio_media_array[i].playing = false;
       audio_media_array[i].has_click_listener = false;
-      new GreenAudioPlayer('#' + slug);
+      new GreenAudioPlayer('#' + slug, {stopOthersOnPlay: true});
     }, 100 * i);
   }
 
