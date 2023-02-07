@@ -1111,7 +1111,6 @@ function audioFiles() {
       typecell
         .pasteString(name)
         .start();
-      // cell.push(a);
 
       audioPlayerString = `<div id="${slug}" class="audio-player"><audio id="audioPlayer" class="audioAudio"><source src="https://docs.google.com/uc?export=download&id=${audioID}" type="audio/mpeg" /></audio></div>`
 

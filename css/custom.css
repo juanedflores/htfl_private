@@ -45,6 +45,7 @@ a:hover {
 .audio-player {
     transition: all 1s ease !important;
     min-width: 100px;
+    max-width: 120px;
 }
 
 .close-button {
@@ -62,6 +63,10 @@ a:hover {
     visibility: hidden;
     transition: all 1s ease;
     padding: 5px;
+}
+
+#audioTable td {
+    max-width: 150px;
 }
 
 td {
