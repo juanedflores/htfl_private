@@ -472,7 +472,7 @@ function next() {
           makeSmall(currentLargeVideoPlayer);
         }
       } else {
-        fadeAudio(currentLargeVideoPlayer, 1);
+        // fadeAudio(currentLargeVideoPlayer, 1);
       }
     }
   });
@@ -574,14 +574,17 @@ function prev() {
       item.style.opacity = '1';
       item.style.pointerEvents = 'auto';
     }
+
     if (currentLargeVideoPlayer && currentLargeVideoPlayer.swiper_slide == item) {
       if (!currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active")) {
+        console.log("INDEX:")
+        console.log(index)
         fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
         if (index < 2 || index > (swiper.slides.length - 2)) {
           makeSmall(currentLargeVideoPlayer);
         }
       } else {
-        fadeAudio(currentLargeVideoPlayer, 1);
+        // fadeAudio(currentLargeVideoPlayer, 1);
       }
     }
   });
@@ -609,7 +612,7 @@ function prev() {
           }
           console.log("fading");
         }
-        fadeAudio(item.player, 0.2);
+        // fadeAudio(item.player, 0.2);
       }
     })
   }
@@ -721,11 +724,17 @@ function playerOnReady(player) {
         // else {
         // CASE_1: there is already a medium
         if (currentMediumVideoPlayer) {
+          currentMediumVideoPlayer.pause();
           makeSmall(currentMediumVideoPlayer);
+          makeMedium(player);
         }
         // CASE_2: making medium from small
-        if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+        else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
           makeMedium(player);
+
+          // setTimeout(function() {
+            // makeMedium(player);
+          // }, 1000)
         }
         // }
 
@@ -1398,6 +1407,7 @@ function makeLarge(plyr) {
   } 
 
   let swiper_slide = $(plyr.swiper_slide);
+  console.log("making large..")
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.addClass('largeVideo');
@@ -1519,12 +1529,15 @@ function initSwiper() {
         }, 100);
       },
       slideNextTransitionEnd: function () {
-        console.log("check if mouse is still over thing?")
         next();
         if (is_on_edge_right) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
         } else if (is_on_edge_left) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
+        }
+
+        if (currentLargeVideoPlayer) {
+          console.log(currentLargeVideoPlayer.volume)
         }
       },
       slidePrevTransitionEnd: function () {
@@ -1533,6 +1546,10 @@ function initSwiper() {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, 3000);
         } else if (is_on_edge_right) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, 3000);
+        }
+
+        if (currentLargeVideoPlayer) {
+          console.log(currentLargeVideoPlayer.volume)
         }
       },
     },
@@ -1745,7 +1762,6 @@ $('.continue-button').on('click', function() {
 
 
   $('.continue-button').fadeOut(200);
-
   $('.continue-button').promise().done(function(){
     $('.continue-button').hide();
     setTimeout(function() {
