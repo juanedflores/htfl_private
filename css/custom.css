@@ -24,6 +24,10 @@ a {
     text-decoration: none;
 }
 
+/* #audioTable td { */
+/*     width: 10vw; */
+/* } */
+
 a:hover {
     text-decoration: underline;
 }

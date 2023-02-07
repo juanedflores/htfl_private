@@ -54,6 +54,8 @@ function showAudioPlayer(i) {
   let audio_player = $(audio_media_array[i].audio_player.children[0]);
   let play_button = $(audio_media_array[i].audio_player.children[0].children[0]);
   let progress_bar = $(audio_media_array[i].audio_player.children[0].children[1]);
+  let close_button = $(audio_media_array[i].audio_player.parentNode.children[2].children[0]);
+  close_button.css('opacity', '1');
 
   function animateAudioPlayer() {
     audio_player.fadeTo(1000, 1.0);
@@ -64,30 +66,83 @@ function showAudioPlayer(i) {
     play_button.css('padding-left', "99%");
     progress_bar.css('pointer-events', 'auto');
     play_button.css('pointer-events', 'auto');
+    close_button.hide();
 
     if (!audio_media_array[i].has_click_listener) {
       audio_media_array[i].has_click_listener = true;
       play_button.on('click', function() {
-        console.log("isanimating")
-        console.log(swiper.animating)
         fade_timer = setTimeout(function() {
-          if (!audio_media_array[i].playing) {
+          if (!audio_media_array[i].playing && parseInt(play_button.css('padding-left')) != 0) {
+            audio_media_array[i].playing = true;
             play_button.css('padding-left', "0%");
-            audio_media_array[i].playing = !audio_media_array[i].playing;
             progress_bar.fadeTo(1000, 1.0);
             play_button.css('width', "10%");
+            progress_bar.promise().done(function(){
+              if (audio_media_array[i].playing && audio_media_array[i] == currentAudioPlayer) {
+                close_button.fadeTo(1000, 1.0);
+              }
+            });
           } 
+
+          else if (audio_media_array[i].playing && parseInt(play_button.css('padding-left')) == 0) {
+            audio_media_array[i].playing = false;
+
+          }
+          else if (!audio_media_array[i].playing && parseInt(play_button.css('padding-left')) == 0) {
+
+          }
           else {
-            currentAudioPlayer = null;
-            play_button.css('padding-left', "99%");
-            audio_media_array[i].playing = !audio_media_array[i].playing;
+            audio_media_array[i].playing = false;
+
+            // audio_media_array[i].playing = false;
+            // currentAudioPlayer = null;
+            // play_button.css('padding-left', "99%");
+            // audio_media_array[i].playing = !audio_media_array[i].playing;
+            // play_button.css('width', "100%");
+            // progress_bar.fadeTo(1000, 0.0);
+            // play_button.fadeTo(1000, 0.0);
+            // progress_bar.css('pointer-events', 'none');
+            // play_button.css('pointer-events', 'none');
+            // close_button.fadeTo(400, 0.0);
+
             play_button.css('width', "100%");
             progress_bar.fadeTo(1000, 0.0);
             play_button.fadeTo(1000, 0.0);
+            close_button.fadeTo(400, 0.0);
+
             progress_bar.css('pointer-events', 'none');
             play_button.css('pointer-events', 'none');
           }
         }, 1000)
+
+        close_button.on('click', function() {
+          if (currentAudioPlayer.playing && currentAudioPlayer != audio_media_array[i]) {
+            $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+          }
+          else if (audio_media_array[i].playing) {
+            if (currentAudioPlayer && currentAudioPlayer == audio_media_array[i]) {
+              $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+              // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+              // audio_media_array[i].playing = false;
+            }
+          }
+          play_button.css('width', "100%");
+          progress_bar.fadeTo(1000, 0.0);
+          play_button.fadeTo(400, 0.0);
+          close_button.fadeTo(400, 0.0);
+
+          progress_bar.css('pointer-events', 'none');
+          play_button.css('pointer-events', 'none');
+            // play_button.css('padding-left', "99%");
+            // play_button.css('width', "100%");
+            // progress_bar.fadeTo(1000, 0.0);
+            // play_button.fadeTo(1000, 0.0);
+            // progress_bar.css('pointer-events', 'none');
+            // play_button.css('pointer-events', 'none');
+            // close_button.fadeTo(400, 0.0);
+
+            // currentAudioPlayer = null;
+        });
       });
     }
   }
@@ -99,15 +154,26 @@ function showAudioPlayer(i) {
   }
   else if (currentAudioPlayer != audio_media_array[i]) {
     console.log("DIFF")
-    if (currentAudioPlayer.playing) {
+    if (currentAudioPlayer.playing && currentAudioPlayer) {
+
       $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+      // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+      close_button.hide();
     }
     $(currentAudioPlayer.audio_player.children[0]).fadeTo(1000, 0.0);
     $(currentAudioPlayer.audio_player.children[0].children[0]).css('pointer-events', 'none');
     $(currentAudioPlayer.audio_player.children[0].children[1]).css('pointer-events', 'none');
+    $(currentAudioPlayer.audio_player.parentNode.children[2].children[0]).fadeTo(1000, 0.0);
     animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
   } else {
+    if (!currentAudioPlayer.playing) {
+      animateAudioPlayer();
+    } else {
+      // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
+      // close_button.hide();
+    }
+
     console.log("SAME")
   }
 }
@@ -1039,11 +1105,11 @@ function audioFiles() {
       typecell = new Typewriter(a, {
         loop: false,
         cursor: '',
-        delay: 10,
+        delay: 50,
       });
 
       typecell
-        .typeString(name)
+        .pasteString(name)
         .start();
       // cell.push(a);
 
@@ -1055,6 +1121,10 @@ function audioFiles() {
       audio_media_array[i].playing = false;
       audio_media_array[i].has_click_listener = false;
       new GreenAudioPlayer('#' + slug, {stopOthersOnPlay: true});
+
+      cell = currRow.insertCell(2);
+      x_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" style="width: 10%; height: 100%; z-index: 0; cursor: pointer; position: relative; left: 10px; top: 2px; opacity: 0;" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="__lottie_element_2"><rect width="500" height="500" x="0" y="0"></rect></clipPath></defs><g clip-path="url(#__lottie_element_2)"><g style="display: block;" transform="matrix(0.7071068286895752,-0.7071067690849304,0.7071067690849304,0.7071068286895752,323.93365478515625,331.6793212890625)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: none;" transform="matrix(1,0,0,1,244.5229949951172,360)" opacity="0.05480000000000018"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: block;" transform="matrix(0.7071068286895752,0.7071067690849304,-0.7071067690849304,0.7071068286895752,168.3206787109375,323.9336853027344)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g></g></svg>'
+      cell.innerHTML = x_svg
     }, 100 * i);
   }
 
