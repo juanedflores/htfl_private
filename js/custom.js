@@ -55,55 +55,60 @@ function showAudioPlayer(i) {
   let play_button = $(audio_media_array[i].audio_player.children[0].children[0]);
   let progress_bar = $(audio_media_array[i].audio_player.children[0].children[1]);
 
-  audio_player.fadeTo(1000, 1.0);
+  function animateAudioPlayer() {
+    audio_player.fadeTo(1000, 1.0);
+    play_button.fadeTo(1000, 1.0);
+    progress_bar.css('visibility', 'visible');
+    progress_bar.fadeTo(1000, 1.0);
+    play_button.css('width', "100%");
+    play_button.css('padding-left', "99%");
+    progress_bar.css('pointer-events', 'auto');
+    play_button.css('pointer-events', 'auto');
 
-  play_button.fadeTo(1000, 1.0);
-
-  progress_bar.css('visibility', 'visible');
-  progress_bar.fadeTo(1000, 1.0);
-  play_button.css('width', "100%");
-
-  play_button.css('padding-left', "50%");
-
-  progress_bar.css('pointer-events', 'auto');
-  play_button.css('pointer-events', 'auto');
+    if (!audio_media_array[i].has_click_listener) {
+      audio_media_array[i].has_click_listener = true;
+      play_button.on('click', function() {
+        console.log("isanimating")
+        console.log(swiper.animating)
+        fade_timer = setTimeout(function() {
+          if (!audio_media_array[i].playing) {
+            play_button.css('padding-left', "0%");
+            audio_media_array[i].playing = !audio_media_array[i].playing;
+            progress_bar.fadeTo(1000, 1.0);
+            play_button.css('width', "10%");
+          } 
+          else {
+            currentAudioPlayer = null;
+            play_button.css('padding-left', "99%");
+            audio_media_array[i].playing = !audio_media_array[i].playing;
+            play_button.css('width', "100%");
+            progress_bar.fadeTo(1000, 0.0);
+            play_button.fadeTo(1000, 0.0);
+            progress_bar.css('pointer-events', 'none');
+            play_button.css('pointer-events', 'none');
+          }
+        }, 1000)
+      });
+    }
+  }
 
   if (!currentAudioPlayer) {
+    console.log("INIT")
+    animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
   }
-  else if (currentAudioPlayer != audio_media_array[i].audio_player.children[0]) {
+  else if (currentAudioPlayer != audio_media_array[i]) {
+    console.log("DIFF")
     if (currentAudioPlayer.playing) {
       $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
     }
     $(currentAudioPlayer.audio_player.children[0]).fadeTo(1000, 0.0);
     $(currentAudioPlayer.audio_player.children[0].children[0]).css('pointer-events', 'none');
     $(currentAudioPlayer.audio_player.children[0].children[1]).css('pointer-events', 'none');
+    animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
-  }
-
-  if (!audio_media_array[i].has_click_listener) {
-    audio_media_array[i].has_click_listener = true;
-    play_button.on('click', function() {
-      console.log("isanimating")
-      console.log(swiper.animating)
-      fade_timer = setTimeout(function() {
-        if (!audio_media_array[i].playing) {
-          play_button.css('padding-left', "0%");
-          audio_media_array[i].playing = !audio_media_array[i].playing;
-          progress_bar.fadeTo(1000, 1.0);
-          play_button.css('width', "10%");
-        } 
-        else {
-          play_button.css('padding-left', "99%");
-          audio_media_array[i].playing = !audio_media_array[i].playing;
-          play_button.css('width', "100%");
-          progress_bar.fadeTo(1000, 0.0);
-          play_button.fadeTo(1000, 0.0);
-          progress_bar.css('pointer-events', 'none');
-          play_button.css('pointer-events', 'none');
-        }
-      }, 1000)
-    });
+  } else {
+    console.log("SAME")
   }
 }
 
