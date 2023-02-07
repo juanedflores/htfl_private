@@ -1,8 +1,11 @@
 body {
+    height: 100%;
+    width: 100%;
+    margin: auto;
     /* custom */
     cursor: url('../assets/cursor.png'), pointer !important;
     /* webflow */
-    overflow: hidden;
+    overflow: hidden !important;
     height: 100%;
     background-color: #141414;
     font-family: Montserrat, sans-serif;
@@ -45,7 +48,7 @@ a:hover {
 .audio-player {
     transition: all 1s ease !important;
     min-width: 100px;
-    max-width: 120px;
+    max-width: 160px;
 }
 
 .close-button {
@@ -66,7 +69,10 @@ a:hover {
 }
 
 #audioTable td {
-    max-width: 150px;
+    /* max-width: 100px; */
+    /* max-height: 100px; */
+    /* padding: 2px; */
+    /* margin: 0; */
 }
 
 td {
@@ -839,6 +845,10 @@ body {
 }
 
 @media screen and (max-width: 1200px) {
+    body  {
+        overflow: scroll;
+    }
+
     .swiper {
         padding: 0 36px;
     }
