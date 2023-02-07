@@ -1743,6 +1743,10 @@ $('.continue-button').on('click', function() {
 
 
   $('.continue-button').fadeOut(600);
+
+  $('.continue-button').promise().done(function(){
+    $('.continue-button').hide();
+  });
   setTimeout(function() {
     $('#typedWords').fadeOut(800);
     $('#typedWordsSkip').fadeOut(800);
