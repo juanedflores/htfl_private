@@ -183,7 +183,7 @@ function showAudioPlayer(i) {
 function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
   if (!swiper.animating) {
 
-    if (index_page_clicked) {
+    if (index_page_clicked && !currentLargeVideoPlayer) {
       $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
       $('#swiper').fadeTo(1000, 1.0);
       $('#content_text').fadeTo(1000, 0.4);
@@ -1367,7 +1367,8 @@ function makeMedium(plyr) {
       $('#content_text').fadeTo(1000, 0.3);
       $('#upButton').fadeTo(1000, 0.3);
       $('#downButton').fadeTo(1000, 0.3);
-    } else {
+    } 
+    else {
       $('#content_text').fadeTo(1000, 0.0);
       $('#content_text').promise().done(function(){
         document.getElementById("content_text").innerHTML = "";
@@ -1386,10 +1387,12 @@ function makeMedium(plyr) {
 
 function makeLarge(plyr) {
   if (index_page_clicked) {
+    console.log("CLICKED")
     $('#content_text').fadeTo(1000, 0.0);
     $('#upButton').fadeTo(1000, 0.0);
     $('#downButton').fadeTo(1000, 0.0);
     $('#content_text').promise().done(function(){
+      $('#content_text').hide();
       document.getElementById("content_text").innerHTML = "";
     });
   } 
