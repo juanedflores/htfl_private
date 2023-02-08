@@ -1764,6 +1764,7 @@ $('.continue-button').on('click', function() {
   $('.continue-button').fadeOut(200);
   $('.continue-button').promise().done(function(){
     $('.continue-button').hide();
+    $('.continue-button').css('opacity', '0');
     setTimeout(function() {
       $('#typedWords').fadeOut(800);
       $('#typedWordsSkip').fadeOut(800);
