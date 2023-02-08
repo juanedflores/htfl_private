@@ -57,17 +57,23 @@ function showAudioPlayer(i) {
   let close_button = $(audio_media_array[i].audio_player.parentNode.children[2].children[0]);
   close_button.css('opacity', '1');
 
+  close_button.css('pointer-events', 'none');
+  progress_bar.css('pointer-events', 'none');
+
+  play_button.css('pointer-events', 'auto');
+  // progress_bar.css('pointer-events', 'auto');
+
   function animateAudioPlayer() {
-    audio_player.fadeTo(1000, 1.0);
-    play_button.fadeTo(1000, 1.0);
-    progress_bar.css('visibility', 'visible');
-    progress_bar.fadeTo(1000, 1.0);
-    play_button.css('width', "100%");
-    play_button.css('padding-left', "99%");
-    progress_bar.css('pointer-events', 'auto');
-    play_button.css('pointer-events', 'auto');
+    play_button.css('width', "0%");
+    play_button.css('padding-left', "100%");
     close_button.hide();
 
+    setTimeout(function() {
+      audio_player.fadeTo(200, 1.0);
+      play_button.fadeTo(200, 1.0);
+      progress_bar.css('visibility', 'visible');
+      progress_bar.fadeTo(200, 1.0);
+    }, 250);
     if (!audio_media_array[i].has_click_listener) {
       audio_media_array[i].has_click_listener = true;
       play_button.on('click', function() {
@@ -75,13 +81,22 @@ function showAudioPlayer(i) {
           if (!audio_media_array[i].playing && parseInt(play_button.css('padding-left')) != 0) {
             audio_media_array[i].playing = true;
             play_button.css('padding-left', "0%");
-            progress_bar.fadeTo(1000, 1.0);
+            progress_bar.fadeTo(100, 1.0);
             play_button.css('width', "10%");
             progress_bar.promise().done(function(){
               if (audio_media_array[i].playing && audio_media_array[i] == currentAudioPlayer) {
-                close_button.fadeTo(1000, 1.0);
+                close_button.fadeTo(100, 1.0);
+                setTimeout(function() {
+                  // close_button.css('pointer-events', 'auto');
+                }, 1000);
               }
             });
+            setTimeout(function() {
+              console.log("made clickable")
+              progress_bar.css('pointer-events', 'auto');
+              play_button.css('pointer-events', 'auto');
+              close_button.css('pointer-events', 'auto');
+            }, 500);
           } 
 
           else if (audio_media_array[i].playing && parseInt(play_button.css('padding-left')) == 0) {
@@ -94,26 +109,16 @@ function showAudioPlayer(i) {
           else {
             audio_media_array[i].playing = false;
 
-            // audio_media_array[i].playing = false;
-            // currentAudioPlayer = null;
-            // play_button.css('padding-left', "99%");
-            // audio_media_array[i].playing = !audio_media_array[i].playing;
-            // play_button.css('width', "100%");
-            // progress_bar.fadeTo(1000, 0.0);
-            // play_button.fadeTo(1000, 0.0);
-            // progress_bar.css('pointer-events', 'none');
-            // play_button.css('pointer-events', 'none');
-            // close_button.fadeTo(400, 0.0);
-
             play_button.css('width', "100%");
-            progress_bar.fadeTo(1000, 0.0);
-            play_button.fadeTo(1000, 0.0);
-            close_button.fadeTo(400, 0.0);
+            progress_bar.fadeTo(100, 0.0);
+            play_button.fadeTo(100, 0.0);
+            close_button.fadeTo(100, 0.0);
 
             progress_bar.css('pointer-events', 'none');
             play_button.css('pointer-events', 'none');
+            close_button.css('pointer-events', 'none');
           }
-        }, 1000)
+        }, 200)
 
         close_button.on('click', function() {
           if (currentAudioPlayer.playing && currentAudioPlayer != audio_media_array[i]) {
@@ -127,21 +132,13 @@ function showAudioPlayer(i) {
             }
           }
           play_button.css('width', "100%");
-          progress_bar.fadeTo(1000, 0.0);
-          play_button.fadeTo(400, 0.0);
-          close_button.fadeTo(400, 0.0);
+          progress_bar.fadeTo(100, 0.0);
+          play_button.fadeTo(100, 0.0);
+          close_button.fadeTo(100, 0.0);
 
           progress_bar.css('pointer-events', 'none');
           play_button.css('pointer-events', 'none');
-            // play_button.css('padding-left', "99%");
-            // play_button.css('width', "100%");
-            // progress_bar.fadeTo(1000, 0.0);
-            // play_button.fadeTo(1000, 0.0);
-            // progress_bar.css('pointer-events', 'none');
-            // play_button.css('pointer-events', 'none');
-            // close_button.fadeTo(400, 0.0);
-
-            // currentAudioPlayer = null;
+          close_button.css('pointer-events', 'none');
         });
       });
     }
@@ -155,23 +152,23 @@ function showAudioPlayer(i) {
   else if (currentAudioPlayer != audio_media_array[i]) {
     console.log("DIFF")
     if (currentAudioPlayer.playing && currentAudioPlayer) {
-
       $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
-      // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
       close_button.hide();
     }
-    $(currentAudioPlayer.audio_player.children[0]).fadeTo(1000, 0.0);
+    $(currentAudioPlayer.audio_player.children[0]).fadeTo(10, 0.0);
+    $(currentAudioPlayer.audio_player.parentNode.children[2].children[0]).fadeTo(10, 0.0);
     $(currentAudioPlayer.audio_player.children[0].children[0]).css('pointer-events', 'none');
     $(currentAudioPlayer.audio_player.children[0].children[1]).css('pointer-events', 'none');
-    $(currentAudioPlayer.audio_player.parentNode.children[2].children[0]).fadeTo(1000, 0.0);
+    // close button
+    $(currentAudioPlayer.audio_player.parentNode.children[2].children[0]).css('pointer-events', 'none');
+
     animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
   } else {
     if (!currentAudioPlayer.playing) {
       animateAudioPlayer();
     } else {
-      // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
-      // close_button.hide();
+      // else
     }
 
     console.log("SAME")
@@ -1901,5 +1898,7 @@ $(document).click(function(event) {
 $(".section").hover(function(event) {
   if (index_page_clicked && !currentMediumVideoPlayer && !currentLargeVideoPlayer) {
     $('#content_text').fadeTo(500, 1.0);
+    $('#upButton').fadeTo(500, 1.0);
+    $('#downButton').fadeTo(500, 1.0);
   }
 });

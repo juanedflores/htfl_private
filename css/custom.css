@@ -41,12 +41,12 @@ a:hover {
 
 .holder {
     display: none;
-    transition: all 1s ease !important;
+    transition: all 500ms ease !important;
     padding: 5px;
 }
 
 .audio-player {
-    transition: all 1s ease !important;
+    transition: all 100ms ease !important;
     min-width: 100px;
     max-width: 160px;
 }
@@ -59,12 +59,12 @@ a:hover {
 .green-audio-player .holder {
     display: none;
     position: relative;
-    transition: all 1s ease;
+    transition: all 100ms ease;
 }
 
 .controls {
     visibility: hidden;
-    transition: all 1s ease;
+    transition: all 100ms ease;
     padding: 5px;
 }
 
