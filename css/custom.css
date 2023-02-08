@@ -41,7 +41,7 @@ a:hover {
 
 .holder {
     display: none;
-    transition: all 500ms ease !important;
+    transition: all 100ms ease !important;
     padding: 5px;
 }
 
