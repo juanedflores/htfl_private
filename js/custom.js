@@ -1366,16 +1366,40 @@ function makeMedium(plyr) {
     }
   }
 
+
+  // if (index_page_clicked) {
+  //   $('#content_text').fadeTo(1000, 0.3);
+  //   $('#upButton').fadeTo(1000, 0.3);
+  //   $('#downButton').fadeTo(1000, 0.3);
+  // } 
+  // else {
+  //   $('#content_text').fadeTo(1000, 0.0);
+  //   $('#upButton').fadeTo(1000, 0.0);
+  //   $('#downButton').fadeTo(1000, 0.0);
+  //   $('#content_text').promise().done(function(){
+  //     document.getElementById("content_text").innerHTML = "";
+  //     $('#upButton').hide();
+  //     $('#downButton').hide();
+  //   });
+  // }
   $('#swiper').fadeTo(1000, 1.0);
   if (menu_item_text_visible) {
-    menu_item_text_visible = false;
+    // menu_item_text_visible = false;
     if (index_page_clicked) {
+
       $('#content_text').fadeTo(1000, 0.3);
-      $('#upButton').fadeTo(1000, 0.3);
-      $('#downButton').fadeTo(1000, 0.3);
+      if (document.getElementById("content_text").innerHTML != "") {
+        $('#upButton').fadeTo(1000, 0.3);
+        $('#downButton').fadeTo(1000, 0.3);
+      }
     } 
     else {
+      menu_item_text_visible = false;
       $('#content_text').fadeTo(1000, 0.0);
+      // $('#upButton').fadeTo(1000, 0.0);
+      // $('#downButton').fadeTo(1000, 0.0);
+      $('#upButton').hide();
+      $('#downButton').hide();
       $('#content_text').promise().done(function(){
         document.getElementById("content_text").innerHTML = "";
         $('#upButton').hide();
@@ -1393,7 +1417,6 @@ function makeMedium(plyr) {
 
 function makeLarge(plyr) {
   if (index_page_clicked) {
-    console.log("CLICKED")
     $('#content_text').fadeTo(1000, 0.0);
     $('#upButton').fadeTo(1000, 0.0);
     $('#downButton').fadeTo(1000, 0.0);
@@ -1898,7 +1921,9 @@ $(document).click(function(event) {
 $(".section").hover(function(event) {
   if (index_page_clicked && !currentMediumVideoPlayer && !currentLargeVideoPlayer) {
     $('#content_text').fadeTo(500, 1.0);
-    $('#upButton').fadeTo(500, 1.0);
-    $('#downButton').fadeTo(500, 1.0);
+    if (document.getElementById("content_text").innerHTML != "") {
+      $('#upButton').fadeTo(500, 1.0);
+      $('#downButton').fadeTo(500, 1.0);
+    }
   }
 });
