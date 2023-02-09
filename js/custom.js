@@ -222,9 +222,8 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
     // if distance to left is less, do prev
     if (distance_to_left < distance_to_right) {
       diff = distance_to_left;
-      if (diff >= swiper.visibleSlidesIndexes.length) {
+      if (diff >= Math.round(swiper.visibleSlidesIndexes.length/2)) {
         for (var i = 0; i < diff-1; i++) {
-          console.log(i)
           loadSlidesLeft();
         }
         setTimeout(function() {
@@ -273,7 +272,7 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
     // if distance to right is less, do next
     else if (distance_to_left > distance_to_right) {
       diff = distance_to_right;
-      if (diff >= swiper.visibleSlidesIndexes.length) {
+      if (diff >= Math.round(swiper.visibleSlidesIndexes.length/2)) {
         for (var i = 0; i < diff-1; i++) {
           loadSlidesRight();
         }
