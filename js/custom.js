@@ -640,6 +640,12 @@ function playerOnReady(player) {
 
     // console.log(player.media);
 
+    if ($(window).width() > 400) {
+      $(player_swiper_slide).css({ 'min-width' : '1vw' });
+    } else {
+      $(player_swiper_slide).css({ 'min-width' : '20vw' });
+    }
+
     // make videos appear randomly on intro
     // TODO: do this only on page enter
     let random_Time = Math.random() * 1000;
@@ -1045,7 +1051,7 @@ function aboutTheInstallation() {
   typedText2 = "Half Truths and Full Lies depicts, through documentation and reenactment, the case of Efrén Paredes Jr., a Latinx man from Michigan, who was sentenced to life without parole in 1989 at age fifteen, for a murder he claims he did not commit."
   typedText3 = "The multi-channel installation takes on a Rashomon-like quality, as divergent accounts of the crime accrue, forming multiple portraits of Efren. These accounts reflect perspectives of a range of individuals, from a police detective to key witnesses from the tight-knit small town community who singled Paredes out, as well as those whose lives — over the past 30 years — were most affected by the teen’s conviction: family members, teachers, and citizens who sat in judgment as jury members."
   typedText4 = "Half Truths and Full Lies tells a story about a story; one constructed by a group of teens who appear to have conspired to set up their peer, and whose narrative played on stereotypical assumptions about racial minorities. This account became the only one the public, and the jury, got to hear, and the one upon which the local police and prosecutor relied."
-  typedText5 = "<a href='https://vimeo.com/294983167' target='_blank'>Full story.</a>"
+  typedText5 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Full story.</a>"
 
   typeString = new Typewriter("#aboutCaseInstallation", {
     loop: false,
@@ -1131,15 +1137,20 @@ function audioFiles() {
       new GreenAudioPlayer('#' + slug, {stopOthersOnPlay: true});
 
       cell = currRow.insertCell(2);
-      x_svg = '<svg class="close_button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="50" height="50" style="min-width: 18px; max-width: 20px; width: 100%; height: 100%; z-index: 0; cursor: pointer; position: relative; left: 2px; top: 2px; opacity: 0;" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="__lottie_element_2"><rect width="500" height="500" x="0" y="0"></rect></clipPath></defs><g clip-path="url(#__lottie_element_2)"><g style="display: block;" transform="matrix(0.7071068286895752,-0.7071067690849304,0.7071067690849304,0.7071068286895752,323.93365478515625,331.6793212890625)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: none;" transform="matrix(1,0,0,1,244.5229949951172,360)" opacity="0.05480000000000018"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: block;" transform="matrix(0.7071068286895752,0.7071067690849304,-0.7071067690849304,0.7071068286895752,168.3206787109375,323.9336853027344)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g></g></svg>'
-      cell.innerHTML = x_svg
+      w = $(window).width();
+      if (w > 600) {
+        x_svg = '<svg class="close_button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="50" height="50" style="min-width: 18px; max-width: 20px; width: 100%; height: 100%; z-index: 0; cursor: pointer; position: relative; left: 2px; top: 2px; opacity: 0;" preserveAspectRatio="xMidYMid meet"><defs><clipPath id="__lottie_element_2"><rect width="500" height="500" x="0" y="0"></rect></clipPath></defs><g clip-path="url(#__lottie_element_2)"><g style="display: block;" transform="matrix(0.7071068286895752,-0.7071067690849304,0.7071067690849304,0.7071068286895752,323.93365478515625,331.6793212890625)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: none;" transform="matrix(1,0,0,1,244.5229949951172,360)" opacity="0.05480000000000018"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g><g style="display: block;" transform="matrix(0.7071068286895752,0.7071067690849304,-0.7071067690849304,0.7071068286895752,168.3206787109375,323.9336853027344)" opacity="1"><g opacity="1" transform="matrix(1,0,0,1,5.4770002365112305,-110.03500366210938)"><path fill="rgb(229,229,229)" fill-opacity="1" d=" M150,-9 C150,-9 150,9 150,9 C150,9 -150,9 -150,9 C-150,9 -150,-9 -150,-9 C-150,-9 150,-9 150,-9z"></path></g></g></g></svg>'
+        cell.innerHTML = x_svg;
+      }
+      // newDiv = document.createElement("div");
+      // newDiv.appendChild(x_svg);
     }, 100 * i);
   }
 
   table = document.getElementById("audioTable");
   for (var i = 0; i <= audio_media_array.length - 1; i++) {
     task(i);
-  }
+  }0
 }
 
 function resources() {
@@ -1279,7 +1290,12 @@ function makeSmall(plyr) {
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.removeClass('largeVideo');
     vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-    swiper_slide.css({ 'min-width' : '1vw' });
+
+    if ($(window).width() > 400) {
+      swiper_slide.css({ 'min-width' : '1vw' });
+    } else {
+      swiper_slide.css({ 'min-width' : '20vw' });
+    }
 
     // lower volume to 0
     fadeAudio(plyr, 0);
@@ -1306,7 +1322,12 @@ function closeAndSwipe(plyr) {
   swiper_slide = $(plyr.swiper_slide);
   if (swiper_slide.hasClass("largeVideo")){
     swiper_slide.removeClass('largeVideo');
-    swiper_slide.css({ 'min-width' : '1vw' });
+
+    if ($(window).width() > 400) {
+      swiper_slide.css({ 'min-width' : '1vw' });
+    } else {
+      swiper_slide.css({ 'min-width' : '20vw' });
+    }
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
