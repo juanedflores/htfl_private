@@ -4406,7 +4406,7 @@ a {
 .link.resources-link {
     padding-bottom: 7px;
     line-height: 1.2em;
-    text-decoration: none;
+    /* text-decoration: none; */
     text-indent: 30px;
 }
 
@@ -4691,7 +4691,7 @@ a {
     line-height: 1em;
     font-style: normal;
     font-weight: 200;
-    text-decoration: none;
+    /* text-decoration: none; */
     text-indent: 30px;
 }
 

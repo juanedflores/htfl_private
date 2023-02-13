@@ -2,7 +2,6 @@
 // GLOBAL_VARIABLES:
 let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
-let currentActivePlayer = null;
 let currentAudioPlayer = null;
 let video_media_array;
 let audio_media_array;
@@ -93,7 +92,6 @@ function showAudioPlayer(i) {
               }
             });
             setTimeout(function() {
-              console.log("made clickable")
               progress_bar.css('pointer-events', 'auto');
               play_button.css('pointer-events', 'auto');
               close_button.css('pointer-events', 'auto');
@@ -129,8 +127,6 @@ function showAudioPlayer(i) {
           else if (audio_media_array[i].playing) {
             if (currentAudioPlayer && currentAudioPlayer == audio_media_array[i]) {
               $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
-              // $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
-              // audio_media_array[i].playing = false;
             }
           }
           play_button.css('width', "100%");
@@ -147,12 +143,10 @@ function showAudioPlayer(i) {
   }
 
   if (!currentAudioPlayer) {
-    console.log("INIT")
     animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
   }
   else if (currentAudioPlayer != audio_media_array[i]) {
-    console.log("DIFF")
     if (currentAudioPlayer.playing && currentAudioPlayer) {
       $(currentAudioPlayer.audio_player.children[0].children[0].children[1]).click();
       close_button.hide();
@@ -167,15 +161,6 @@ function showAudioPlayer(i) {
     animateAudioPlayer();
     currentAudioPlayer = audio_media_array[i];
   } 
-  else {
-    if (!currentAudioPlayer.playing) {
-      // animateAudioPlayer();
-    } else {
-      // else
-    }
-
-    console.log("SAME")
-  }
 }
 
 //////////////////////////////////////////////////////////////
@@ -321,14 +306,8 @@ function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
         }
       }
     } else {
-      console.log("must be same indexx?");
+      // TODO: do something here?
     }
-
-    // if there are currently no medium or large video, make it medium (clicked from index page)
-    // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer && !dont_make_target_medium) {
-    //   makeMedium(video_media_array[target_index].player);
-    // }
-
   }
 }
 
@@ -370,7 +349,6 @@ function loadSlidesRight() {
 }
 
 function loadSlidesLeft() {
-  console.log("load")
   $('.swiper-wrapper').css({ transition: 'all 0s' });
   // update beginning and ending indices
   currentEndIndex = currentEndIndex-1;
@@ -576,8 +554,6 @@ function prev() {
 
     if (currentLargeVideoPlayer && currentLargeVideoPlayer.swiper_slide == item) {
       if (!currentLargeVideoPlayer.swiper_slide.classList.contains("swiper-slide-active")) {
-        console.log("INDEX:")
-        console.log(index)
         fadeAudio(currentLargeVideoPlayer, audio_amounts[index]);
         if (index < 2 || index > (swiper.slides.length - 2)) {
           makeSmall(currentLargeVideoPlayer);
@@ -609,9 +585,7 @@ function prev() {
           if (debug_swiper) {
             indexCells[index].style.color = "blue";
           }
-          console.log("fading");
         }
-        // fadeAudio(item.player, 0.2);
       }
     })
   }
@@ -671,7 +645,6 @@ function playerOnReady(player) {
         var rect = e.target.getBoundingClientRect();
         var x = e.clientX - rect.right; //x position within the element.
         player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
-        console.log("set a new value")
       }
     }
     // append the div to html
@@ -712,11 +685,9 @@ function playerOnReady(player) {
     // add mouse events 
     let showDelay = 600, hideDelay = 700;
     player_swiper_slide.addEventListener('mouseenter', function() {
-      console.log("entered")
       clearTimeout(menuLeaveTimer);
       // CASE_2: there is already a medium and its different from hovered player
       if (currentMediumVideoPlayer && currentMediumVideoPlayer != player) {
-        console.log("entered a video when a medium")
         menuEnterTimer = setTimeout(function() {
           if (currentMediumVideoPlayer.playing) {
             currentMediumVideoPlayer.pause();
@@ -749,7 +720,6 @@ function playerOnReady(player) {
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
           if ($(player_card_description).is(":visible")){
-            console.log($(currentMediumVideoPlayer.swiper_slide).css("min-width"));
             if (vw_convert(35) == parseFloat($(currentMediumVideoPlayer.swiper_slide).css("min-width"))) {
               makeLarge(player);
             }
@@ -1373,7 +1343,6 @@ function makeLarge(plyr) {
   } 
 
   let swiper_slide = $(plyr.swiper_slide);
-  console.log("making large..")
   if (swiper_slide.hasClass("mediumVideo")){
     swiper_slide.removeClass('mediumVideo');
     swiper_slide.addClass('largeVideo');
@@ -1488,8 +1457,6 @@ function initSwiper() {
       resize: function () {
         resizing = true;
         clearTimeout(resizeTimer);
-        // clearTimeout(menuEnterTimer);
-        // clearTimeout(menuLeaveTimer);
         resizeTimer = setTimeout(() => {
           resizing = false;
         }, 100);
@@ -1501,10 +1468,6 @@ function initSwiper() {
         } else if (is_on_edge_left) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, move_one_slide_time);
         }
-
-        if (currentLargeVideoPlayer) {
-          console.log(currentLargeVideoPlayer.volume)
-        }
       },
       slidePrevTransitionEnd: function () {
         prev();
@@ -1512,10 +1475,6 @@ function initSwiper() {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, move_one_slide_time);
         } else if (is_on_edge_right) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, move_one_slide_time);
-        }
-
-        if (currentLargeVideoPlayer) {
-          console.log(currentLargeVideoPlayer.volume)
         }
       },
     },
@@ -1573,9 +1532,6 @@ async function fetchCSV () {
       video_media_array[i].player.media_index = i;
       if (unclickable_slides.includes(i)) {
         video_media_array[i].player.unclickable = true;
-      }
-      if (i == initialSlide) {
-        currentActivePlayer = player;
       }
     }
     // once player is ready, add its event listeners, etc.
@@ -1762,7 +1718,6 @@ $('.continue-button').on('click', function() {
 menu_text = document.getElementsByClassName("menu-text");
 menu_button = document.getElementsByClassName("lottieanimation");
 menu_button[0].onclick = function() {
-  console.log("clicked menu")
   if (currentLargeVideoPlayer) {
     makeSmall(currentLargeVideoPlayer);
   }
