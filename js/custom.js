@@ -57,17 +57,16 @@ function showAudioPlayer(i) {
   let play_button = $(audio_media_array[i].audio_player.children[0].children[0]);
   let progress_bar = $(audio_media_array[i].audio_player.children[0].children[1]);
   let close_button = $(audio_media_array[i].audio_player.parentNode.children[2].children[0]);
-  close_button.css('opacity', '1');
 
+  close_button.css('opacity', '1');
   close_button.css('pointer-events', 'none');
   progress_bar.css('pointer-events', 'none');
-
   play_button.css('pointer-events', 'auto');
-  // progress_bar.css('pointer-events', 'auto');
 
   function animateAudioPlayer() {
     play_button.css('width', "0%");
-    play_button.css('padding-left', "100%");
+    play_button.css('padding-left', "0%");
+    progress_bar.css('padding-right', "100%");
     close_button.hide();
 
     setTimeout(function() {
@@ -80,9 +79,10 @@ function showAudioPlayer(i) {
       audio_media_array[i].has_click_listener = true;
       play_button.on('click', function() {
         fade_timer = setTimeout(function() {
-          if (!audio_media_array[i].playing && parseInt(play_button.css('padding-left'))) {
+          if (!audio_media_array[i].playing && parseInt(progress_bar.css('padding-right'))) {
             audio_media_array[i].playing = true;
-            play_button.css('padding-left', "0%");
+            // play_button.css('padding-left', "0%");
+            progress_bar.css('padding-right', "0%");
             progress_bar.fadeTo(100, 1.0);
             play_button.css('width', "10%");
             progress_bar.promise().done(function(){
@@ -98,11 +98,11 @@ function showAudioPlayer(i) {
             }, 500);
           } 
 
-          else if (audio_media_array[i].playing && parseInt(play_button.css('padding-left')) == 0) {
+          else if (audio_media_array[i].playing && parseInt(progress_bar.css('padding-right')) == 0) {
             audio_media_array[i].playing = false;
 
           }
-          else if (!audio_media_array[i].playing && parseInt(play_button.css('padding-left')) == 0) {
+          else if (!audio_media_array[i].playing && parseInt(progress_bar.css('padding-right')) == 0) {
             audio_media_array[i].playing = true;
 
           }
@@ -1283,6 +1283,12 @@ function resources() {
 function makeSmall(plyr) {
   let swiper_slide = $(plyr.swiper_slide);
 
+  if (index_page_clicked) {
+    $('#content_text').fadeTo(1000, 1.0);
+    $('#upButton').fadeTo(1000, 1.0);
+    $('#downButton').fadeTo(1000, 1.0);
+  }
+
   // making small from medium
   // CASE_1: there is a medium player and user hovered out of it
   if ((swiper_slide.hasClass("mediumVideo") && currentMediumVideoPlayer == plyr) || (swiper_slide.hasClass("largeVideo") && currentLargeVideoPlayer == plyr)) {
@@ -1344,6 +1350,8 @@ function closeAndSwipe(plyr) {
 
 function makeMedium(plyr) {
   console.log("making medium..")
+
+
   function med() {
     let swiper_slide = $(plyr.swiper_slide);
 
@@ -1392,26 +1400,12 @@ function makeMedium(plyr) {
 
   $('#swiper').fadeTo(1000, 1.0);
   if (menu_item_text_visible) {
-    menu_item_text_visible = false;
     if (index_page_clicked) {
-      // menu_item_text_visible = true;
       $('#content_text').fadeTo(1000, 0.3);
-      if (!document.getElementById("content_text").innerHTML == "") {
-        $('#upButton').fadeTo(1000, 0.3);
-        $('#downButton').fadeTo(1000, 0.3);
-      }
+      $('#upButton').fadeTo(1000, 0.3);
+      $('#downButton').fadeTo(1000, 0.3);
     } 
-    else {
-      $('#content_text').fadeTo(1000, 0.0);
-      $('#content_text').promise().done(function(){
-        document.getElementById("content_text").innerHTML = "";
-        $('#upButton').hide();
-        $('#downButton').hide();
-      });
-    }
-    $('#content_text').promise().done(function(){
-      med();
-    });
+    med();
   } else {
     med();
   }
@@ -1421,14 +1415,13 @@ function makeMedium(plyr) {
 function makeLarge(plyr) {
 
   if (index_page_clicked) {
-    console.log("CLICKED")
     $('#content_text').fadeTo(1000, 0.0);
     $('#upButton').fadeTo(1000, 0.0);
     $('#downButton').fadeTo(1000, 0.0);
-    $('#content_text').promise().done(function(){
-      $('#content_text').hide();
-      document.getElementById("content_text").innerHTML = "";
-    });
+    // $('#content_text').promise().done(function(){
+      // $('#content_text').hide();
+      // document.getElementById("content_text").innerHTML = "";
+    // });
   } 
 
   let swiper_slide = $(plyr.swiper_slide);
@@ -1916,14 +1909,4 @@ $(document).click(function(event) {
 });
 
 $(".section").hover(function(event) {
-  if (index_page_clicked && !currentMediumVideoPlayer && !currentLargeVideoPlayer) {
-    $('#content_text').fadeTo(500, 1.0);
-    if (!document.getElementById("content_text").innerHTML == "") {
-      $('#upButton').fadeTo(500, 1.0);
-      $('#downButton').fadeTo(500, 1.0);
-    } else {
-      $('#upButton').fadeTo(500, 0.0);
-      $('#downButton').fadeTo(500, 0.0);
-    }
-  }
 });
