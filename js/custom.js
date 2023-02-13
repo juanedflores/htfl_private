@@ -19,12 +19,14 @@ let fading_audio = false;
 let unclickable_slides_amount = 4;
 let unclickable_slides = [];
 
-move_one_slide_time = 1500;
+move_one_slide_time = 2200;
 
 let is_on_edge_left = false;
 let is_on_edge_right = false;
 
 let swiper;
+
+let fadeMenuTimer;
 
 let menuEnterTimer, menuLeaveTimer, resizeTimer;
 let updateInterval;
@@ -625,7 +627,6 @@ function prev() {
 
 // PLAYER_FUNCTIONS:
 function playerOnReady(player) {
-  // when player is ready...
   player.on('ready', (event) => {
     let player = event.detail.plyr 
     let player_swiper_slide = player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
@@ -637,16 +638,16 @@ function playerOnReady(player) {
     let player_iframe = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[0].children[0];
     let player_plyrposter = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[1];
 
-    // console.log(player.media);
-
+    // responsive
     if ($(window).width() > 400) {
+      // for desktop
       $(player_swiper_slide).css({ 'min-width' : '1vw' });
     } else {
+      // for mobile
       $(player_swiper_slide).css({ 'min-width' : '20vw' });
     }
 
     // make videos appear randomly on intro
-    // TODO: do this only on page enter
     let random_Time = Math.random() * 1000;
     setTimeout(() => {
       player.elements.container.style.visibility = "visible";
@@ -670,7 +671,6 @@ function playerOnReady(player) {
         var rect = e.target.getBoundingClientRect();
         var x = e.clientX - rect.right; //x position within the element.
         player.currentTime = player.duration * (1-(Math.abs(x) / parentwidth));
-        // player.progressbar.set((1-(Math.abs(x) / parentwidth)));
         console.log("set a new value")
       }
     }
@@ -684,7 +684,6 @@ function playerOnReady(player) {
     });
     // set the progressbar to 0
     progressbar.set(0.0);
-
     // disable double click to fullscreen feature
     player.eventListeners.forEach(function(eventListener) {
       if(eventListener.type === 'dblclick') {
@@ -701,7 +700,6 @@ function playerOnReady(player) {
     player.durationdiv = player_durationDiv;
     player.player_controls = player_controls;
 
-
     /// add an end event listener
     player.on('ended', function(data) {
       closeAndSwipe(player);
@@ -712,78 +710,41 @@ function playerOnReady(player) {
     //////////////////////////////////////////////////////////////
     //* [MOUSE EVENTS FOR SLIDER] *//
     // add mouse events 
-    let showDelay = 500, hideDelay = 500;
+    let showDelay = 600, hideDelay = 700;
     player_swiper_slide.addEventListener('mouseenter', function() {
+      console.log("entered")
       clearTimeout(menuLeaveTimer);
-      menuEnterTimer = setTimeout(function() {
-        // if (player.media_index == currentStartIndex+1 || player.media_index == currentStartIndex+2) {
-        //   player.swiper_slide.style.pointerEvents = 'none';
-        //   moveToSlide(currentStartIndex+4, true);
-        // } 
-        // else if (player.media_index == currentEndIndex-1 || player.media_index == currentEndIndex-2) {
-        //   player.swiper_slide.style.pointerEvents = 'none';
-        //   moveToSlide(player.media_index, true);
-        // } 
-        // else {
-        // CASE_1: there is already a medium
-        if (currentMediumVideoPlayer) {
+      // CASE_2: there is already a medium and its different from hovered player
+      if (currentMediumVideoPlayer && currentMediumVideoPlayer != player) {
+        console.log("entered a video when a medium")
+        menuEnterTimer = setTimeout(function() {
           if (currentMediumVideoPlayer.playing) {
             currentMediumVideoPlayer.pause();
-            makeSmall(currentMediumVideoPlayer);
           }
+          makeSmall(currentMediumVideoPlayer);
           makeMedium(player);
-        }
-        // CASE_2: making medium from small
-        else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+        }, showDelay);
+      }
+      // CASE_1: all are small and there is no medium
+      if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+        menuEnterTimer = setTimeout(function() {
           makeMedium(player);
-
-          // setTimeout(function() {
-            // makeMedium(player);
-          // }, 1000)
-        }
-        // }
-
-      }, showDelay);
-
-      // if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
-      //   makeMedium(player);
-      // }
-      // if (!resizing) {
-        // if (menuLeaveTimer != null && currentMediumVideoPlayer != null) {
-        //   clearTimeout(menuLeaveTimer);
-        //   prevPlayer = $(currentMediumVideoPlayer.elements.wrapper.parentNode.parentNode);
-        //   makeSmall(currentMediumVideoPlayer.swiper_slide, currentMediumVideoPlayer);
-        //   makeMedium(thisItem, player);
-        // } 
-        // else {
-        //   // add active class after a delay
-        // }
-      // }
+        }, showDelay);
+      }
     });
 
     // triggered when user's mouse leaves the swiper item
     player_swiper_slide.addEventListener('mouseleave', function() {
       clearTimeout(menuEnterTimer);
-      if (currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+      // CASE_1: mouse left a video that was medium
+      if (currentMediumVideoPlayer && !currentLargeVideoPlayer && currentMediumVideoPlayer == player) {
         menuLeaveTimer = setTimeout(function() {
           makeSmall(player);
         }, hideDelay);
       }
-
-      // TODO: add event listener for background click
-      // if (currentLargeVideoPlayer != null && currentMediumVideoPlayer == null){
-      //   backgroundClick = document.addEventListener('click', function() {
-      //     console.log("clicked the background");
-      //     let player_swiper_slide = currentLargeVideoPlayer.elements.container.offsetParent.offsetParent;
-      //     player_swiper_slide = $(player_swiper_slide);
-      //     makeMedium(player_swiper_slide, currentLargeVideoPlayer);
-      //   }, { once: true });
-      // }
-
     });
 
     player_videocard.addEventListener('click', function(event) {
-
       // CASE_1: there is a medium video && user clicked on it
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
@@ -793,17 +754,19 @@ function playerOnReady(player) {
               makeLarge(player);
             }
           }
-        } else {
-          // CASE_3: there is a medium video && user clicked on another video
-          // fadeAudio(currentMediumVideoPlayer, 0);
-          makeSmall(currentMediumVideoPlayer);
-          setTimeout(function() {
-            makeMedium(player);
-          }, 1000);
         }
+        // else {
+        //   // CASE_3: there is a medium video && user clicked on another video
+        //   // fadeAudio(currentMediumVideoPlayer, 0);
+        //   makeSmall(currentMediumVideoPlayer);
+        //   setTimeout(function() {
+        //     makeMedium(player);
+        //   }, 1000);
+        // }
       }
 
       // CASE_2: there is a large video && user clicked on it
+      // else if (currentLargeVideoPlayer) {
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
           if ($(player_card_description).is(":visible")) {
@@ -814,48 +777,26 @@ function playerOnReady(player) {
         } 
         else {
           // CASE_4: there is a large video && user clicked on another video
-          // fadeAudio(currentLargeVideoPlayer, 0);
+          clearTimeout(menuLeaveTimer);
+          clearTimeout(menuEnterTimer);
+          var x = 10;
+          var interval = 300;
+          for (var i = 0; i < x; i++) {
+            setTimeout(function () {
+              clearTimeout(menuLeaveTimer);
+              clearTimeout(menuEnterTimer);
+            }, i * interval)
+          }
+          setTimeout(function() {
+            clearTimeout(fadeMenuTimer);
+          }, 500)
+
           makeSmall(currentLargeVideoPlayer);
           setTimeout(function() {
             makeMedium(player);
           }, 1000)
         }
       }
-
-
-
-
-      // CASE_3: user clicked on a small player
-      // else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
-      //   clearTimer(menuEnterTimer);
-      //   clearTimer(menuLeaveTimer);
-      //   makeMedium(player);
-      // }
-
-
-      // if (currentMediumVideoPlayer || currentLargeVideoPlayer) {
-      //   // if the clicked video is currently small, make medium
-      //   if(currentMediumVideoPlayer == null && currentLargeVideoPlayer == null) {
-      //     makeMedium(thisItem, player);
-      //   } 
-      //   // if the clicked video is currently medium, make large
-      //   else if(thisItem.hasClass("mediumVideo")) {
-      //     makeLarge(thisItem, player);
-      //   } 
-      //   // if the clicked video is currently large, make medium
-      //   else if (thisItem.hasClass("largeVideo")){
-      //     makeMedium(thisItem, player);
-      //   } 
-      //   else if (currentLargeVideoPlayer) {
-      //     if (thisItem != currentLargeVideoPlayer.elements.container.offsetParent.offsetParent) {
-      //       // console.log("different")
-      //     } else {
-      //       // console.log("same")
-      //     }
-      //     let player_swiper_slide = $(currentLargeVideoPlayer.elements.container.offsetParent.offsetParent);
-      //     makeSmallLarge(player_swiper_slide, currentLargeVideoPlayer, thisItem, player);
-      //   }
-      // }
     });
   });
 }
@@ -1281,13 +1222,16 @@ function resources() {
 
 // VIDEO_SIZE_FUNCTIONS:
 function makeSmall(plyr) {
+  clearTimeout(fadeMenuTimer);
   let swiper_slide = $(plyr.swiper_slide);
 
-  if (index_page_clicked) {
-    $('#content_text').fadeTo(1000, 1.0);
-    $('#upButton').fadeTo(1000, 1.0);
-    $('#downButton').fadeTo(1000, 1.0);
-  }
+  fadeMenuTimer = setTimeout(function() {
+    if (index_page_clicked) {
+      $('#content_text').fadeTo(1000, 1.0);
+      $('#upButton').fadeTo(1000, 1.0);
+      $('#downButton').fadeTo(1000, 1.0);
+    }
+  }, 1000);
 
   // making small from medium
   // CASE_1: there is a medium player and user hovered out of it
@@ -1313,6 +1257,7 @@ function makeSmall(plyr) {
       // plyr.player_controls.style.display = "none";
       plyr.pause();
     }, 1000);
+
     // hide the description
     let description = $(plyr.card_description);
     description.fadeOut(400);
@@ -1349,9 +1294,7 @@ function closeAndSwipe(plyr) {
 }
 
 function makeMedium(plyr) {
-  console.log("making medium..")
-
-
+  clearTimeout(fadeMenuTimer);
   function med() {
     let swiper_slide = $(plyr.swiper_slide);
 
@@ -1361,10 +1304,8 @@ function makeMedium(plyr) {
     $('.swiper-wrapper').css({ 'margin-bottom': '10vh' });
     $('.swiper-wrapper').promise().done(function(){
       $('#swiper').fadeTo(1000, 1);
-      // $('.swiper-wrapper').css({ 'margin-bottom': '5vh' });
       $('.swiper-button-prev').css({ 'bottom': '20vh' });
       $('.swiper-button-next').css({ 'bottom': '20vh' });
-      // index();
     });
 
     // making medium from small size
@@ -1400,15 +1341,17 @@ function makeMedium(plyr) {
 
   $('#swiper').fadeTo(1000, 1.0);
   if (menu_item_text_visible) {
-    if (index_page_clicked) {
-      $('#content_text').fadeTo(1000, 0.3);
-      $('#upButton').fadeTo(1000, 0.3);
-      $('#downButton').fadeTo(1000, 0.3);
-    } else {
-      $('#content_text').fadeTo(1000, 0.0);
-      $('#upButton').fadeTo(1000, 0.0);
-      $('#downButton').fadeTo(1000, 0.0);
-    }
+    fadeMenuTimer = setTimeout(function() {
+      if (index_page_clicked) {
+        $('#content_text').fadeTo(1000, 0.3);
+        $('#upButton').fadeTo(1000, 0.3);
+        $('#downButton').fadeTo(1000, 0.3);
+      } else {
+        $('#content_text').fadeTo(1000, 0.0);
+        $('#upButton').fadeTo(1000, 0.0);
+        $('#downButton').fadeTo(1000, 0.0);
+      }
+    }, 1000);
     med();
   } else {
     med();
@@ -1418,6 +1361,7 @@ function makeMedium(plyr) {
 
 function makeLarge(plyr) {
 
+  clearTimeout(fadeMenuTimer);
   if (index_page_clicked) {
     $('#content_text').fadeTo(1000, 0.0);
     $('#upButton').fadeTo(1000, 0.0);
@@ -1531,7 +1475,7 @@ function initSwiper() {
     slidesPerView: (currentEndIndex-1)-(bufferSize*2),
     initialSlide: initialSlide,
     slidesPerGroup: 1,
-    preventInteractionOnTransition: true,
+    // preventInteractionOnTransition: true,
     speed: 1000,
     slideToClickedSlide: false,
     centeredSlides: true,
@@ -1544,8 +1488,8 @@ function initSwiper() {
       resize: function () {
         resizing = true;
         clearTimeout(resizeTimer);
-        clearTimeout(menuEnterTimer);
-        clearTimeout(menuLeaveTimer);
+        // clearTimeout(menuEnterTimer);
+        // clearTimeout(menuLeaveTimer);
         resizeTimer = setTimeout(() => {
           resizing = false;
         }, 100);
@@ -1609,12 +1553,13 @@ async function fetchCSV () {
   // you can init swiper now that the swiper-slide class is in the html
   await initSwiper();
   // determine the unclickable_slides indices
-  for (var i = 0; i < unclickable_slides_amount; i++) {
-    // unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize)-unclickable_slides_amount);
-    // unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1) - unclickable_slides_amount+1));
-    unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize+1));
-    unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1)));
-  }
+  // for (var i = 0; i < unclickable_slides_amount; i++) {
+  //   // unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize)-unclickable_slides_amount);
+  //   // unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1) - unclickable_slides_amount+1));
+  //   unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize+1));
+  //   unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1)));
+  // }
+  unclickable_slides = [0, 1, 2, 3, 14, 13, 12, 11];
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
   // hide all video players to start
@@ -1780,6 +1725,8 @@ $('.continue-button').on('click', function() {
 
   $(".borderprev").show();
   $(".bordernext").show();
+
+  $('.swiper-wrapper').css({ transition: 'all 0.7s linear' });
 
 
 
