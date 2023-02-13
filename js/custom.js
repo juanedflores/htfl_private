@@ -1404,7 +1404,11 @@ function makeMedium(plyr) {
       $('#content_text').fadeTo(1000, 0.3);
       $('#upButton').fadeTo(1000, 0.3);
       $('#downButton').fadeTo(1000, 0.3);
-    } 
+    } else {
+      $('#content_text').fadeTo(1000, 0.0);
+      $('#upButton').fadeTo(1000, 0.0);
+      $('#downButton').fadeTo(1000, 0.0);
+    }
     med();
   } else {
     med();
