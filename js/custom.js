@@ -720,19 +720,11 @@ function playerOnReady(player) {
       if (currentMediumVideoPlayer) {
         if (player == currentMediumVideoPlayer) {
           if ($(player_card_description).is(":visible")){
-            if (vw_convert(35) == parseFloat($(currentMediumVideoPlayer.swiper_slide).css("min-width"))) {
+            // if (vw_convert(35) == parseFloat($(currentMediumVideoPlayer.swiper_slide).css("min-width"))) {
               makeLarge(player);
-            }
+            // }
           }
         }
-        // else {
-        //   // CASE_3: there is a medium video && user clicked on another video
-        //   // fadeAudio(currentMediumVideoPlayer, 0);
-        //   makeSmall(currentMediumVideoPlayer);
-        //   setTimeout(function() {
-        //     makeMedium(player);
-        //   }, 1000);
-        // }
       }
 
       // CASE_2: there is a large video && user clicked on it
@@ -740,9 +732,9 @@ function playerOnReady(player) {
       else if (currentLargeVideoPlayer) {
         if (player == currentLargeVideoPlayer) {
           if ($(player_card_description).is(":visible")) {
-            if (vw_convert(70) == parseFloat($(currentLargeVideoPlayer.swiper_slide).css("min-width"))) { 
+            // if (vw_convert(70) == parseFloat($(currentLargeVideoPlayer.swiper_slide).css("min-width"))) { 
               makeMedium(player);
-            }
+            // }
           }
         } 
         else {
@@ -1518,6 +1510,8 @@ async function fetchCSV () {
   //   unclickable_slides.push((swiper.visibleSlidesIndexes[0 + i])-(bufferSize+1));
   //   unclickable_slides.push((swiper.visibleSlidesIndexes[(swiper.visibleSlidesIndexes.length-1) - i] + (bufferSize+1)));
   // }
+
+  // hard coding the unclickable slides
   unclickable_slides = [0, 1, 2, 3, 14, 13, 12, 11];
   // init all video players
   const players = Plyr.setup('.js-player', { controls: playerControls, debug: false, clickToPlay: false, vimeo: vimeoOptions,});
