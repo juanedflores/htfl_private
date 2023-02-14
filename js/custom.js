@@ -689,6 +689,15 @@ function playerOnReady(player) {
       // CASE_2: there is already a medium and its different from hovered player
       if (currentMediumVideoPlayer && currentMediumVideoPlayer != player) {
         menuEnterTimer = setTimeout(function() {
+          index_page_clicked = false;
+          $('#content_text').fadeTo(1000, 0.0);
+          $('#upButton').fadeTo(1000, 0.0);
+          $('#downButton').fadeTo(1000, 0.0);
+
+          $('#content_text').promise().done(function(){
+            document.getElementById("content_text").innerHTML = "";
+          });
+
           if (currentMediumVideoPlayer.playing) {
             currentMediumVideoPlayer.pause();
           }
@@ -699,20 +708,25 @@ function playerOnReady(player) {
       // CASE_1: all are small and there is no medium
       else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
         menuEnterTimer = setTimeout(function() {
+
           makeMedium(player);
         }, showDelay);
       }
 
-      // CASE_3:
-      else if (!currentMediumVideoPlayer && currentLargeVideoPlayer) {
-        // makeSmall(currentLargeVideoPlayer);
-        // menuEnterTimer = setTimeout(function() {
-        //   makeMedium(player);
-        // }, showDelay);
-        //
+      // CASE_3: there is a large video
+      else if (!currentMediumVideoPlayer && currentLargeVideoPlayer && currentLargeVideoPlayer != player) {
         menuEnterTimer = setTimeout(function() {
           makeSmall(currentLargeVideoPlayer);
           setTimeout(function() {
+            index_page_clicked = false;
+            $('#content_text').fadeTo(1000, 0.0);
+            $('#upButton').fadeTo(1000, 0.0);
+            $('#downButton').fadeTo(1000, 0.0);
+
+            $('#content_text').promise().done(function(){
+              document.getElementById("content_text").innerHTML = "";
+            });
+
             makeMedium(player);
 
             clearTimeout(menuLeaveTimer);
@@ -1482,6 +1496,7 @@ function initSwiper() {
       slideNextTransitionEnd: function () {
         next();
         if (is_on_edge_right) {
+
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, move_one_slide_time);
         } else if (is_on_edge_left) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, move_one_slide_time);
@@ -1637,6 +1652,15 @@ document.addEventListener('DOMContentLoaded', () => {
   $(".borderprev").mouseenter(function() {
     is_on_edge_left = true;
     moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, move_one_slide_time);
+
+    index_page_clicked = false;
+    $('#content_text').fadeTo(1000, 0.0);
+    $('#upButton').fadeTo(1000, 0.0);
+    $('#downButton').fadeTo(1000, 0.0);
+
+    $('#content_text').promise().done(function(){
+      document.getElementById("content_text").innerHTML = "";
+    });
   });
   $(".borderprev").mouseleave(function() {
     is_on_edge_left = false;
@@ -1644,6 +1668,15 @@ document.addEventListener('DOMContentLoaded', () => {
   $(".bordernext").mouseenter(function() {
     is_on_edge_right = true;
     moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)+1, true, move_one_slide_time);
+
+    index_page_clicked = false;
+    $('#content_text').fadeTo(1000, 0.0);
+    $('#upButton').fadeTo(1000, 0.0);
+    $('#downButton').fadeTo(1000, 0.0);
+
+    $('#content_text').promise().done(function(){
+      document.getElementById("content_text").innerHTML = "";
+    });
   });
   $(".bordernext").mouseleave(function() {
     is_on_edge_right = false;
