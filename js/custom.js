@@ -683,7 +683,7 @@ function playerOnReady(player) {
     //////////////////////////////////////////////////////////////
     //* [MOUSE EVENTS FOR SLIDER] *//
     // add mouse events 
-    let showDelay = 600, hideDelay = 700;
+    let showDelay = 700, hideDelay = 700;
     player_swiper_slide.addEventListener('mouseenter', function() {
       clearTimeout(menuLeaveTimer);
       // CASE_2: there is already a medium and its different from hovered player
@@ -697,10 +697,36 @@ function playerOnReady(player) {
         }, showDelay);
       }
       // CASE_1: all are small and there is no medium
-      if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
+      else if (!currentMediumVideoPlayer && !currentLargeVideoPlayer) {
         menuEnterTimer = setTimeout(function() {
           makeMedium(player);
         }, showDelay);
+      }
+
+      // CASE_3:
+      else if (!currentMediumVideoPlayer && currentLargeVideoPlayer) {
+        // makeSmall(currentLargeVideoPlayer);
+        // menuEnterTimer = setTimeout(function() {
+        //   makeMedium(player);
+        // }, showDelay);
+        //
+        menuEnterTimer = setTimeout(function() {
+          makeSmall(currentLargeVideoPlayer);
+          setTimeout(function() {
+            makeMedium(player);
+
+            clearTimeout(menuLeaveTimer);
+            clearTimeout(menuEnterTimer);
+            var x = 10;
+            var interval = 300;
+            for (var i = 0; i < x; i++) {
+              setTimeout(function () {
+                clearTimeout(menuLeaveTimer);
+                clearTimeout(menuEnterTimer);
+              }, i * interval)
+            }
+          }, 1000);
+        }, showDelay)
       }
     });
 
@@ -1460,6 +1486,7 @@ function initSwiper() {
         } else if (is_on_edge_left) {
           moveToSlide(((currentStartIndex+initialSlide)%video_media_array.length)-1, true, move_one_slide_time);
         }
+
       },
       slidePrevTransitionEnd: function () {
         prev();
