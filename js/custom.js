@@ -1868,5 +1868,4 @@ $(document).click(function(event) {
   }
 });
 
-$(".section").hover(function(event) {
-});
+console.log("Hi Nick!")
