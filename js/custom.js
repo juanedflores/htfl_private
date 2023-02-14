@@ -694,6 +694,7 @@ function playerOnReady(player) {
           $('#upButton').fadeTo(1000, 0.0);
           $('#downButton').fadeTo(1000, 0.0);
 
+
           $('#content_text').promise().done(function(){
             document.getElementById("content_text").innerHTML = "";
           });
@@ -703,6 +704,10 @@ function playerOnReady(player) {
           }
           makeSmall(currentMediumVideoPlayer);
           makeMedium(player);
+
+          setTimeout(function() {
+            clearTimeout(fadeMenuTimer);
+          }, 500)
         }, showDelay);
       }
       // CASE_1: all are small and there is no medium
@@ -717,6 +722,10 @@ function playerOnReady(player) {
       else if (!currentMediumVideoPlayer && currentLargeVideoPlayer && currentLargeVideoPlayer != player) {
         menuEnterTimer = setTimeout(function() {
           makeSmall(currentLargeVideoPlayer);
+
+          setTimeout(function() {
+            clearTimeout(fadeMenuTimer);
+          }, 500)
           setTimeout(function() {
             index_page_clicked = false;
             $('#content_text').fadeTo(1000, 0.0);
@@ -728,6 +737,7 @@ function playerOnReady(player) {
             });
 
             makeMedium(player);
+
 
             clearTimeout(menuLeaveTimer);
             clearTimeout(menuEnterTimer);
@@ -792,6 +802,15 @@ function playerOnReady(player) {
           setTimeout(function() {
             clearTimeout(fadeMenuTimer);
           }, 500)
+
+          index_page_clicked = false;
+          $('#content_text').fadeTo(1000, 0.0);
+          $('#upButton').fadeTo(1000, 0.0);
+          $('#downButton').fadeTo(1000, 0.0);
+
+          $('#content_text').promise().done(function(){
+            document.getElementById("content_text").innerHTML = "";
+          });
 
           makeSmall(currentLargeVideoPlayer);
           setTimeout(function() {
