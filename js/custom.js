@@ -1012,7 +1012,8 @@ function aboutTheInstallation() {
   typedText2 = "Half Truths and Full Lies depicts, through documentation and reenactment, the case of Efrén Paredes Jr., a Latinx man from Michigan, who was sentenced to life without parole in 1989 at age fifteen, for a murder he claims he did not commit."
   typedText3 = "The multi-channel installation takes on a Rashomon-like quality, as divergent accounts of the crime accrue, forming multiple portraits of Efren. These accounts reflect perspectives of a range of individuals, from a police detective to key witnesses from the tight-knit small town community who singled Paredes out, as well as those whose lives — over the past 30 years — were most affected by the teen’s conviction: family members, teachers, and citizens who sat in judgment as jury members."
   typedText4 = "Half Truths and Full Lies tells a story about a story; one constructed by a group of teens who appear to have conspired to set up their peer, and whose narrative played on stereotypical assumptions about racial minorities. This account became the only one the public, and the jury, got to hear, and the one upon which the local police and prosecutor relied."
-  typedText5 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Full story.</a>"
+  typedText5 = "Half Truths and Full Lies site was produced with the support of the Chicago Digital Media Production Fund."
+  typedText6 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Full story.</a>"
 
   typeString = new Typewriter("#aboutCaseInstallation", {
     loop: false,
