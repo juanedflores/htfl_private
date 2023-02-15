@@ -1044,9 +1044,15 @@ function aboutTheInstallation() {
     typeString.pasteString(stringArray[i] + " ");
   }
   typeString.typeString("<br /><br />")
+  
+  stringArray = stringSplitter(typedText5);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
 
   typeString
-    .typeString(typedText5)
+    .typeString(typedText6)
     .start();
 }
 
