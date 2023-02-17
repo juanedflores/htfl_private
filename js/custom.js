@@ -4,6 +4,7 @@ let currentMediumVideoPlayer = null;
 let currentLargeVideoPlayer = null;
 let currentAudioPlayer = null;
 let video_media_array;
+let video_media_array_index;
 let audio_media_array;
 let currentStartIndex = 0;
 let currentEndIndex = 14;
@@ -852,7 +853,7 @@ function index() {
 
   function task(i) {
     setTimeout(function() {
-      let name = video_media_array[i]["Subject Name"];
+      let name = video_media_array_index[i]["Subject Name"];
       if (name != currName) {
         cellcount = 0;
         currRow = table.insertRow(rowcount);
@@ -875,7 +876,7 @@ function index() {
 
         // add the time
         cell = currRow.insertCell(cellcount);
-        duration = video_media_array[i]["Video Duration"];
+        duration = video_media_array_index[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
         cellIndex = indexCells.length-1;
@@ -898,7 +899,7 @@ function index() {
       }
       else {
         cell = currRow.insertCell(cellcount);
-        duration = video_media_array[i]["Video Duration"];
+        duration = video_media_array_index[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
         cellIndex = indexCells.length-1;
@@ -919,13 +920,13 @@ function index() {
         cellcount = cellcount + 1;
       }
       // DEBUGGING:
-      if (i == video_media_array.length - 1) {
+      if (i == video_media_array_index.length - 1) {
         if (indexCells.length > 0) {
           for (var j = 0; j < indexCells.length; j++) {
             indexCells[j].style.color = "white";
           }
 
-          video_media_array.forEach(function(item, index) {
+          video_media_array_index.forEach(function(item, index) {
             if (item.player) {
               let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
@@ -949,7 +950,7 @@ function index() {
     }, 100 * i);
   }
 
-  for (var i = 0; i <= video_media_array.length - 1; i++) {
+  for (var i = 0; i <= video_media_array_index.length - 1; i++) {
     task(i);
   }
 }
@@ -1560,9 +1561,11 @@ function initSwiper() {
 async function fetchCSV () {
   // get video info from csv file
   const res = await fetch('video_media.csv');
-  video_media_array = await res.text();
-  video_media_array = $.csv.toObjects(video_media_array)
+  video_media_array_text = await res.text();
+  video_media_array = $.csv.toObjects(video_media_array_text);
+  video_media_array_index = $.csv.toObjects(video_media_array_text);
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  console.log(video_media_array_index);
   // get audio info from csv file
   const resaudio = await fetch('audio_media.csv');
   audio_media_array = await resaudio.text();
