@@ -879,7 +879,8 @@ function index() {
         duration = video_media_array_index[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
-        cellIndex = indexCells.length-1;
+        // cellIndex = indexCells.length-1;
+        cellIndex = video_media_array_index[i].slider_index;
         a.setAttribute('href', `javascript:moveToSlide(${cellIndex}, false, 1000)`);
         // a.innerHTML = duration;
 
@@ -902,7 +903,8 @@ function index() {
         duration = video_media_array_index[i]["Video Duration"];
         a = document.createElement('a');
         indexCells.push(a);
-        cellIndex = indexCells.length-1;
+        // cellIndex = indexCells.length-1;
+        cellIndex = video_media_array_index[i].slider_index;
         a.setAttribute('href', `javascript:moveToSlide(${cellIndex}, false, 1000)`);
         // a.innerHTML = duration;
 
@@ -1566,6 +1568,15 @@ async function fetchCSV () {
   video_media_array_index = $.csv.toObjects(video_media_array_text);
   video_media_array_index.sort((a, b) => a["Subject Name"].localeCompare(b["Subject Name"]))
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+
+  for (var i = 0; i < video_media_array.length; i++) {
+    for (var j = 0; j < video_media_array_index.length; j++) {
+      if (video_media_array[i]["Subject Name"] == video_media_array_index[j]["Subject Name"] && video_media_array[i]["Video Duration"] == video_media_array_index[j]["Video Duration"]) {
+        video_media_array_index[j].slider_index = i;
+      }
+    }
+  }
+
   console.log(video_media_array_index);
   // get audio info from csv file
   const resaudio = await fetch('audio_media.csv');
