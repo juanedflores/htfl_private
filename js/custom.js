@@ -1648,6 +1648,7 @@ async function fetchCSV () {
 // AFTER_DOM_CONTENT_IS_LOADED:
 document.addEventListener('DOMContentLoaded', () => {
 
+  $(".tab-menu").hide();
   $("#menuDiv").hide();
   // hide the border prev and next buttons
   $(".borderprev").hide();
@@ -1785,6 +1786,7 @@ $('.continue-button').on('click', function() {
   menu_button[0].click();
 
   afterIntro = true;
+  $(".tab-menu").show();
 
   $(".borderprev").show();
   $(".bordernext").show();
