@@ -1564,6 +1564,7 @@ async function fetchCSV () {
   video_media_array_text = await res.text();
   video_media_array = $.csv.toObjects(video_media_array_text);
   video_media_array_index = $.csv.toObjects(video_media_array_text);
+  video_media_array_index.sort((a, b) => a["Subject Name"].localeCompare(b["Subject Name"]))
   video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
   console.log(video_media_array_index);
   // get audio info from csv file
