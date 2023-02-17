@@ -1571,8 +1571,9 @@ async function fetchCSV () {
 
   for (var i = 0; i < video_media_array.length; i++) {
     for (var j = 0; j < video_media_array_index.length; j++) {
-      if (video_media_array[i]["Subject Name"] == video_media_array_index[j]["Subject Name"] && video_media_array[i]["Video Duration"] == video_media_array_index[j]["Video Duration"]) {
+      if (video_media_array[i]["Subject Name"] == video_media_array_index[j]["Subject Name"] && video_media_array[i]["Vimeo ID"] == video_media_array_index[j]["Vimeo ID"]) {
         video_media_array_index[j].slider_index = i;
+        // break;
       }
     }
   }
