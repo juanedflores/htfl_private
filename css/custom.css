@@ -27,6 +27,10 @@ a {
     text-decoration: none;
 }
 
+.menu-text {
+    color: #141414;
+}
+
 .menu-text:hover {
     text-decoration: underline;
 }
