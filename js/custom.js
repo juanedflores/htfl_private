@@ -24,6 +24,8 @@ move_one_slide_time = 2200;
 let is_on_edge_left = false;
 let is_on_edge_right = false;
 
+let afterIntro = false;
+
 let swiper;
 
 let fadeMenuTimer;
@@ -1782,6 +1784,8 @@ $('.continue-button').on('click', function() {
   menu_button[0].click();
   menu_button[0].click();
 
+  afterIntro = true;
+
   $(".borderprev").show();
   $(".bordernext").show();
 
@@ -1829,59 +1833,62 @@ menu_button[0].onclick = function() {
 }
 for (var i = 0; i < menu_text.length; i++) {
   menu_text[i].onclick = function() {
-    $('.swiper-wrapper').css({ transition: 'all 0.5s linear' });
-    // reset menu content text
-    document.getElementById("content_text").innerHTML = "";
-    // temporary fix to make menu close after clicking on a menu item
-    menu_button[0].click();
-    // get the menu item that was clicked
-    let thisItem = $(this);
-    // fade in the menu item content
-    $('#content_text').fadeTo(1000, 1.0);
+    if (afterIntro) {
+      $('.swiper-wrapper').css({ transition: 'all 0.5s linear' });
+      // reset menu content text
+      document.getElementById("content_text").innerHTML = "";
+      // temporary fix to make menu close after clicking on a menu item
+      menu_button[0].click();
+      // get the menu item that was clicked
+      let thisItem = $(this);
+      // fade in the menu item content
+      $('#content_text').fadeTo(1000, 1.0);
 
-    $('.arrow-buttons-div').css('display', 'block');
-    $('.arrow-buttons-div').fadeTo(1000, 1.0);
-    $('#upButton').fadeTo(1000, 1.0);
-    $('#downButton').fadeTo(1000, 1.0);
+      $('.arrow-buttons-div').css('display', 'block');
+      $('.arrow-buttons-div').fadeTo(1000, 1.0);
+      $('#upButton').fadeTo(1000, 1.0);
+      $('#downButton').fadeTo(1000, 1.0);
 
 
-    // menu item content is now visible
-    menu_item_text_visible = true;
-    menuItem = thisItem[0].innerText;
+      // menu item content is now visible
+      menu_item_text_visible = true;
+      menuItem = thisItem[0].innerText;
 
-    $('#swiper').fadeTo(1000, 0.4);
+      $('#swiper').fadeTo(1000, 0.4);
 
-    if (menuItem == "Index") {
-      index_page_clicked = true;
+      if (menuItem == "Index") {
+        index_page_clicked = true;
 
-      $('#swiper').promise().done(function(){
-        $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
-        $('.swiper-button-prev').css({ 'bottom': '15vh' });
-        $('.swiper-button-next').css({ 'bottom': '15vh' });
-        index();
-      });
-    } 
-    else {
+        $('#swiper').promise().done(function(){
+          $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+          $('.swiper-button-prev').css({ 'bottom': '15vh' });
+          $('.swiper-button-next').css({ 'bottom': '15vh' });
+          index();
+        });
+      } 
+      else {
 
-      $('#swiper').promise().done(function(){
-        $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
-        $('.swiper-button-prev').css({ 'bottom': '15vh' });
-        $('.swiper-button-next').css({ 'bottom': '15vh' });
-      });
-      index_page_clicked = false;
+        $('#swiper').promise().done(function(){
+          $('.swiper-wrapper').css({ 'margin-bottom': '0vh' });
+          $('.swiper-button-prev').css({ 'bottom': '15vh' });
+          $('.swiper-button-next').css({ 'bottom': '15vh' });
+        });
+        index_page_clicked = false;
+      }
+      if (menuItem == "About the case") {
+        aboutTheCase();
+      }
+      if (menuItem == "About the installation") {
+        aboutTheInstallation();
+      }
+      if (menuItem == "Audio files") {
+        audioFiles();
+      }
+      if (menuItem == "Resources") {
+        resources();
+      }
     }
-    if (menuItem == "About the case") {
-      aboutTheCase();
-    }
-    if (menuItem == "About the installation") {
-      aboutTheInstallation();
-    }
-    if (menuItem == "Audio files") {
-      audioFiles();
-    }
-    if (menuItem == "Resources") {
-      resources();
-    }
+
   }
 }
 
