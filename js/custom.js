@@ -615,6 +615,25 @@ function playerOnReady(player) {
     let player_iframe = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[0].children[0];
     let player_plyrposter = player_swiper_slide.firstElementChild.firstElementChild.firstElementChild.children[1].children[1];
 
+
+    vimeo_id = video_media_array[player.media_index]["Vimeo ID"]
+
+    console.log(vimeo_id);
+    fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeo_id}`)
+      .then(response => {
+        return response.text();
+      })
+      .then(data => {
+        let { thumbnail_url } = JSON.parse(data);
+        thumbnail_url = thumbnail_url.substring(0,thumbnail_url.length-7) + "640.png";
+        player_plyrposter.style.background = `url(${thumbnail_url}) no-repeat center center fixed`;
+        player_plyrposter.style.backgroundSize = "cover";
+        player_plyrposter.style.opacity = "1";
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
     // responsive
     if ($(window).width() > 400) {
       // for desktop
@@ -675,6 +694,7 @@ function playerOnReady(player) {
     player.topdiv = player_videoTopDiv;
     player.durationdiv = player_durationDiv;
     player.player_controls = player_controls;
+    player.player_poster = player_plyrposter;
 
     /// add an end event listener
     player.on('ended', function(data) {
@@ -930,7 +950,7 @@ function index() {
             indexCells[j].style.color = "white";
           }
 
-          video_media_array_index.forEach(function(item, index) {
+          video_media_array.forEach(function(item, index) {
             if (item.player) {
               let player_swiper_slide = item.player.elements.wrapper.parentNode.parentNode.parentNode.parentNode;
               if (player_swiper_slide.classList.contains("swiper-slide-visible")) {
@@ -1019,7 +1039,10 @@ function aboutTheInstallation() {
   typedText4 = "Half Truths and Full Lies tells a story about a story; one constructed by a group of teens who appear to have conspired to set up their peer, and whose narrative played on stereotypical assumptions about racial minorities. This account became the only one the public, and the jury, got to hear, and the one upon which the local police and prosecutor relied."
   typedText5 = "*"
   typedText6 = "Half Truths and Full Lies site was produced with the support of the Chicago Digital Media Production Fund."
-  typedText7 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Video demo of the installation</a>"
+
+  typedText7 = "<a href='https://chicagofilmmakers.org/' target='_blank'><img width=100 style='display: block;' src='https://ci5.googleusercontent.com/proxy/iS3h5JU76I64hxVg9mjNOnEzMgPwpWPhmOjgTTr75mC5R8iUsxA9gNxn4_4Vuyc1twL5uIN9-Yr-wTaQ2mixHxr79eZczReQ_oObu_kxnF4nCMUq5A3FCU32APlyvL2Zhhde-BPydA5ujKATNSVZdhf3--QtCv8uOEFZ8_N9ik-LcIiaipGwtlZWvSyCL1h2jorCv8jth9BFxnXLmw=s0-d-e1-ft#https://docs.google.com/uc?export=download&id=1FZA0GOlro6EElKCEOD4I2Y62uzEy_Rk_&revid=0Bw4z2vIYIGD0N0FidzYxV2NtV3ZUOTl3RUowWnhsd1p5VCtJPQ'></img><a/><br />"
+  typedText8 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Video demo of the installation</a>"
+
 
   typeString = new Typewriter("#aboutCaseInstallation", {
     loop: false,
@@ -1065,6 +1088,7 @@ function aboutTheInstallation() {
 
   typeString
     .typeString(typedText7)
+    .typeString(typedText8)
     .start();
 }
 
@@ -1286,6 +1310,15 @@ function makeSmall(plyr) {
       swiper_slide.css({ 'min-width' : '20vw' });
     }
 
+    // TODO: create another time out
+    setTimeout( function() {
+      // plyr.player_poster.style.visibility = "visible";
+      // plyr.player_poster.style.display = "block";
+      // plyr.player_poster.style.zIndex = "1";
+      plyr.player_poster.style.opacity = "1";
+
+    }, 1000);
+
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
@@ -1354,6 +1387,15 @@ function makeMedium(plyr) {
       // making current small player to medium..
       swiper_slide.addClass('mediumVideo');
       swiper_slide.css({ 'min-width' : '35vw' });
+
+      // TODO: create another time out
+      setTimeout( function() {
+        // plyr.player_poster.style.visibility = "hidden";
+        // plyr.player_poster.style.zIndex = "1";
+        // plyr.player_poster.style.display = "none";
+        plyr.player_poster.style.opacity = "0";
+      }, 1000);
+
       // fade in the description
       setTimeout(function() {
         if (currentMediumVideoPlayer == plyr){
@@ -1580,7 +1622,7 @@ async function fetchCSV () {
     }
   }
 
-  console.log(video_media_array_index);
+  // console.log(video_media_array_index);
   // get audio info from csv file
   const resaudio = await fetch('audio_media.csv');
   audio_media_array = await resaudio.text();
@@ -1611,6 +1653,9 @@ async function fetchCSV () {
   // hide all video players to start
   for (var i = 0; i < players.length; i++) {
     player = players[i];
+    // console.log(player);
+
+
     player.elements.container.style.visibility = "hidden";
 
     // add player entry to video_media_array
@@ -1624,6 +1669,7 @@ async function fetchCSV () {
     // once player is ready, add its event listeners, etc.
     playerOnReady(player);
   }
+
   for (var i = 0; i < swiper.slides.length; i++) {
     let volume = 0;
 
