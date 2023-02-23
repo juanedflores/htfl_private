@@ -647,7 +647,7 @@ function playerOnReady(player) {
     let random_Time = Math.random() * 1000;
     setTimeout(() => {
       player.elements.container.style.visibility = "visible";
-    }, random_Time);
+    }, random_Time + 400);
     // add a transition effect
     player_swiper_slide.style.transition = "all 1400ms ease";
     // init the volume
