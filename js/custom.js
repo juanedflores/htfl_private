@@ -1040,7 +1040,7 @@ function aboutTheInstallation() {
   typedText5 = "*"
   typedText6 = "Half Truths and Full Lies site was produced with the support of the Chicago Digital Media Production Fund."
 
-  typedText7 = "<a href='https://chicagofilmmakers.org/' target='_blank'><img width=100 style='display: block;' src='https://ci5.googleusercontent.com/proxy/iS3h5JU76I64hxVg9mjNOnEzMgPwpWPhmOjgTTr75mC5R8iUsxA9gNxn4_4Vuyc1twL5uIN9-Yr-wTaQ2mixHxr79eZczReQ_oObu_kxnF4nCMUq5A3FCU32APlyvL2Zhhde-BPydA5ujKATNSVZdhf3--QtCv8uOEFZ8_N9ik-LcIiaipGwtlZWvSyCL1h2jorCv8jth9BFxnXLmw=s0-d-e1-ft#https://docs.google.com/uc?export=download&id=1FZA0GOlro6EElKCEOD4I2Y62uzEy_Rk_&revid=0Bw4z2vIYIGD0N0FidzYxV2NtV3ZUOTl3RUowWnhsd1p5VCtJPQ'></img><a/><br />"
+  typedText7 = "<a href='https://chicagofilmmakers.org/' target='_blank'><img width=100 style='display: block; border: solid 2px white;' src='https://ci5.googleusercontent.com/proxy/iS3h5JU76I64hxVg9mjNOnEzMgPwpWPhmOjgTTr75mC5R8iUsxA9gNxn4_4Vuyc1twL5uIN9-Yr-wTaQ2mixHxr79eZczReQ_oObu_kxnF4nCMUq5A3FCU32APlyvL2Zhhde-BPydA5ujKATNSVZdhf3--QtCv8uOEFZ8_N9ik-LcIiaipGwtlZWvSyCL1h2jorCv8jth9BFxnXLmw=s0-d-e1-ft#https://docs.google.com/uc?export=download&id=1FZA0GOlro6EElKCEOD4I2Y62uzEy_Rk_&revid=0Bw4z2vIYIGD0N0FidzYxV2NtV3ZUOTl3RUowWnhsd1p5VCtJPQ'></img><a/><br />"
   typedText8 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Video demo of the installation</a>"
 
 
