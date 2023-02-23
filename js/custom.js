@@ -1317,7 +1317,7 @@ function makeSmall(plyr) {
       // plyr.player_poster.style.zIndex = "1";
       plyr.player_poster.style.opacity = "1";
 
-    }, 1000);
+    }, 700);
 
     // lower volume to 0
     fadeAudio(plyr, 0);
@@ -1457,7 +1457,7 @@ function makeLarge(plyr) {
 
     setTimeout( function() {
       plyr.player_poster.style.opacity = "0";
-    }, 1000);
+    }, 700);
     // play video
     // fade audio to full volume
     fadeAudio(plyr, 1);
