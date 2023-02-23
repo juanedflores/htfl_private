@@ -618,21 +618,23 @@ function playerOnReady(player) {
 
     vimeo_id = video_media_array[player.media_index]["Vimeo ID"]
 
-    console.log(vimeo_id);
-    fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeo_id}`)
-      .then(response => {
-        return response.text();
-      })
-      .then(data => {
-        let { thumbnail_url } = JSON.parse(data);
-        thumbnail_url = thumbnail_url.substring(0,thumbnail_url.length-7) + "640.png";
-        player_plyrposter.style.background = `url(${thumbnail_url}) no-repeat center center fixed`;
-        player_plyrposter.style.backgroundSize = "cover";
-        player_plyrposter.style.opacity = "1";
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    if ($(window).width() > 400) {
+      // if desktop
+      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeo_id}`)
+        .then(response => {
+          return response.text();
+        })
+        .then(data => {
+          let { thumbnail_url } = JSON.parse(data);
+          thumbnail_url = thumbnail_url.substring(0,thumbnail_url.length-7) + "640.png";
+          player_plyrposter.style.background = `url(${thumbnail_url}) no-repeat center center fixed`;
+          player_plyrposter.style.backgroundSize = "cover";
+          player_plyrposter.style.opacity = "1";
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
 
     // responsive
     if ($(window).width() > 400) {
@@ -1310,14 +1312,13 @@ function makeSmall(plyr) {
       swiper_slide.css({ 'min-width' : '20vw' });
     }
 
-    // TODO: create another time out
-    setTimeout( function() {
-      // plyr.player_poster.style.visibility = "visible";
-      // plyr.player_poster.style.display = "block";
-      // plyr.player_poster.style.zIndex = "1";
-      plyr.player_poster.style.opacity = "1";
 
-    }, 700);
+    if ($(window).width() > 400) {
+      // if desktop
+      setTimeout( function() {
+        plyr.player_poster.style.opacity = "1";
+      }, 700);
+    }
 
     // lower volume to 0
     fadeAudio(plyr, 0);
@@ -1455,9 +1456,14 @@ function makeLarge(plyr) {
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
 
-    setTimeout( function() {
-      plyr.player_poster.style.opacity = "0";
-    }, 700);
+
+    if ($(window).width() > 400) {
+      // if desktop
+      setTimeout( function() {
+        plyr.player_poster.style.opacity = "0";
+      }, 700);
+    }
+
     // play video
     // fade audio to full volume
     fadeAudio(plyr, 1);
