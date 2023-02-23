@@ -1388,13 +1388,6 @@ function makeMedium(plyr) {
       swiper_slide.addClass('mediumVideo');
       swiper_slide.css({ 'min-width' : '35vw' });
 
-      // TODO: create another time out
-      setTimeout( function() {
-        // plyr.player_poster.style.visibility = "hidden";
-        // plyr.player_poster.style.zIndex = "1";
-        // plyr.player_poster.style.display = "none";
-        plyr.player_poster.style.opacity = "0";
-      }, 1000);
 
       // fade in the description
       setTimeout(function() {
@@ -1461,6 +1454,10 @@ function makeLarge(plyr) {
     currentMediumVideoPlayer = null;
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
+
+    setTimeout( function() {
+      plyr.player_poster.style.opacity = "0";
+    }, 1000);
     // play video
     // fade audio to full volume
     fadeAudio(plyr, 1);
