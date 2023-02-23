@@ -1743,7 +1743,7 @@ document.addEventListener('DOMContentLoaded', () => {
         $('.continue-button').click();
       }, {once: true});
     }, { once: true });
-  }, 2000);
+  }, 2400);
 
   $(".borderprev").mouseenter(function() {
     is_on_edge_left = true;
