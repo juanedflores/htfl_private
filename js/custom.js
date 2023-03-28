@@ -168,6 +168,29 @@ function showAudioPlayer(i) {
 
 //////////////////////////////////////////////////////////////
 // SLIDER_FUNCTIONS:
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    // console.log(array[currentIndex-1]["Subject Name"]);
+    // if (currentIndex < array.length) {
+      // if (array[currentIndex-1]["Subject Name"] !== array[currentIndex]["Subject Name"]) {
+    currentIndex -= 1;
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+      // }
+    // }
+  }
+
+  return array;
+}
+
 function moveToSlide(target_index, dont_make_target_medium, speed=1000) {
   if (!swiper.animating) {
 
@@ -875,10 +898,100 @@ function index() {
   let cellcount = 0;
   table = document.getElementById("indexTable");
 
+  currRow = table.insertRow(rowcount);
+  rowcount = rowcount + 1;
+  cell = currRow.insertCell(0);
+  // typewriter
+  typecell = new Typewriter(cell, {
+    loop: false,
+    cursor: '',
+    delay: 50,
+  });
+  typecell
+    .typeString("<span style='text-decoration: underline; font-weight: 500;'>Community<span>")
+    .start();
+  // currRow = table.insertRow(rowcount);
+  // rowcount = rowcount + 1;
+  // cell = currRow.insertCell(0);
+  // cell.innerHTML = "<br>";
+
   function task(i) {
     setTimeout(function() {
       let name = video_media_array_index[i]["Subject Name"];
       if (name != currName) {
+        if (name == "Efrén Paredes Jr") {
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          cell.innerHTML = "<br>";
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          // typewriter
+          typecell = new Typewriter(cell, {
+            loop: false,
+            cursor: '',
+            delay: 50,
+          });
+          typecell
+            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Family<span>")
+            .start();
+        }
+        else if (name == "Jim Gladstone") { 
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          cell.innerHTML = "<br>";
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          // typewriter
+          typecell = new Typewriter(cell, {
+            loop: false,
+            cursor: '',
+            delay: 50,
+          });
+          typecell
+            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Jury<span>")
+            .start();
+        }
+        else if (name == "Andrew Burch") { 
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          cell.innerHTML = "<br>";
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          // typewriter
+          typecell = new Typewriter(cell, {
+            loop: false,
+            cursor: '',
+            delay: 50,
+          });
+          typecell
+            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Law<span>")
+            .start();
+        }
+        else if (name == "Carol Draeger Thomas") { 
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          cell.innerHTML = "<br>";
+          currRow = table.insertRow(rowcount);
+          rowcount = rowcount + 1;
+          cell = currRow.insertCell(0);
+          // typewriter
+          typecell = new Typewriter(cell, {
+            loop: false,
+            cursor: '',
+            delay: 50,
+          });
+          typecell
+            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Media<span>")
+            .start();
+        }
+
         cellcount = 0;
         currRow = table.insertRow(rowcount);
         currName = name;
@@ -1313,13 +1426,6 @@ function makeSmall(plyr) {
     }
 
 
-    if ($(window).width() > 400) {
-      // if desktop
-      setTimeout( function() {
-        plyr.player_poster.style.opacity = "1";
-      }, 700);
-    }
-
     // lower volume to 0
     fadeAudio(plyr, 0);
     // pause the video after ms it takes to return to small
@@ -1329,8 +1435,15 @@ function makeSmall(plyr) {
       plyr.durationdiv.style.display = "flex";
       // hide controls
       // plyr.player_controls.style.display = "none";
+      plyr.restart();
       plyr.pause();
+
+
     }, 1000);
+    if ($(window).width() > 400) {
+      // if desktop
+      plyr.player_poster.style.opacity = "1";
+    }
 
     // hide the description
     let description = $(plyr.card_description);
@@ -1456,7 +1569,6 @@ function makeLarge(plyr) {
     currentLargeVideoPlayer = plyr;
     swiper_slide.css({ 'min-width' : '70vw' });
 
-
     if ($(window).width() > 400) {
       // if desktop
       setTimeout( function() {
@@ -1485,8 +1597,10 @@ function makeLarge(plyr) {
     }, 20);
 
     plyr.play();
-    // setTimeout(function() {
-    // }, 2000);
+    if ($(window).width() > 400) {
+      // if desktop
+      plyr.player_poster.style.opacity = "0";
+    }
   } 
 }
 
@@ -1609,18 +1723,19 @@ function initSwiper() {
 // INITIALIZE_MEDIA:
 async function fetchCSV () {
   // get video info from csv file
-  const res = await fetch('video_media.csv');
+  const res = await fetch('video_media_neworder.csv');
   video_media_array_text = await res.text();
   video_media_array = $.csv.toObjects(video_media_array_text);
   video_media_array_index = $.csv.toObjects(video_media_array_text);
-  video_media_array_index.sort((a, b) => a["Subject Name"].localeCompare(b["Subject Name"]))
-  video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  // video_media_array_index.sort((a, b) => a["Subject Name"].localeCompare(b["Subject Name"]))
+  // video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  // video_media_array.sort( () => Math.random() - 0.5);
+  video_media_array = shuffle(video_media_array);
 
   for (var i = 0; i < video_media_array.length; i++) {
     for (var j = 0; j < video_media_array_index.length; j++) {
       if (video_media_array[i]["Subject Name"] == video_media_array_index[j]["Subject Name"] && video_media_array[i]["Vimeo ID"] == video_media_array_index[j]["Vimeo ID"]) {
         video_media_array_index[j].slider_index = i;
-        // break;
       }
     }
   }
