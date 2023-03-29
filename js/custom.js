@@ -878,7 +878,7 @@ function index() {
   indexContent = 
   `
     <div id="indexContent" class="indexcontent">
-        <table id="indexTable" style="width: 100%;">
+        <table id="indexTable" style="width: 100%; font-weight:200;">
           <tr style="visibility: hidden">
             <th>Rally in support of Juvenile Lifers</th>
             <th>0:00</th>
@@ -908,7 +908,7 @@ function index() {
     delay: 50,
   });
   typecell
-    .typeString("<span style='text-decoration: underline; font-weight: 500;'>Community<span>")
+    .typeString("<span style='font-weight: 400; font-size: 1.2em; line-height: 1em;'>Community<span>")
     .start();
   // currRow = table.insertRow(rowcount);
   // rowcount = rowcount + 1;
@@ -934,7 +934,7 @@ function index() {
             delay: 50,
           });
           typecell
-            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Family<span>")
+            .typeString("<span style='font-weight: 400; font-size: 1.2em; line-height: 1em;'>Family<span>")
             .start();
         }
         else if (name == "Jim Gladstone") { 
@@ -952,7 +952,7 @@ function index() {
             delay: 50,
           });
           typecell
-            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Jury<span>")
+            .typeString("<span style='font-weight: 400; font-size: 1.2em; line-height: 1em;'>Jury<span>")
             .start();
         }
         else if (name == "Andrew Burch") { 
@@ -970,7 +970,7 @@ function index() {
             delay: 50,
           });
           typecell
-            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Law<span>")
+            .typeString("<span style='font-weight: 400; font-size: 1.2em; line-height: 1em;'>Law<span>")
             .start();
         }
         else if (name == "Carol Draeger Thomas") { 
@@ -988,7 +988,7 @@ function index() {
             delay: 50,
           });
           typecell
-            .typeString("<span style='text-decoration: underline; font-weight: 500;'>Media<span>")
+            .typeString("<span style='font-weight: 400; font-size: 1.2em; line-height: 1em;'>Media<span>")
             .start();
         }
 
@@ -1438,12 +1438,12 @@ function makeSmall(plyr) {
       plyr.restart();
       plyr.pause();
 
+      if ($(window).width() > 400) {
+        // if desktop
+        plyr.player_poster.style.opacity = "1";
+      }
 
     }, 1000);
-    if ($(window).width() > 400) {
-      // if desktop
-      plyr.player_poster.style.opacity = "1";
-    }
 
     // hide the description
     let description = $(plyr.card_description);
@@ -1728,9 +1728,8 @@ async function fetchCSV () {
   video_media_array = $.csv.toObjects(video_media_array_text);
   video_media_array_index = $.csv.toObjects(video_media_array_text);
   // video_media_array_index.sort((a, b) => a["Subject Name"].localeCompare(b["Subject Name"]))
-  // video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
-  // video_media_array.sort( () => Math.random() - 0.5);
-  video_media_array = shuffle(video_media_array);
+  video_media_array.sort((a, b) => a["Order in Scrolly Reel"] - b["Order in Scrolly Reel"])
+  // video_media_array = shuffle(video_media_array);
 
   for (var i = 0; i < video_media_array.length; i++) {
     for (var j = 0; j < video_media_array_index.length; j++) {

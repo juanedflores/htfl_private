@@ -22,6 +22,10 @@ body {
     scroll-behavior: smooth;
 }
 
+.table-heading {
+    padding-bottom: 10px;
+}
+
 a {
     color: #fff;
     text-decoration: none;
