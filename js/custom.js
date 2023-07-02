@@ -1119,7 +1119,7 @@ function aboutTheCase() {
     had witnessed his return home before the murder
     was committed, was discarded. Efrén was
     sentenced to two life without parole sentences
-    and one parolable life sentence.
+    and one parolable life sentence..
     `
 
   typeString = new Typewriter("#aboutCaseContent", {
