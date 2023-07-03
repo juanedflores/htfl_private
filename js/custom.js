@@ -1924,11 +1924,8 @@ for (var i = 0; i < stringArray.length; i++) {
   typewriter.pasteString(stringArray[i] + " ");
 }
 typewriter
-   .pauseFor(200)
-  .typeString(' <br><br> Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit.')
-
   .pauseFor(1000)
-  .typeString(' <br><br> The project is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
+  .typeString(' <br><br> Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
