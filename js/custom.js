@@ -1919,14 +1919,8 @@ var typewriter = new Typewriter(typedWords, {
 
 // intro text body
 typedText = "       Half Truths and Full Lies tells a story about story. 
-  <br />
-                            <br />
 Stories are at the heart of the American criminal legal system and jury trials are storytelling contests. 
-  <br />
-                            <br />
 Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence. 
-  <br />
-                            <br />
 Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit."
 stringArray = stringSplitter(typedText);
 for (var i = 0; i < stringArray.length; i++) {
