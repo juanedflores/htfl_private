@@ -1925,7 +1925,7 @@ for (var i = 0; i < stringArray.length; i++) {
 }
 typewriter
   .pauseFor(1000)
-  .typeString(' <br><br> Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit.')
+  .typeString(' <br><br>Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
