@@ -1113,7 +1113,7 @@ function aboutTheCase() {
   The case against Efren was based primarily on the statements of 
   the other youths who received reduced charges and sentences in 
   exchange for their testimony. Efren was sentenced to two life 
-  without parole sentences and one parolable life sentence.
+  without parole sentences and one parolable life sentence. 
     `
 
   typeString = new Typewriter("#aboutCaseContent", {
