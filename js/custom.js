@@ -1142,15 +1142,20 @@ function aboutTheInstallation() {
   `;
   document.getElementById("content_text").innerHTML = aboutInstallContent;
 
-  typedText = "A collaborative project between nonfiction filmmakers Tirtza Even and Meg McLagan and audio producer Elyse Blennerhassett."
-  typedText2 = "Half Truths and Full Lies depicts, through documentation and reenactment, the case of Efrén Paredes Jr., a Latinx man from Michigan, who was sentenced to life without parole in 1989 at age fifteen, for a murder he claims he did not commit."
-  typedText3 = "The multi-channel installation takes on a Rashomon-like quality, as divergent accounts of the crime accrue, forming multiple portraits of Efren. These accounts reflect perspectives of a range of individuals, from a police detective to key witnesses from the tight-knit small town community who singled Paredes out, as well as those whose lives — over the past 30 years — were most affected by the teen’s conviction: family members, teachers, and citizens who sat in judgment as jury members."
-  typedText4 = "Half Truths and Full Lies tells a story about a story; one constructed by a group of teens who appear to have conspired to set up their peer, and whose narrative played on stereotypical assumptions about racial minorities. This account became the only one the public, and the jury, got to hear, and the one upon which the local police and prosecutor relied."
-  typedText5 = "*"
-  typedText6 = "Half Truths and Full Lies site was produced with the support of the Chicago Digital Media Production Fund."
+  typedText = "Half Truths and Full Lies tells a story about story."
+  typedText2 = "Stories are at the heart of the American criminal legal system and jury trials are storytelling contests."
+  typedText3 = "Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence. "
+  typedText4 = "Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit."
+  typedText5 = "Although we began this project with the intention of making a long form documentary, we soon decided it would be better served by a nonlinear approach, one that would not focus on harmonizing witness accounts into a single narrative composition, but that allows for “navigational viewing” as filmmaker Harun Farocki describes it—the continuous updating and adjusting of multiple voices and perspectives, a polyphony that in its very form reflects the contingency of truth."
+  typedText6 = "Manifested as either a multi-channel installation or an online interactive piece, HTFL takes on a Rashomon-like quality, as viewers are asked to piece together an array of accounts, from police detectives and a group of teens who appear to have conspired to set up their peer, to family members, teachers, pastors, lawyers, and citizens who sat in judgment as jury members."
+  typedText7 = "Through the divergent accounts, the project attempts to recuperate conflicting narrative possibilities, including Efren’s own  story of innocence; to generate reasonable doubt about the version put forward by the prosecutor and to investigate the narrative nature of truth-telling in both media and the law."
 
-  typedText7 = "<a href='https://chicagofilmmakers.org/' target='_blank'><img width=100 style='display: block; border: solid 2px white;' src='https://ci5.googleusercontent.com/proxy/iS3h5JU76I64hxVg9mjNOnEzMgPwpWPhmOjgTTr75mC5R8iUsxA9gNxn4_4Vuyc1twL5uIN9-Yr-wTaQ2mixHxr79eZczReQ_oObu_kxnF4nCMUq5A3FCU32APlyvL2Zhhde-BPydA5ujKATNSVZdhf3--QtCv8uOEFZ8_N9ik-LcIiaipGwtlZWvSyCL1h2jorCv8jth9BFxnXLmw=s0-d-e1-ft#https://docs.google.com/uc?export=download&id=1FZA0GOlro6EElKCEOD4I2Y62uzEy_Rk_&revid=0Bw4z2vIYIGD0N0FidzYxV2NtV3ZUOTl3RUowWnhsd1p5VCtJPQ'></img><a/><br />"
-  typedText8 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Video demo of the installation</a>"
+  typedText8 = "*"
+  typedText9 = "Half Truths and Full Lies is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett."
+  typedText10 = "The site was produced with the support of the Chicago Digital Media Production Fund."
+
+  typedText11 = "<a href='https://chicagofilmmakers.org/' target='_blank'><img width=100 style='display: block; border: solid 2px white;' src='https://ci5.googleusercontent.com/proxy/iS3h5JU76I64hxVg9mjNOnEzMgPwpWPhmOjgTTr75mC5R8iUsxA9gNxn4_4Vuyc1twL5uIN9-Yr-wTaQ2mixHxr79eZczReQ_oObu_kxnF4nCMUq5A3FCU32APlyvL2Zhhde-BPydA5ujKATNSVZdhf3--QtCv8uOEFZ8_N9ik-LcIiaipGwtlZWvSyCL1h2jorCv8jth9BFxnXLmw=s0-d-e1-ft#https://docs.google.com/uc?export=download&id=1FZA0GOlro6EElKCEOD4I2Y62uzEy_Rk_&revid=0Bw4z2vIYIGD0N0FidzYxV2NtV3ZUOTl3RUowWnhsd1p5VCtJPQ'></img><a/><br />"
+  typedText12 = "<a href='https://vimeo.com/294983167' style='text-decoration: underline;' target='_blank'>Video demo of the installation</a>"
 
 
   typeString = new Typewriter("#aboutCaseInstallation", {
