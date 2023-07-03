@@ -1137,7 +1137,7 @@ function aboutTheInstallation() {
   // html content string
   aboutInstallContent = 
   `
-    <div id="aboutCaseInstallation" class="text-block-13">
+    <div id="aboutCaseInstallation" class="text-block-17">
     </div>
   `;
   document.getElementById("content_text").innerHTML = aboutInstallContent;
