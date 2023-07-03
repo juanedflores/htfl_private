@@ -1918,14 +1918,14 @@ var typewriter = new Typewriter(typedWords, {
 });
 
 // intro text body
-typedText = "In 1989, at age 15, Efren Paredes, Jr. was convicted for a murder and armed robbery. The crime took place in St. Joseph, Michigan, at a local store where Efren was working at the time. According to Efren and his family, on the night of the crime, after completing his work at the store, he was brought home by the store’s manager. A short time later the store was robbed and the manager was murdered. The case against Efren was based primarily on the statements of the other youths who received reduced charges and sentences in exchange for their testimony. Efren was sentenced to two life without parole sentences and one parolable life sentence."
+typedText = "Half Truths and Full Lies tells a story about story. Stories are at the heart of the American criminal legal system and jury trials are storytelling contests. Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence. Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit."
 stringArray = stringSplitter(typedText);
 for (var i = 0; i < stringArray.length; i++) {
   typewriter.pasteString(stringArray[i] + " ");
 }
 typewriter
   .pauseFor(1000)
-  .typeString(' <br><br> He is currently 50 years-old.')
+  .typeString(' <br><br> The project is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
