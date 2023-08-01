@@ -1935,7 +1935,7 @@ typewriter
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
-  });
+});
 
 // start to write the intro text
 typewriterTitle.typeString('Half Truths <b>and</b> Full Lies').pauseFor(1000).callFunction(() => {
