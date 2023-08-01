@@ -1934,6 +1934,13 @@ typewriter
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
+ }
+typewriter
+  .pauseFor(1000)
+  .typeString(' <br><br> The project is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
+  .pauseFor(1000)
+  .callFunction(() => {
+    $('.continue-button').show();
   });
 
 // start to write the intro text
