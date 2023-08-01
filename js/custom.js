@@ -1922,6 +1922,7 @@ var typewriter = new Typewriter(typedWords, {
   delay: 1,
 });
 
+}
 // intro text body
 typedText = "Half Truths and Full Lies tells a story about story. Stories are at the heart of the American criminal legal system and jury trials are storytelling contests. Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence."
 stringArray = stringSplitter(typedText);
