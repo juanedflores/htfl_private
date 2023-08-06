@@ -1930,7 +1930,7 @@ for (var i = 0; i < stringArray.length; i++) {
 }
 typewriter
   .pauseFor(1000)
-  .typeString(' <br><br> Half Truths and Full Lies is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
+  .typeString(' <br><br> Half Truths and Full Lies explores the case of Efren Paredes.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
