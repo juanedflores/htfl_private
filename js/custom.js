@@ -1200,9 +1200,33 @@ function aboutTheInstallation() {
   }
   typeString.typeString("<br /><br />")
 
+   stringArray = stringSplitter(typedText7);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+   stringArray = stringSplitter(typedText8);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+   stringArray = stringSplitter(typedText9);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+
+   stringArray = stringSplitter(typedText10);
+  for (var i = 0; i < stringArray.length; i++) {
+    typeString.pasteString(stringArray[i] + " ");
+  }
+  typeString.typeString("<br /><br />")
+  
   typeString
-    .typeString(typedText7)
-    .typeString(typedText8)
+    .typeString(typedText11)
+    .typeString(typedText12)
     .start();
 }
 
