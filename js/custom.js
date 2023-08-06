@@ -1954,7 +1954,7 @@ for (var i = 0; i < stringArray.length; i++) {
 }
 typewriter
   .pauseFor(1000)
-  .typeString(' <br><br> The project is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
+  .typeString(' <br><br> Half Truths and Full lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a crime he claims he did not commit.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
