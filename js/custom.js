@@ -1923,14 +1923,14 @@ var typewriter = new Typewriter(typedWords, {
 });
 
 // intro text body
-typedText = "Half Truths and Full Lies tells a story about story. Stories are at the heart of the American criminal legal system and jury trials are storytelling contests. Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence."
+typedText = "Half Truths and Full Lies tells a story about story. Stories are at the heart of the American criminal legal system and jury trials are storytelling contests. Every argument is a story and every lawyer and witness are storytellers who craft a narrative from pieces of information that have been deemed evidence. Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit."
 stringArray = stringSplitter(typedText);
 for (var i = 0; i < stringArray.length; i++) {
   typewriter.pasteString(stringArray[i] + " ");
 }
 typewriter
   .pauseFor(1000)
-  .typeString(' <br><br> Half Truths and Full Lies explores the case of Efren Paredes, a Latinx man from Michigan sentenced to life without parole at age 15 for a murder he claims he didn't commit.')
+  .typeString(' <br><br> The project is a collaboration between Tirtza Even, Meg McLagan and Elyse Blennerhassett.')
   .pauseFor(1000)
   .callFunction(() => {
     $('.continue-button').show();
