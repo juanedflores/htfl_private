@@ -1854,8 +1854,11 @@ function makeLarge(plyr) {
             ) {
                 console.log('REACHED.. CLEARING INTERVAL');
                 // player_plyrposter.style.opacity = '0';
-                plyr.player_poster.style.opacity = '0';
-                plyr.play();
+
+                setTimeout(function () {
+                    plyr.player_poster.style.opacity = '0';
+                    plyr.play();
+                }, 400);
             }
         }
         checkSize();
