@@ -1856,7 +1856,6 @@ function makeLarge(plyr) {
                 function waitTillStart() {
                     console.log(plyr.currentTime);
                     if (plyr.currentTime == 0) {
-                        plyr.play();
                         // console.log('Searing for start');
                         setTimeout(waitTillStart, 100);
                     } else {
@@ -1864,6 +1863,7 @@ function makeLarge(plyr) {
                         plyr.player_poster.style.opacity = '0';
                     }
                 }
+                plyr.play();
                 waitTillStart();
 
                 // console.log('REACHED.. CLEARING INTERVAL');
