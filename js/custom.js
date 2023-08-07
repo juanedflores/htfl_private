@@ -1850,7 +1850,7 @@ function makeLarge(plyr) {
             } else if (
                 Math.abs(
                     vw_convert(70) - parseFloat(swiper_slide.css('min-width'))
-                ) < 0.5
+                ) < 1.5
             ) {
                 console.log('REACHED.. CLEARING INTERVAL');
                 // player_plyrposter.style.opacity = '0';
