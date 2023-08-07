@@ -774,7 +774,7 @@ function playerOnReady(player) {
                     let { thumbnail_url } = JSON.parse(data);
                     thumbnail_url =
                         thumbnail_url.substring(0, thumbnail_url.length - 7) +
-                        '640.png';
+                        '1080.png';
                     player_plyrposter.style.background = `url(${thumbnail_url}) no-repeat center center fixed`;
                     player_plyrposter.style.backgroundSize = 'cover';
                     player_plyrposter.style.opacity = '1';
