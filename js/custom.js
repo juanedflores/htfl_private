@@ -894,13 +894,13 @@ function playerOnReady(player) {
         // onPlay = function (data) {};
 
         // add an event listener for when video paused
-        const onPause = function (data) {
-            // data is an object containing properties specific to that event
-            player_plyrposter.style.opacity = '1';
-            console.log('onpause');
-        };
-
-        player.on('pause', onPause);
+        // const onPause = function (data) {
+        //     // data is an object containing properties specific to that event
+        //     player_plyrposter.style.opacity = '1';
+        //     console.log('onpause');
+        // };
+        //
+        // player.on('pause', onPause);
 
         //////////////////////////////////////////////////////////////
         //* [MOUSE EVENTS FOR SLIDER] *//
