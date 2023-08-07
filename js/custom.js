@@ -1854,16 +1854,29 @@ function makeLarge(plyr) {
             ) {
                 //  plyr.currentTime > 0
                 function waitTillStart() {
+                    // console.log('READY:');
+                    // console.log(plyr.ready);
+                    // console.log('LOADING:');
+                    // console.log(plyr.loading);
+                    if (plyr.ready == true) {
+                        setTimeout(function () {
+                            // console.log('PLAYER:');
+                            console.log(plyr);
+                            plyr.play();
+                        }, 600);
+                        // console.log('player is ready..');
+                    } else if (plyr.loading) {
+                        // plyr.play();
+                    }
                     console.log(plyr.currentTime);
-                    if (plyr.currentTime == 0) {
+                    if (plyr.currentTime > 0) {
                         // console.log('Searing for start');
-                        setTimeout(waitTillStart, 100);
+                        plyr.player_poster.style.opacity = '0';
                     } else {
                         // console.log('REMOVING THUMBNAIL');
-                        plyr.player_poster.style.opacity = '0';
+                        setTimeout(waitTillStart, 500);
                     }
                 }
-                plyr.play();
                 waitTillStart();
 
                 // console.log('REACHED.. CLEARING INTERVAL');
