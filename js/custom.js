@@ -1839,24 +1839,35 @@ function makeLarge(plyr) {
         // plyr.play();
 
         function checkSize() {
-            console.log('checking size..');
+            // console.log('checking size..');
             if (
                 Math.abs(
                     vw_convert(70) - parseFloat(swiper_slide.css('min-width'))
                 ) > 0.5
             ) {
-                console.log('running..');
+                // console.log('running..');
                 setTimeout(checkSize, 100);
             } else if (
                 Math.abs(
                     vw_convert(70) - parseFloat(swiper_slide.css('min-width'))
                 ) < 1.5
             ) {
-                console.log('REACHED.. CLEARING INTERVAL');
-                // player_plyrposter.style.opacity = '0';
+                //  plyr.currentTime > 0
+                function waitTillStart() {
+                    console.log(plyr.currentTime);
+                    if (plyr.currentTime == 0) {
+                        plyr.play();
+                        // console.log('Searing for start');
+                        setTimeout(waitTillStart, 100);
+                    } else {
+                        // console.log('REMOVING THUMBNAIL');
+                        plyr.player_poster.style.opacity = '0';
+                    }
+                }
+                waitTillStart();
 
-                plyr.player_poster.style.opacity = '0';
-                plyr.play();
+                // console.log('REACHED.. CLEARING INTERVAL');
+                // player_plyrposter.style.opacity = '0';
             }
         }
         checkSize();
