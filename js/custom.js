@@ -862,32 +862,33 @@ function playerOnReady(player) {
             player.currentTime = 0;
         });
 
-        player.on('playing', function (data) {
-            // data is an object containing properties specific to that event
-            console.log('onbufferend');
-
-            function checkSize() {
-                console.log('checking size..');
-                if (
-                    Math.abs(
-                        vw_convert(70) -
-                            parseFloat($(player_swiper_slide).css('min-width'))
-                    ) > 0.5
-                ) {
-                    console.log('running..');
-                    setTimeout(checkSize, 100);
-                } else if (
-                    Math.abs(
-                        vw_convert(70) -
-                            parseFloat($(player_swiper_slide).css('min-width'))
-                    ) < 0.5
-                ) {
-                    console.log('REACHED.. CLEARING INTERVAL');
-                    player_plyrposter.style.opacity = '0';
-                }
-            }
-            checkSize();
-        });
+        // player.on('playing', function (data) {
+        //     // data is an object containing properties specific to that event
+        //     console.log('onbufferend');
+        //
+        //     function checkSize() {
+        //         console.log('checking size..');
+        //         if (
+        //             Math.abs(
+        //                 vw_convert(70) -
+        //                     parseFloat($(player_swiper_slide).css('min-width'))
+        //             ) > 0.5
+        //         ) {
+        //             console.log('running..');
+        //             setTimeout(checkSize, 100);
+        //         } else if (
+        //             Math.abs(
+        //                 vw_convert(70) -
+        //                     parseFloat($(player_swiper_slide).css('min-width'))
+        //             ) < 0.5
+        //         ) {
+        //             console.log('REACHED.. CLEARING INTERVAL');
+        //             player_plyrposter.style.opacity = '0';
+        //             player.play();
+        //         }
+        //     }
+        //     checkSize();
+        // });
 
         // add an event listener for when video plays
         // onPlay = function (data) {};
@@ -1835,7 +1836,30 @@ function makeLarge(plyr) {
             plyr.progressbar.set(percentage);
         }, 20);
 
-        plyr.play();
+        // plyr.play();
+
+        function checkSize() {
+            console.log('checking size..');
+            if (
+                Math.abs(
+                    vw_convert(70) - parseFloat(swiper_slide.css('min-width'))
+                ) > 0.5
+            ) {
+                console.log('running..');
+                setTimeout(checkSize, 100);
+            } else if (
+                Math.abs(
+                    vw_convert(70) - parseFloat(swiper_slide.css('min-width'))
+                ) < 0.5
+            ) {
+                console.log('REACHED.. CLEARING INTERVAL');
+                // player_plyrposter.style.opacity = '0';
+                plyr.player_poster.style.opacity = '0';
+                plyr.play();
+            }
+        }
+        checkSize();
+
         // if ($(window).width() > 400) {
         //     // if desktop
         //     plyr.player_poster.style.opacity = '0';
