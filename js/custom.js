@@ -1855,10 +1855,8 @@ function makeLarge(plyr) {
                 console.log('REACHED.. CLEARING INTERVAL');
                 // player_plyrposter.style.opacity = '0';
 
-                setTimeout(function () {
-                    plyr.player_poster.style.opacity = '0';
-                    plyr.play();
-                }, 400);
+                plyr.player_poster.style.opacity = '0';
+                plyr.play();
             }
         }
         checkSize();
