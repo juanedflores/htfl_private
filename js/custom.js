@@ -1336,8 +1336,8 @@ function aboutTheCase() {
     typeString.typeString('<br><br>He is currently 50 years-old.').start();
 }
 
-function aboutTheInstallation() {
-    console.log('about the installation');
+function aboutTheProject() {
+    console.log('about the project');
 
     // html content string
     aboutInstallContent = `
@@ -2371,8 +2371,8 @@ for (var i = 0; i < menu_text.length; i++) {
             if (menuItem == 'About the case') {
                 aboutTheCase();
             }
-            if (menuItem == 'About the installation') {
-                aboutTheInstallation();
+            if (menuItem == 'About the project') {
+                aboutTheProject();
             }
             if (menuItem == 'Audio files') {
                 audioFiles();
