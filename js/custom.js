@@ -1336,8 +1336,8 @@ function aboutTheCase() {
     typeString.typeString('<br><br>He is currently 50 years-old.').start();
 }
 
-function aboutTheInstallation() {
-    console.log('about the installation');
+function aboutTheProject() {
+    console.log('about the project');
 
     // html content string
     aboutInstallContent = `
@@ -1356,7 +1356,7 @@ function aboutTheInstallation() {
     typedText5 =
         'Although we began this project with the intention of making a long form documentary, we soon decided it would be better served by a nonlinear approach, one that would not focus on harmonizing witness accounts into a single narrative composition, but that allows for “navigational viewing” as filmmaker Harun Farocki describes it—the continuous updating and adjusting of multiple voices and perspectives, a polyphony that in its very form reflects the contingency of truth.';
     typedText6 =
-        'Manifested as either a multi-channel installation or an online interactive piece, HTFL takes on a Rashomon-like quality, as viewers are asked to piece together an array of accounts, from police detectives and a group of teens who appear to have conspired to set up their peer, to family members, teachers, pastors, lawyers, and citizens who sat in judgment as jury members.';
+        'Manifested as either a multi-channel installation or an online interactive piece, Half Truths and Full Lies takes on a Rashomon-like quality, as viewers are asked to piece together an array of accounts, from police detectives and a group of teens who appear to have conspired to set up their peer, to family members, teachers, pastors, lawyers, and citizens who sat in judgment as jury members.';
     typedText7 =
         'Through the divergent accounts, the project attempts to recuperate conflicting narrative possibilities, including Efren’s own  story of innocence; to generate reasonable doubt about the version put forward by the prosecutor and to investigate the narrative nature of truth-telling in both media and the law.';
 
@@ -2382,8 +2382,8 @@ for (var i = 0; i < menu_text.length; i++) {
             if (menuItem == 'About the case') {
                 aboutTheCase();
             }
-            if (menuItem == 'About the installation') {
-                aboutTheInstallation();
+            if (menuItem == 'About the project') {
+                aboutTheProject();
             }
             if (menuItem == 'Audio files') {
                 audioFiles();
